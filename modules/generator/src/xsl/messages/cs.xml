@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright 2010 Spolecne s.r.o. (www.spoledge.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *-->
+<messages xmlns="http://www.spoledge.com/audao/xsl/messages">
+	<words>
+		<word name="COLUMN">Sloupec</word>
+		<word name="DETAIL">Detail</word>
+		<word name="ERROR">Chyba</word>
+		<word name="INDEX">Index</word>
+		<word name="LOCATION">Místo</word>
+		<word name="METHOD">Metoda</word>
+		<word name="TABLE">Tabulka</word>
+		<word name="VIEW">Pohled</word>
+	</words>
+	<errors>
+		<error errcode="MULTIPLE_PARENT_KEYS">Více než jeden rodičovský klíč není povolen</error>
+		<error errcode="REFERENCE_NOT_FOUND">Odkaz nebyl nalezen</error>
+
+		<error errcode="GAE_AUTO_NUMBER_ONLY_INSERT">GAE - auto non pk non Date/Timestamp sloupce lze použít pouze pro operace 'insert'</error>
+		<error errcode="GAE_AUTO_NUMBER_ONLY_LONG">GAE - pouze typ 'long' je podporován v auto non pk non Date/Timestamp sloupcích</error>
+		<error errcode="GAE_BATCH_UPDATE_NOT_SUPPORTED">GAE - metody pro dávkový update nejsou podporovány</error>
+		<error errcode="GAE_FINDER_NOT_SUPPORTED">GAE - tento finder není podporován</error>
+		<error errcode="GAE_FINDER_ON_UNINDEXED_PROPERTY">GAE - nelze vyhledávat podle neindexované property</error>
+		<error errcode="GAE_INDEX_ON_COMPLEX_ANCESTOR">GAE - index smí obsahovat pouze sloupce odkazující na jednoduché předky (úroveň 1)</error>
+		<error errcode="GAE_LIST_PARAM_ON_SIMPLE_PROPERTY">GAE - parameter 'list' není povolený pro tento type sloupce (non-list)</error>
+		<error errcode="GAE_MOVE_NOT_SUPPORTED">GAE - metody 'move' nejsou podporovány</error>
+		<error errcode="GAE_PK_TYPE_NOT_SUPPORTED">GAE - pouze typy 'long' a 'String' mohou být primární klíče</error>
+		<error errcode="GAE_TRUNCATE_NOT_SUPPORTED">GAE - metody 'truncate' nejsou podporovány</error>
+	</errors>
+</messages>
