@@ -1,0 +1,213 @@
+AUDAO - Automatic DAO Generator README
+======================================
+
+Overview
+--------
+
+AUDAO is a tool for generating SQL - DDL and DAO libraries.
+The input is a configuration file (XML) describing the database entities
+and relations. The output is a set of SQLs (CREATE/DROP/INSERT)
+and a Java JAR library plus Javadoc (optionally).
+
+The purpose of this tool is to speed up of development of database
+powered applications. The designer creates one configuration file
+and everything other is automatically generated. The developer does not need
+to be aware of the database type or to handle most of potential
+DB exceptions (SQLException).
+
+Currently the following databases are supported:
+    * MySQL - version 3, 4, 5
+    * Oracle - version 9i, 10g and 11g
+    * Google App Engie - low-level API
+    * JDO (Google App Engie) - DEPRECATED - NOT FULLY IMPLEMENTED !
+
+Currently the following DAO / DTO programming language is supported:
+    * Java - version 1.5, 1.6
+
+
+Dependencies
+------------
+
+Currently the following external libraries are needed for compilation:
+    * Apache Commons Logging: commons-logging-1.1.1.jar
+    * Apache Xalan-J XSLT processor: xalan*.jar and serializer.jar
+    * ANTLR3 parser generator: antlr-3.2.jar and antlr-runtime-3.2.jar
+    * Apache XMLBeans: xbean.jar and jsr173_1.0_api.jar
+    * JUnit: junit-4.6.jar (testing only)
+
+For using the DAO classes you need to install MySQL or Oracle JDBC
+implementation libraries (mysl-connector or ojdbc14.jar)
+
+Google App Engine you need to have installed also the GAE SDK.
+
+For JDO (Google App Engine) you need to have installed also the JDO library
+(javax.jdo.*)
+
+
+DAO Features
+------------
+
+General
+    * for each table a DTO, DAO and DAO-implementation classes are generated
+
+    * DaoFactory dynamically chooses which DAO-implementation is used
+        (MySQL, Oracle)
+
+    * database schemas are supported
+
+    * inheritance of tables is supported
+
+    * abstract tables/classes are supported
+
+    * views are supported
+
+    * column references to the same or other tables are supported
+        (column type is taken from the referenced table)
+
+    * initial data can be also defined
+
+
+DTO
+    * copy constructors allow to easily copy and cast one object
+        to another one - for table tree hierarchy
+
+    * support for enumerations
+
+    * overloaded "set" methods for types java.sql.Date
+        and java.sql.Timestamp allows to easily assign also java.util.Date
+
+    * smart "toString()" method prints only non-null attributes
+
+    * inner enum "Column" and static string TABLE allows to use
+        the real database column names in safe way
+
+    * support for Google Web Toolkit (GWT) - compilable to JavaScript
+
+
+DAO
+    * finder methods can be automatically generated according to defined indexes
+        and primary keys
+
+    * explicit finders can be defined:
+        + "all" - returns all records
+        + "pk" - return one record specified by primary key
+        + "index" - returns all records specified by condition of an index
+        + "condition" - prepared SQL query + parameters
+        + "dynamic" - dynamic SQL query + parameters
+        + "ref" - N:M reference table is used to fetch the result
+
+    * the result set can be sorted according to predefined criteria
+
+    * explicit "update" methods can be defined (similar possibilities
+        as for finders)
+
+    * explicit "delete" methods can be defined (similar possibilities
+        as for finders)
+
+    * explicit "truncate" method can be defined
+
+    * explicit "move" methods which moves one or more items from one to
+        another DB table can be defined (similar possibilities
+        as for finders)
+
+    * "auto" columns for integer types allow to generate them automatically
+        (mostly used for primary keys)
+
+    * "auto" columns for Date and Timestamp allows to set the current
+        date and time automatically when inserting and/or updating
+
+
+DAO-implementation - MySQL
+    * "auto" integer columns are implemented using "autoincrement" feature
+
+DAO-implementation - Oracle
+    * "auto" integer columns are implemented using sequences
+    * sorting: internationalization support using NLSSORT()
+
+
+Building
+--------
+
+1) Copy or link:
+    - MySQL/Oracle JAR files to lib/jdbc
+    - Apache commons-logging-1.1.1.jar to lib/commons
+    - Apache XMLBeans xbean.jar and jsr173_1.0_api.jar to lib/xmlbeans
+    - JUnit junit*.jar to lib/junit
+
+2) Copy "sample.ant.properties" to ".ant.properties".
+
+3) Edit ".ant.properties".
+
+4) run ant
+
+
+Testing
+--------
+
+0) you must build it
+
+1) Copy "modules/distro/sample.ant.properties" to "modules/distro/.ant.properties".
+
+2) Edit "modules/distro/.ant.properties".
+
+3) run ant test
+
+
+Using
+-----
+
+-----------------------------------------------------------------------------
+__Generator (config -> DAO library):__
+
+
+Put the following code into your project build.xml.
+Set up ${audao.home} which points to AuDAO distribution directory:
+
+    <import file="${audao.home}/tools/build-audao.xml"/>
+
+    <target name="dist">
+        <antcall target="audao-jar">
+            <param name="audao-debug" value="true"/>
+            <param name="audao-xml" location="${src.dir}/db/sample.xml"/>
+            <param name="audao-gen-dir" location="${build.dir}/sample-oracle"/>
+            <param name="audao-dbtype" value="oracle"/>
+            <param name="audao-package" value="com.foo.sample.db"/>
+            <param name="audao-jar" location="${dist.dir}/sample-db-oracle.jar"/>
+        </antcall>
+    </target>
+
+
+For Google App Engine set up ${gae.home} which points to GAE SDK home directory
+and use this:
+
+    <import file="${audao.home}/tools/build-audao-gae.xml"/>
+
+    <target name="dist">
+        <antcall target="audao-jar">
+            <param name="audao-debug" value="true"/>
+            <param name="audao-xml" location="${src.dir}/db/sample.xml"/>
+            <param name="audao-gen-dir" location="${build.dir}/sample-gae"/>
+            <param name="audao-dbtype" value="gae"/>
+            <param name="audao-package" value="com.foo.sample.db"/>
+            <param name="audao-jar" location="${dist.dir}/sample-db-gae.jar"/>
+        </antcall>
+    </target>
+
+
+If you are using the same project structure as AUDAO (conf/, lib/, modules/,
+build.xml, build-commons.xml), then you can just copy the above snippet to your
+module local build.xml as is. Otherwise please look at the build-commons.xml
+file to set the variables correctly.
+
+The source code is generated into your local "build" directory.
+The JAR library is put into your local "dist" directory.
+
+
+Development
+-----------
+
+Conventions:
+    * Java files: 4-space indentation
+    * XML files: tab indentation
+
+

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="audao" default="dist" basedir=".">
+
+	<!-- IMPORT THE COMMON PROPERTIES AND TARGETS -->
+	<import file="build-commons.xml"/>
+
+	<!-- SECTION PROPERTIES -->
+
+	<!-- SECTION FILESET AND CLASSPATH -->
+
+	<!-- SECTION TARGETS -->
+
+	<target name="dist" description="Creates the library">
+
+		<echo level="info" message="*** Module 'common' *************************************************"/>
+		<ant dir="modules/common" inheritAll="false"/>
+		<copy file="modules/common/dist/audao-common.jar" todir="modules/embed/lib"/>
+		<copy file="modules/common/dist/audao-common.jar" todir="modules/web-core/lib"/>
+		<copy file="modules/common/dist/audao-common.jar" todir="modules/web/lib"/>
+
+		<echo level="info" message="*** Module 'schemas' ************************************************"/>
+		<ant dir="modules/schemas" inheritAll="false"/>
+		<copy file="modules/schemas/dist/audao-schema.jar" todir="modules/inspector/lib"/>
+
+		<echo level="info" message="*** Module 'generator' **********************************************"/>
+		<ant dir="modules/generator" inheritAll="false"/>
+		<copy file="modules/generator/dist/audao-db.jar" todir="modules/parser/lib"/>
+
+		<echo level="info" message="*** Module 'parser' *************************************************"/>
+		<ant dir="modules/parser" inheritAll="false"/>
+		<copy file="modules/parser/dist/audao-parser.jar" todir="modules/embed/lib"/>
+		<copy file="modules/parser/dist/audao-parser.jar" todir="modules/web/lib"/>
+
+		<echo level="info" message="*** Module 'embed' **************************************************"/>
+		<ant dir="modules/embed" inheritAll="false"/>
+		<copy file="modules/embed/dist/audao-embed.jar" todir="modules/web/lib"/>
+
+		<antcall target="dist.distro"/>
+	</target>
+
+	<target name="dist.distro" unless="no-distro" description="Creates the distribution">
+		<echo level="info" message="*** Module 'doc' ****************************************************"/>
+		<ant dir="modules/doc" inheritAll="false"/>
+
+		<echo level="info" message="*** Module 'distro' *************************************************"/>
+		<ant dir="modules/distro" inheritAll="false"/>
+
+		<echo level="info" message="*** Module 'gwt-emul' ***********************************************"/>
+		<ant dir="modules/gwt-emul" inheritAll="false"/>
+	</target>
+
+
+	<target name="test" depends="dist" description="Tests the application">
+		<ant dir="modules/parser" target="test" inheritAll="false"/>
+		<ant dir="modules/distro" target="test" inheritAll="false"/>
+		<ant dir="modules/gwt-emul" target="test" inheritAll="false"/>
+	</target>
+
+
+	<target name="doc" description="Generates the documentation">
+		<mkdir dir="${build.dir}/javadoc"/>
+		<javadoc
+			destdir="${build.dir}/javadoc"
+			windowtitle="AUDAO API"
+			>
+			<packageset dir="modules/generator/src/java"/>
+			<doctitle><![CDATA[<h1>AUDAO API</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &#169; 2010 Spolecne s.r.o. All Rights Reserved.</i>]]></bottom>
+			<group title="Database" packages="${pkg-name}.db*"/>
+		</javadoc>
+	</target>
+
+
+	<target name="clean" description="Clears the project">
+		<ant dir="modules/gwt-emul" target="clear" inheritAll="false"/>
+		<ant dir="modules/distro" target="clear" inheritAll="false"/>
+		<ant dir="modules/doc" target="clear" inheritAll="false"/>
+		<ant dir="modules/embed" target="clear" inheritAll="false"/>
+		<ant dir="modules/parser" target="clear" inheritAll="false"/>
+		<ant dir="modules/generator" target="clear" inheritAll="false"/>
+		<ant dir="modules/schemas" target="clear" inheritAll="false"/>
+		<ant dir="modules/common" target="clear" inheritAll="false"/>
+		<delete dir="${build.dir}"/>
+	</target>
+
+	<target name="clear" description="Clears the project">
+		<antcall target="clean"/>
+	</target>
+
+	<target name="mr-proper" description="Clears the project precisely">
+		<ant dir="modules/gwt-emul" target="mr-proper" inheritAll="false"/>
+		<ant dir="modules/distro" target="mr-proper" inheritAll="false"/>
+		<ant dir="modules/doc" target="mr-proper" inheritAll="false"/>
+		<ant dir="modules/embed" target="mr-proper" inheritAll="false"/>
+		<ant dir="modules/parser" target="mr-proper" inheritAll="false"/>
+		<ant dir="modules/generator" target="mr-proper" inheritAll="false"/>
+		<ant dir="modules/schemas" target="mr-proper" inheritAll="false"/>
+		<ant dir="modules/common" target="mr-proper" inheritAll="false"/>
+		<delete dir="${build.dir}"/>
+	</target>
+
+	<target name="mrproper" description="Clears the project precisely">
+		<antcall target="mr-proper"/>
+	</target>
+
+</project>
