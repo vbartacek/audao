@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2010 Spolecne s.r.o. (www.spoledge.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *-->
+<project name="commons" basedir="." default="...">
+
+	<!-- SECTION PROPERTIES -->
+
+	<dirname property="root.dir" file="${ant.file.commons}"/>
+	<property name="app-name" value="audao"/>
+	<property name="pkg-prefix" value="com.spoledge"/>
+
+	<!-- The global .ant.properties -->
+	<property file="${root.dir}/VERSION"/>
+	<property file="${root.dir}/.ant.properties"/>
+
+	<!-- The local .ant.properties -->
+	<property file=".ant.properties"/>
+
+	<condition property="pkg-name" value="${pkg-prefix}.${app-name}">
+		<not>
+			<isset property="pkg-name"/>
+		</not>
+	</condition>
+
+	<property name="module-name" value="${app-name}-${ant.project.name}"/>
+
+	<property name="conf.global" location="${root.dir}/conf"/>
+	<property name="conf.local" location="conf"/>
+
+	<property name="lib.global" location="${root.dir}/lib"/>
+	<property name="lib.local" location="lib"/>
+
+	<property name="src.dir" location="src"/>
+	<property name="src.java" location="${src.dir}/java"/>
+	<property name="src-test.dir" location="${src.dir}/test"/>
+
+	<property name="build.dir" location="build"/>
+	<property name="build.src-gen.dir" location="${build.dir}/src-gen"/>
+	<property name="build.classes.dir" location="${build.dir}/classes"/>
+	<property name="build.classes-test.dir" location="${build.dir}/classes-test"/>
+
+	<property name="dist.dir" location="dist"/>
+
+	<property name="module.jar" location="${dist.dir}/${module-name}.jar"/>
+
+
+	<condition property="log4j.conf" value="${log4j.config}" else="conf/log4j.xml">
+		<isset property="log4j.config"/>
+	</condition>
+
+	<whichresource property="log4j.config.url" resource="${log4j.conf}" classpath="."/>
+
+	<!-- SECTION FILESET AND CLASSPATH -->
+
+	<fileset id="lib.global.fileset" dir="${lib.global}">
+		<include name="**/*.jar"/>
+	</fileset>
+
+	<fileset id="lib.local.fileset" dir="${lib.local}">
+		<include name="**/*.jar"/>
+	</fileset>
+
+	<path id="sql.classpath">
+		<fileset refid="lib.global.fileset"/>
+	</path>
+
+	<path id="junit.path">
+		<fileset dir="${lib.global}/junit" includes="*.jar"/>
+	</path>
+
+
+	<!-- SECTION TARGETS -->
+
+	<target name="clean" description="Clears output directories">
+		<delete dir="${dist.dir}"/>
+		<delete dir="${build.dir}"/>
+	</target>
+
+	<target name="clear" description="Clears output directories">
+		<antcall target="clean"/>
+	</target>
+
+	<target name="mr-proper" description="Clears output and lib directories">
+		<antcall target="clean"/>
+		<delete>
+			<fileset dir="${lib.local}" includes="${app-name}-*.jar"/>
+		</delete>
+	</target>
+
+	<target name="db-info">
+		<property file="${conf.global}/${db.config}"/>
+		<echo level="info" message="*** INFO ************************************************************"/>
+		<echo level="info" message="* The '${db.type}' DB type is configured as follows:"/>
+		<echo level="info" message="*    driver: ${jdbc.driver}"/>
+		<echo level="info" message="*    url:    ${jdbc.url}"/>
+		<echo level="info" message="*    login:  ${jdbc.username}"/>
+		<echo level="info" message="*********************************************************************"/>
+	</target>
+
+	<target name="sql-execute">
+		<sql driver="${jdbc.driver}"
+			url="${jdbc.url}"
+			userid="${jdbc.username}"
+			password="${jdbc.password}"
+			onerror="continue"
+			src="${sql-execute.src}"
+			classpathref="sql.classpath"
+			encoding="UTF-8"
+		/>
+	</target>
+
+	<target name="confirm">
+		<input
+			message="${confirm.message}"
+			validargs="y,n"
+			addproperty="confirm"
+		/>
+		<condition property="continue">
+			<equals arg1="y" arg2="${confirm}"/>
+		</condition>
+		<fail unless="continue">Confirmation failed:
+			The process was aborted because confirmation failed.
+		</fail>
+	</target>
+
+	<target name="depends-on-jar">
+		<condition property="jar.present">
+			<or>
+				<resourcecount when="ge" count="1">
+					<fileset dir="${lib.global}" includes="**/${name}"/>
+				</resourcecount>
+				<resourcecount when="ge" count="1">
+					<fileset dir="${lib.local}" includes="**/${name}"/>
+				</resourcecount>
+			</or>
+		</condition>
+		<antcall target="depends-on-jar.impl"/>
+	</target>
+
+	<target name="depends-on-jar.impl" unless="jar.present">
+		<echo level="error" message="*** ERROR ***********************************************************"/>
+		<echo level="error" message="* The library ${name} is missing."/>
+		<echo level="error" message="* Please read the README file and install it as recommended."/>
+		<echo level="error" message="*********************************************************************"/>
+		<fail>Module dependency failed</fail>
+	</target>
+
+	<target name="depends-on-module">
+		<condition property="full-name" value="${app-name}-${name}-${suffix}.jar">
+			<isset property="suffix"/>
+		</condition>
+		<condition property="full-name" value="${app-name}-${name}.jar">
+			<not>
+				<isset property="suffix"/>
+			</not>
+		</condition>
+		<property name="jar.name" location="${lib.local}/${full-name}"/>
+		<available property="jar.present" file="${jar.name}"/>
+		<antcall target="depends-on-module.impl"/>
+	</target>
+
+	<target name="depends-on-module.impl" unless="jar.present">
+		<echo level="error" message="*** ERROR ***********************************************************"/>
+		<echo level="error" message="* The file ${jar.name} is missing."/>
+		<echo level="error" message="* Please run the global build first."/>
+		<echo level="error" message="*********************************************************************"/>
+		<fail>Module dependency failed</fail>
+	</target>
+
+	<target name="check">
+		<fail unless="pkg-prefix">
+			The property "pkg-prefix" is not set.
+			Please add it to your global .ant.properties file.
+		</fail>
+		<fail unless="app-name">
+			The property "app-name" is not set.
+			Please add it to your global .ant.properties file.
+		</fail>
+		<fail unless="java-version">
+			The property "java-version" is not set (1.5 or 1.6).
+			Please add it to your global .ant.properties file.
+		</fail>
+	</target>
+
+	<target name="compile">
+		<antcall target="compile-src-path">
+			<param name="src-path" value="${src.java}"/>
+		</antcall>
+	</target>
+
+	<target name="compile-src-path">
+		<antcall target="compile-src-dest">
+			<param name="dest-dir" value="${build.classes.dir}"/>
+		</antcall>
+	</target>
+
+	<target name="compile-src-dest" depends="check">
+		<mkdir dir="${dest-dir}"/>
+
+		<condition property="jdk-5">
+			<equals arg1="${java-version}" arg2="1.5"/>
+		</condition>
+
+		<antcall target="compile-src-dest-5"/>
+		<antcall target="compile-src-dest-6"/>
+	</target>
+
+	<target name="compile-src-dest-5" if="jdk-5">
+		<javac
+			destdir="${dest-dir}"
+			classpathref="compile.path"
+			source="${java-version}"
+			target="${java-version}"
+			debug="true"
+			deprecation="true"
+			optimize="false"
+		>
+			<src path="${src-path}"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+	</target>
+
+	<target name="compile-src-dest-6" unless="jdk-5">
+		<mkdir dir="${build.src-gen.dir}"/>
+		<javac
+			destdir="${dest-dir}"
+			classpathref="compile.path"
+			source="${java-version}"
+			target="${java-version}"
+			debug="true"
+			deprecation="true"
+			optimize="false"
+		>
+			<src path="${src-path}"/>
+			<compilerarg value="-Xlint:unchecked"/>
+			<compilerarg value="-s"/>
+			<compilerarg path="${build.src-gen.dir}"/>
+		</javac>
+	</target>
+
+	<target name="compile-test">
+		<mkdir dir="${build.classes-test.dir}"/>
+		<javac
+			srcdir="${src-test.dir}"
+			destdir="${build.classes-test.dir}"
+			classpathref="compile-test.path"
+			source="${java-version}"
+			target="${java-version}"
+			debug="true"
+			deprecation="true"
+			optimize="false"
+		>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+	</target>
+
+	<target name="make-jar">
+		<antcall target="make-jar-src">
+			<param name="src-dir" value="${build.classes.dir}"/>
+		</antcall>
+	</target>
+
+	<fileset id="empty-fs" dir="${dist.dir}" includes="n/a"/>
+	<target name="make-jar-src">
+		<mkdir dir="${dist.dir}"/> 
+		<condition property="metainf-fs" value="empty-fs">
+			<not>
+				<isset property="metainf-fs"/>
+			</not>
+		</condition>
+		<condition property="jar" value="${module.jar}">
+			<not>
+				<isset property="jar"/>
+			</not>
+		</condition>
+		<jar destfile="${jar}">
+			<fileset dir="${src-dir}">
+				<include name="**" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-Jdk" value="${java.version}"/>
+				<attribute name="Build-Platform" value="${os.name} ${os.arch} ${os.version}"/>
+			</manifest>
+			<metainf refid="${metainf-fs}"/>
+		</jar>
+	</target>
+
+
+	<fileset id="junit-default.fs" dir="${build.classes-test.dir}">
+		<include name="**/*Test.class"/>
+		<include name="**/*Tests.class"/>
+		<exclude name="**/*Abstract*Test.class"/>
+		<exclude name="**/*Abstract*Tests.class"/>
+	</fileset>
+
+	<target name="junit">
+
+		<condition property="junit-fs" value="junit-default.fs">
+			<not>
+				<isset property="junit-fs"/>
+			</not>
+		</condition>
+
+		<condition property="junit-path" value="run-test.path">
+			<not>
+				<isset property="junit-path"/>
+			</not>
+		</condition>
+
+		<echo message="log4j.conf=${log4j.conf}"/>
+		<echo message="log4j.configuration=${log4j.config.url}"/>
+		<junit
+			printsummary="on" fork="false"
+			haltonfailure="false"
+			failureproperty="tests.failed"
+			showoutput="false"
+		>
+			<classpath refid="${junit-path}"/>
+			<formatter type="brief" usefile="false"/>
+
+			<batchtest>
+				<fileset refid="${junit-fs}"/>
+			</batchtest>
+			<sysproperty key="log4j.configuration" value="${log4j.config.url}"/>
+			<sysproperty key="jdbc.driver" value="${jdbc.driver}"/>
+			<sysproperty key="jdbc.url" value="${jdbc.url}"/>
+			<sysproperty key="jdbc.username" value="${jdbc.username}"/>
+			<sysproperty key="jdbc.password" value="${jdbc.password}"/>
+		</junit>
+
+		<fail if="tests.failed">
+			***********************************************************
+			***********************************************************
+			**** One or more tests failed! Check the output ... ****
+			***********************************************************
+			***********************************************************
+		</fail>
+	</target>
+
+
+
+</project>

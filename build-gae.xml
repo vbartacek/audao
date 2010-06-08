@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2010 Spolecne s.r.o. (www.spoledge.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *-->
+<project name="gae" default="dist" basedir=".">
+
+	<!--
+	<import file="${gae.home}/config/user/ant-macros.xml" />
+	-->
+
+	<fileset id="gae-tools.fs" dir="${gae.home}/lib">
+		<include name="*.jar"/>
+	</fileset>
+
+	<fileset id="gae-api.fs" dir="${gae.home}/lib/user">
+		<include name="*.jar"/>
+	</fileset>
+
+	<fileset id="gae-jdo.fs" dir="${gae.home}/lib/user/orm">
+		<include name="jdo2*.jar"/>
+	</fileset>
+
+	<path id="gae-tools.path">
+		<fileset refid="gae-tools.fs"/>
+		<fileset refid="gae-api.fs"/>
+	</path>
+
+	<!-- SECTION TASK-DEFS -->
+
+	<taskdef
+		name="gae-enhancer"
+		classpathref="gae-tools.path" 
+		classname="com.google.appengine.tools.enhancer.EnhancerTask"
+	/>
+
+
+	<macrodef name="gae-appserver" description="Runs the App Engine Development App Server">
+		<attribute name="war" description="The exploded war directory containing the application"/>
+		<attribute name="port" default="8080" description="The port the server starts on"/>
+		<attribute name="address" default="localhost" description="The interface the server binds to"/>
+		<element name="options" optional="true" description="Additional options for dev_appserver"/>
+		<element name="args" optional="true" description="Additional arguments for the java task"/>
+
+		<sequential>
+			<java
+				classname="com.google.appengine.tools.KickStart"
+				classpathref="gae-tools.path"
+				fork="true" failonerror="true"
+			>
+				<arg value="com.google.appengine.tools.development.DevAppServerMain"/>
+				<arg value="--port=@{port}"/>
+				<arg value="--address=@{address}"/>
+				<options/>
+				<arg value="@{war}"/>
+				<args/>
+			</java>
+		</sequential>
+	</macrodef>
+
+
+	<!-- SECTION TARGETS -->
+
+</project>           
+
