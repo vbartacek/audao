@@ -1,0 +1,227 @@
+<?xml version="1.0"?>
+<project name="db" basedir="." default="dist">
+
+	<!-- IMPORT THE COMMON PROPERTIES AND TARGETS -->
+	<import file="../../build-commons.xml"/>
+
+	<!-- SECTION PROPERTIES -->
+
+	<condition property="gen-pkg-name" value="${gen-pkg-prefix}.${gen-app-name}">
+		<not>
+			<isset property="gen-pkg-name"/>
+		</not>
+	</condition>
+
+	<property name="pkg-db-name" value="${gen-pkg-name}"/>
+
+	<property name="src.db.dir" location="${src.dir}/db"/>
+	<property name="src.db.xml" location="${src.db.dir}/${gen-app-name}.xml"/>
+
+	<property name="xsl.dir" location="${src.dir}/xsl"/>
+	<property name="xsl.sql.dir" location="${xsl.dir}/sql"/>
+	<property name="xsl.dao.dir" location="${xsl.dir}/dao"/>
+
+	<property name="build.app.dir" location="${build.dir}/${gen-app-name}-${db.type}"/>
+	<property name="build.db.xml" location="${build.app.dir}/${gen-app-name}.xml"/>
+
+	<property name="build.xsl.dir" location="${build.app.dir}/xsl"/>
+	<property name="build.xsl.sql.dir" location="${build.xsl.dir}/sql"/>
+	<property name="build.xsl.dao.dir" location="${build.xsl.dir}/dao"/>
+
+	<property name="build.sql.dir" location="${build.app.dir}/sql"/>
+	<property name="build.dao.dir" location="${build.app.dir}/dao"/>
+
+	<property name="build.app-classes.dir" location="${build.app.dir}/classes"/>
+
+	<pathconvert property="dirsep">
+		<path>
+			<pathelement location="/"/>
+		</path>
+	</pathconvert>
+
+	<condition property="db.configuration" value="${db.config}">
+		<available file="${db.config}"/>
+	</condition>
+
+	<condition property="db.configuration" value="${conf.global}/${db.config}">
+		<not>
+			<available file="${db.config}"/>
+		</not>
+	</condition>
+
+	<property file="${db.configuration}"/>
+
+	<!-- SECTION FILESET AND CLASSPATH -->
+
+	<path id="xalan.path">
+		<fileset dir="${xalan.home}" includes="*.jar"/>
+	</path>
+
+	<path id="compile.path">
+		<fileset dir="${lib.global}/commons" includes="commons-logging*.jar"/>
+		<fileset dir="${gae.home}/lib/user" includes="*.jar"/>
+		<fileset dir="${gae.home}/lib/user/orm" includes="jdo2*.jar"/>
+	</path>
+
+	<!-- SECTION TARGETS -->
+
+	<target name="validate-xml">
+		<ant
+			antfile="../schemas/build.xml"
+			dir="../schemas"
+			target="validate-xml"
+			inheritAll="false"
+		>
+			<property name="src.xml" location="${src.db.xml}"/>
+		</ant>
+	</target>
+
+
+	<target name="gen-copy">
+		<mkdir dir="${build.xsl.dir}"/>
+		<copy
+			todir="${build.xsl.dir}"
+			filtering="true"
+		>
+			<fileset dir="${xsl.dir}"/>
+			<filterset>
+				<filter token="DIR_SEP" value="${dirsep}"/>
+			</filterset>
+		</copy>
+	</target>
+
+
+	<!-- We use newest Xalan to overcome problems with #default namespace -->
+	<target name="gen-preprocess">
+		<fail unless="xalan.home">
+			The property "xalan.home" is not set.
+			Please set it to the Xalan home directory.
+		</fail>
+		<xslt
+			style="${build.xsl.dir}/preprocess.xsl"
+			in="${src.db.xml}"
+			out="${build.db.xml}"
+			classpathref="xalan.path"
+		/>
+	</target>
+
+
+	<target name="gen-sql" if="has-sql">
+		<xslt
+			style="${build.xsl.sql.dir}/${db.type}/create-tables.xsl"
+			in="${build.db.xml}"
+			out="${build.sql.dir}/create-tables-${gen-app-name}-${db.type}.sql"
+		>
+			<param name="db_type" expression="${db.type}"/>
+			<param name="db_user" expression="${jdbc.username}"/>
+		</xslt>
+
+		<xslt
+			style="${build.xsl.sql.dir}/${db.type}/drop-tables.xsl"
+			in="${build.db.xml}"
+			out="${build.sql.dir}/drop-tables-${gen-app-name}-${db.type}.sql"
+		/>
+	</target>
+
+
+	<target name="gen-dao">
+		<mkdir dir="${build.dao.dir}"/>
+
+		<available property="has-own-dto" file="${build.xsl.dao.dir}/${db.type}/dto.xsl"/>
+		<available property="has-own-dto-impl" file="${build.xsl.dao.dir}/${db.type}/dto-impl.xsl"/>
+		<available property="has-own-dao" file="${build.xsl.dao.dir}/${db.type}/dao.xsl"/>
+		<available property="has-own-dao-impl" file="${build.xsl.dao.dir}/${db.type}/dao-impl.xsl"/>
+		<available property="has-own-factory" file="${build.xsl.dao.dir}/${db.type}/factory.xsl"/>
+		<available property="has-own-factory-impl" file="${build.xsl.dao.dir}/${db.type}/factory-impl.xsl"/>
+
+		<xslt
+			style="${build.xsl.dao.dir}/build-dao.xsl"
+			in="${build.db.xml}"
+			out="${build.dao.dir}/build-dao.xml"
+		>
+			<param name="pkg_db" expression="${pkg-db-name}"/>
+			<param name="db_type" expression="${db.type}"/>
+			<param name="has_own_dto" expression="${has-own-dto}"/>
+			<param name="has_own_dto_impl" expression="${has-own-dto-impl}"/>
+			<param name="has_own_dao" expression="${has-own-dao}"/>
+			<param name="has_own_dao_impl" expression="${has-own-dao-impl}"/>
+			<param name="has_own_factory" expression="${has-own-factory}"/>
+			<param name="has_own_factory_impl" expression="${has-own-factory-impl}"/>
+		</xslt>
+
+		<ant antfile="${build.dao.dir}/build-dao.xml"/>
+
+		<copy todir="${build.dao.dir}">
+			<fileset dir="${src.java}">
+				<include name="com/spoledge/audao/db/dto/*.java"/>
+				<include name="com/spoledge/audao/db/dao/*.java"/>
+				<include name="com/spoledge/audao/db/dao/${db.type}/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+
+
+	<target name="dist-sql" depends="check,validate-xml" description="Generates SQLs">
+		<antcall target="gen-copy"/>
+		<antcall target="gen-preprocess"/>
+
+		<available property="has-sql" file="${build.xsl.sql.dir}/${db.type}"/>
+		<antcall target="gen-sql"/>
+	</target>
+
+
+	<target name="dist-gen" depends="dist-sql" description="Generates SQLs and DAOs">
+		<antcall target="gen-dao"/>
+	</target>
+
+
+	<fileset id="metainf.fs" dir="${src.db.dir}" includes="${gen-app-name}.xml"/>
+	<target name="dist-app" depends="dist-sql" description="Generates and compiles SQLs and DAOs">
+		<antcall target="gen-dao"/>
+		<antcall target="compile-src-dest">
+			<param name="src-path" value="${build.dao.dir}"/>
+			<param name="dest-dir" value="${build.app-classes.dir}"/>
+		</antcall>
+		<antcall target="make-jar-src">
+			<param name="src-dir" value="${build.app-classes.dir}"/>
+			<param name="metainf-fs" value="metainf.fs"/>
+			<param name="jar" location="${dist.dir}/${gen-app-name}-db-${db.type}.jar"/>
+		</antcall>
+	</target>
+
+
+	<target name="dist" description="Compiles static Java files">
+		<antcall target="compile"/>
+		<antcall target="make-jar"/>
+	</target>
+
+
+	<target name="db-create" depends="dist-sql" description="Creates tables in an empty DB">
+		<antcall target="confirm">
+			<param name="confirm.message" value="Do you really want to CREATE all tables in ${jdbc.url} user '${jdbc.username}' ?"/>
+		</antcall>
+		<echo message="CREATE TABLES USING: ${jdbc.driver} ${jdbc.url}"/>
+		<antcall target="sql-execute">
+			<param name="sql-execute.src" value="${build.sql.dir}/create-tables-${gen-app-name}-${db.type}.sql"/>
+		</antcall>
+	</target>
+
+	<target name="db-drop" depends="dist-sql" description="Drops table structures in DB">
+		<antcall target="confirm">
+			<param name="confirm.message" value="Do you really want to DROP all tables in ${jdbc.url} user '${jdbc.username}' ?"/>
+		</antcall>
+		<echo message="DROP TABLES USING: ${jdbc.driver} ${jdbc.url}"/>
+		<antcall target="sql-execute">
+			<param name="sql-execute.src" value="${build.sql.dir}/drop-tables-${gen-app-name}-${db.type}.sql"/>
+		</antcall>
+	</target>
+
+	<target name="clear-app" description="Clears only the current application's data">
+		<ancall target="clean-app"/>
+	</target>
+
+	<target name="clean-app">
+		<delete dir="${build.app.dir}"/>
+	</target>
+
+</project>
