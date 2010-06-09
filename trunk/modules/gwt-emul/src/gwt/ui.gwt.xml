@@ -1,0 +1,17 @@
+<module rename-to="ui">
+
+	<inherits name='com.google.gwt.user.User'/>
+	<inherits name="com.google.gwt.i18n.I18N"/>
+	<inherits name="com.google.gwt.uibinder.UiBinder" />
+
+	<inherits name='com.google.gwt.user.theme.standard.Standard'/>
+
+	<extend-property name="locale" values="cs"/>
+
+	<super-source path="audaobase"/>
+	<super-source path="appengine"/>
+
+	<source path="audao/test/db/dto"/>
+
+</module>
+

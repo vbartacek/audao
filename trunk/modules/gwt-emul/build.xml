@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<project name="gwt-emul" basedir="." default="dist">
+
+	<!-- IMPORT THE COMMON PROPERTIES AND TARGETS -->
+	<import file="../../build-commons.xml"/>
+	<import file="../../build-gwt.xml"/>
+
+	<property name="audao.home" location="../distro/build/audao-${version}"/>
+
+	<import file="${audao.home}/tools/build-audao-gae.xml"/>
+
+	<!-- SECTION PROPERTIES -->
+
+	<property name="build.app.dir" location="${build.dir}/${module-name}-gae"/>
+
+	<!-- SECTION FILESET AND CLASSPATH -->
+
+	<path id="compile.path">
+	</path>
+
+	<path id="compile-test.path">
+		<pathelement location="${module.jar}"/>
+		<pathelement location="${dist.dir}/${module-name}-gae.jar"/>
+		<pathelement location="${gwt-user.jar}"/>
+	</path>
+
+	<!-- SECTION TARGETS -->
+
+	<target name="generate">
+		<antcall target="audao-jar">
+			<param name="audao-dto-gwt-serializer" value="true"/>
+			<param name="audao-xml" location="${src.dir}/db-test/gwt-emul.xml"/>
+			<param name="audao-gen-dir" location="${build.app.dir}"/>
+			<param name="audao-dbtype" value="gae"/>
+			<param name="audao-package" value="com.spoledge.audao.test.gwt"/>
+			<param name="audao-jar" location="${dist.dir}/${module-name}-gae.jar"/>
+		</antcall>
+	</target>
+
+	<target name="prepare-gwt">
+		<copy todir="${build.gwt-modules.dir}">
+			<fileset dir="${src.gwt.dir}"/>
+		</copy>
+		<copy todir="${build.src.dir}/com/spoledge">
+			<fileset dir="${build.gwt-modules.dir}"/>
+		</copy>
+		<copy todir="${build.src.dir}">
+			<fileset dir="${src-test.dir}"/>
+			<fileset dir="${build.app.dir}/dao">
+				<include name="**/audao/test/gwt/dto/*.java"/>
+			</fileset>
+		</copy>
+		<copy todir="${build.src.dir}/com/spoledge/audaobase">
+			<fileset dir="${build.app.dir}/dao">
+				<include name="**/audao/test/gwt/dto/*.java"/>
+				<include name="com/spoledge/audao/db/dto/AbstractDto.java"/>
+				<include name="com/spoledge/audao/db/dao/DaoException.java"/>
+			</fileset>
+
+		</copy>
+		<copy todir="${build.src.dir}/com/spoledge/appengine">
+			<fileset dir="${src.java}"/>
+		</copy>
+	</target>
+
+	<target name="dist" description="Creates a JAR distribution">
+		<antcall target="compile"/>
+		<antcall target="make-jar"/>
+	</target>
+
+	<target name="test" depends="dist" description="Tests a distribution">
+		<antcall target="generate"/>
+		<antcall target="compile-test"/>
+		<antcall target="prepare-gwt"/>
+
+		<antcall target="gwt">
+			<param name="gwt-pkg-name" value="gwtemul"/>
+		</antcall>
+	</target>
+
+</project>
