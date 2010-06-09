@@ -1,0 +1,2 @@
+#/bin/bash
+ctags --links=no -R common/src/java generator/src/java parser/src/java embed/src/java

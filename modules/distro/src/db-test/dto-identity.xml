@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+	<config>
+		<dto equality="identity"/>
+	</config>
+
+	<tables>
+
+		<!-- ===================================================================================
+		     ===================================== Tests =======================================
+			   =================================================================================== -->
+
+		<table name="dto_ident_dto" abstract="true" force-dto="true">
+			<columns>
+				<column name="prop_a">
+					<type max-length="500">String</type>
+				</column>
+				<column name="prop_b">
+					<type max-length="500">String</type>
+				</column>
+			</columns>
+		</table>
+
+
+		<table name="dto_ident">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+					</enum>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dto_ident_dto">Serializable</type>
+				</column>
+
+			</columns>
+		</table>
+
+	</tables>
+</database>
+

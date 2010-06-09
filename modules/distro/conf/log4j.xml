@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{1}]: %m%n"/>
+		</layout>
+	</appender>
+
+	<appender name="FileAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="log-tests.log"/>
+		<param name="DatePattern" value="'.'yyyy-MM-dd"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p [%c{1}]: %m%n"/>
+		</layout>
+	</appender>
+
+	<category name="com.spoledge">
+		<priority value="debug"/>
+	</category>
+
+	<category name="com.spoledge.audao.test.blob">
+		<priority value="warn"/>
+	</category>
+
+	<category name="com.spoledge.audao.test.db">
+		<priority value="warn"/>
+	</category>
+
+	<category name="com.spoledge.audao.test.gae">
+		<priority value="info"/>
+	</category>
+
+	<category name="com.spoledge.audao.test.cache">
+		<priority value="debug"/>
+	</category>
+
+	<root>
+		<priority value="warn"/>
+		<appender-ref ref="ConsoleAppender"/>
+		<appender-ref ref="FileAppender"/>
+	</root>
+
+</log4j:configuration>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+
+	<config>
+		<dto serial-version="-1">
+			<root>com.spoledge.audao.db.dto.AbstractDto</root>
+		</dto>
+		<dao/>
+		<dao-impl>
+			<root>com.spoledge.audao.db.dao.AbstractDaoImpl</root>
+			<root dbtype="gae">com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl</root>
+			<root dbtype="gaejdo">com.spoledge.audao.db.dao.gae.GaeJdoAbstractDaoImpl</root>
+		</dao-impl>
+		<factory>
+			<create-params default="true" connection="true"/>
+		</factory>
+	</config>
+
+	<tables>
+
+		<table name="tweak_test_001">
+			<config>
+				<dto enum-column="true"/>
+			</config>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+			</columns>
+		</table>
+
+		<table name="tweak_test_002">
+			<config>
+				<dto serial-version="-2" equality="pk">
+					<root>AbstractDto</root>
+				</dto>
+				<dao method-get-order-expr="true">
+					<root>com.spoledge.audao.db.dao.AbstractDao</root>
+				</dao>
+				<dao-impl>
+					<root dbtype="gaejdo">GaeJdoAbstractDaoImpl</root>
+				</dao-impl>
+			</config>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+			</columns>
+		</table>
+
+	</tables>
+</database>
+
+
