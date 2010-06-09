@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<project name="embed" basedir="." default="dist">
+
+	<!-- IMPORT THE COMMON PROPERTIES AND TARGETS -->
+	<import file="../../build-commons.xml"/>
+
+	<!-- SECTION PROPERTIES -->
+	<property name="build.resources.dir" location="${build.dir}/resources"/>
+	<property name="build.xsd.dir" location="${build.resources.dir}/xsd"/>
+	<property name="build.xsl.dir" location="${build.resources.dir}/xsl"/>
+	<property name="build.java.dir" location="${build.resources.dir}/java"/>
+
+	<!-- SECTION FILESET AND CLASSPATH -->
+
+	<path id="antlr.path">
+		<pathelement path="${antlr.jar}"/>
+	</path>
+
+	<path id="xalan.path">
+		<fileset dir="${xalan.home}" includes="*.jar"/>
+	</path>
+
+	<path id="compile.path">
+		<fileset refid="lib.global.fileset"/>
+		<fileset refid="lib.local.fileset"/>
+	</path>
+
+	<path id="run.path">
+		<path refid="compile.path"/>
+		<path refid="antlr.path"/>
+		<path refid="xalan.path"/>
+		<fileset dir="${dist.dir}"/>
+	</path>
+
+	<!-- SECTION TARGETS -->
+
+	<target name="prepare-schemas">
+		<copy todir="${build.xsd.dir}">
+			<fileset dir="../schemas/src/schema" includes="audao.xsd"/>
+		</copy>
+	</target>
+
+	<target name="prepare-templates">
+		<ant
+			antfile="../generator/build.xml"
+			dir="../generator"
+			target="gen-copy"
+			inheritAll="false"
+		>
+			<property name="build.xsl.dir" location="${build.xsl.dir}"/>
+		</ant>
+		<copy todir="${build.xsl.dir}">
+			<fileset dir="${src.dir}/xsl"/>
+		</copy>
+	</target>
+
+	<target name="prepare-sources">
+		<copy todir="${build.java.dir}">
+			<fileset dir="../generator/src/java"/>
+			<fileset dir="${conf.local}" includes="sources.properties"/>
+		</copy>
+	</target>
+
+
+	<target name="make-my-jar">
+		<mkdir dir="${dist.dir}"/> 
+		<jar destfile="${module.jar}">
+			<fileset dir="${build.classes.dir}">
+				<include name="**" />
+			</fileset>
+			<fileset dir="${build.dir}">
+				<include name="resources/**" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-Jdk" value="${java.version}"/>
+				<attribute name="Build-Platform" value="${os.name} ${os.arch} ${os.version}"/>
+			</manifest>
+		</jar>
+	</target>
+
+
+	<target name="dist" description="Creates a JAR distribution">
+		<antcall target="depends-on-module">
+			<param name="name" value="common"/>
+		</antcall>
+		<antcall target="depends-on-module">
+			<param name="name" value="parser"/>
+		</antcall>
+		<antcall target="prepare-schemas"/>
+		<antcall target="prepare-templates"/>
+		<antcall target="prepare-sources"/>
+		<antcall target="compile"/>
+		<antcall target="make-my-jar"/>
+	</target>
+
+
+	<target name="run" depends="dist">
+		<java
+			classname="com.spoledge.audao.generator.Main"
+			classpathref="run.path"
+			fork="true"
+		>
+			<sysproperty key="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.SimpleLog"/>
+			<sysproperty key="org.apache.commons.logging.simplelog.defaultlog" value="debug"/>
+			<arg line="${run.options}"/>
+			<arg value="${run.target}"/>
+			<arg value="${run.pkg}"/>
+			<arg value="${run.xml}"/>
+			<arg value="${run.out}"/>
+		</java>
+	</target>
+
+</project>

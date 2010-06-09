@@ -15,12 +15,9 @@
 		<echo level="info" message="*** Module 'common' *************************************************"/>
 		<ant dir="modules/common" inheritAll="false"/>
 		<copy file="modules/common/dist/audao-common.jar" todir="modules/embed/lib"/>
-		<copy file="modules/common/dist/audao-common.jar" todir="modules/web-core/lib"/>
-		<copy file="modules/common/dist/audao-common.jar" todir="modules/web/lib"/>
 
 		<echo level="info" message="*** Module 'schemas' ************************************************"/>
 		<ant dir="modules/schemas" inheritAll="false"/>
-		<copy file="modules/schemas/dist/audao-schema.jar" todir="modules/inspector/lib"/>
 
 		<echo level="info" message="*** Module 'generator' **********************************************"/>
 		<ant dir="modules/generator" inheritAll="false"/>
@@ -29,11 +26,9 @@
 		<echo level="info" message="*** Module 'parser' *************************************************"/>
 		<ant dir="modules/parser" inheritAll="false"/>
 		<copy file="modules/parser/dist/audao-parser.jar" todir="modules/embed/lib"/>
-		<copy file="modules/parser/dist/audao-parser.jar" todir="modules/web/lib"/>
 
 		<echo level="info" message="*** Module 'embed' **************************************************"/>
 		<ant dir="modules/embed" inheritAll="false"/>
-		<copy file="modules/embed/dist/audao-embed.jar" todir="modules/web/lib"/>
 
 		<antcall target="dist.distro"/>
 	</target>
