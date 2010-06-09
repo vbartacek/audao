@@ -1,0 +1,354 @@
+<div class="chapter">
+<a name="generator-tools"></a>
+<h1 class="chapter">Generator Tools</h1>
+
+<p class="chapter-abstract">
+	Standalone AuDAO is a set of Java libraries allowing you to generate SQLs and Java DAO sources
+	locally on your computer.
+	This chapter describes these tools which help you to generate, compile and package DAO libraries.
+</p>
+
+<div class="section">
+<a name="ant_tools"></a>
+<h2>Apache Ant Tools</h2>
+
+<p>
+	Apache Ant is commonly used for developing Java projects.
+	Currently we support Apache Ant 1.7 and newer.
+	For more information please see the <a href="http://ant.apache.org">Apache Ant project</a>.
+</p>
+
+<div class="subsection">
+<a name="ant_targets"></a>
+<h3>Predefined High-Level Ant Targets</h3>
+
+<p>
+	The standalone AuDAO tool contains Apache Ant build XML fragments
+	in the directory <i>AUDAO_HOME</i>/tools:
+	<ul>
+		<li><tt>build-audao.xml</tt> - for compiling DAO for standard databases</li>
+		<li><tt>build-audao-gae.xml</tt> - for compiling DAO for Google App Engine (both gae and gaejdo)</li>
+	</ul>
+</p>
+
+<p>
+	Either you develop for standard databases (Oracle, MySQL) or for Google App Engine
+	you need to import the correct build file fragment into your project's build.xml.
+</p>
+
+<p>
+	But before you import the fragment you need to define Ant property <tt>audao.home</tt>
+	which should point to the directory where your AuDAO instance si located.
+</p>
+
+<p>
+	If you are importing the <tt>build-audao-gae.xml</tt>, then you also need to define
+	Ant property <tt>gae.home</tt> which should point to the directory where your
+	Google App Engine SDK instance is located.
+	So you can also use <tt>build-audao-gae.xml</tt> for standard database projects,
+	but you need to have GAE SDK installed and the <tt>gae.home</tt> property set.
+</p>
+
+<p>
+	The following example of Ant's build.xml shows how a DAO layer for standard
+	database project can be generated, compiled and JARer by one command:
+	<pre class="prettyprint ant">
+&lt;?xml version="1.0"?&gt;
+&lt;project name="test" basedir="." default="dist"&gt;
+
+  &lt;property name="audao.home" location="/usr/local/audao-1.3"/&gt;
+
+  &lt;import file="${audao.home}/tools/build-audao.xml"/&gt;
+
+  &lt;target name="dist"&gt;
+    &lt;antcall target="audao-jar"&gt;
+      &lt;param name="audao-xml" location="src/my-config.xml"/&gt;
+      &lt;param name="audao-gen-dir" location="build/audao"/&gt;
+      &lt;param name="audao-dbtype" value="oracle"/&gt;
+      &lt;param name="audao-package" value="com.foo"/&gt;
+      &lt;param name="audao-jar" location="dist/test-db-oracle.jar"/&gt;
+    &lt;/antcall&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt; </pre>
+</p>
+
+<p>
+	The following table shows all predefined AuDAO targets:
+</p>
+
+<table class="matrix" width="100%">
+	<tr class="header">
+		<td>AuDAO Predefined Target Name</td>
+		<td>Description</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-generate</tt></td>
+		<td>generates Java DAO sources and SQL scripts</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-compile</tt></td>
+		<td>generates Java DAO sources and SQL scripts; compiles Java classes</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-jar</tt></td>
+		<td>generates Java DAO sources and SQL scripts; compiles Java classes; creates JAR library</td>
+	</tr>
+</table>
+
+<p>
+	The following table shows the parameters of all predefined AuDAO targets:
+</p>
+
+<table class="matrix" width="100%">
+	<tr class="header">
+		<td>Parameter</td>
+		<td>audao-generate</td>
+		<td>audao-compile</td>
+		<td>audao-jar</td>
+		<td>Description</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-xml</tt></td>
+		<td class="ok"><b>yes</b>*</td>
+		<td class="ok"><b>yes</b></td>
+		<td class="ok"><b>yes</b></td>
+		<td>the source configuration XML file location</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-gen-dir</tt></td>
+		<td class="ok"><b>yes</b></td>
+		<td class="ok"><b>yes</b></td>
+		<td class="ok"><b>yes</b></td>
+		<td>the destination directory for generating files; it is automatically created if it does not exist</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-dbtype</tt></td>
+		<td class="ok"><b>yes</b></td>
+		<td class="ok"><b>yes</b></td>
+		<td class="ok"><b>yes</b></td>
+		<td>the target database type (mysql|oracle|gae|gaejdo)</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-package</tt></td>
+		<td class="ok"><b>yes</b></td>
+		<td class="ok"><b>yes</b></td>
+		<td class="ok"><b>yes</b></td>
+		<td>the Java package where to generate the DAO to (e.g. "com.foo")</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-jar</tt></td>
+		<td class="ok">yes</td>
+		<td class="ok">yes</td>
+		<td class="ok"><b>yes</b></td>
+		<td>the location of the target JAR file; the parent directories are automatically created if do not exist</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-debug</tt></td>
+		<td class="ok">yes</td>
+		<td class="ok">yes</td>
+		<td class="ok">yes</td>
+		<td>true/false flag for debugging</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-debug-level</tt></td>
+		<td class="ok">yes</td>
+		<td class="ok">yes</td>
+		<td class="ok">yes</td>
+		<td>commons-logging debug level</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-dto-gwt-serializer</tt></td>
+		<td class="ok">yes</td>
+		<td class="ok">yes</td>
+		<td class="ok">yes</td>
+		<td>true/false to generate GWT custom field serializers for DTOs</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-option-generate</tt></td>
+		<td class="ok">yes</td>
+		<td class="ok">yes</td>
+		<td class="ok">yes</td>
+		<td>a comma separated list of types to be generated: DTO, DTO_IMPL (only gaejdo),
+				DTO_GWT_SERIALIZER, DAO, DAO_IMPL, FACTORY, FACTORY_IMPL,
+				SQL_CREATE, SQL_DROP</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-compile-pathid</tt></td>
+		<td class="ko">no</td>
+		<td class="ok">yes</td>
+		<td class="ok">yes</td>
+		<td>contains classpath refid of a custom classpath for compilation</td>
+	</tr>
+
+	<tr>
+		<td><tt>java-version</tt></td>
+		<td class="ko">no</td>
+		<td class="ok">yes</td>
+		<td class="ok">yes</td>
+		<td>Java version used for javac - obtained from runtime by default</td>
+	</tr>
+
+	<tr>
+		<td><tt>audao-exclude-xml</tt></td>
+		<td class="ko">no</td>
+		<td class="ko">no</td>
+		<td class="ok">yes</td>
+		<td>if set, then the source config XML is not included in the JAR</td>
+	</tr>
+
+</table>
+<span style="font-size: 90%">*) The mandatory parameters are <b>bolded</b></span>
+
+<p class="note">
+	Using of predefined Ant targets is the <b>recommended way</b> how to invoke AuDAO.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="ant_task"></a>
+<h3>AuDAO Ant Task</h3>
+
+<p>
+	You can also call the AuDAO Ant task directly,
+	but there exist some traps with passing correct classpath to it.
+</p>
+
+<p>
+	The example of Ant's build.xml:
+	<pre class="prettyprint ant">
+  &lt;property name="audao.home" location="/usr/local/audao-1.3"/&gt;
+
+  &lt;path id="audao.path"&gt;
+    &lt;fileset dir="${audao.home}" includes="*.jar"/&gt;
+    &lt;fileset dir="${audao.home}/lib" includes="*.jar"/&gt;
+  &lt;/path&gt;
+
+  &lt;taskdef
+    name="audao"
+    classname="com.spoledge.audao.generator.GeneratorTask"
+    classpathref="audao.path"
+  /&gt;
+
+  &lt;target name="audao"&gt;
+    &lt;audao
+      src="my-config.xml"
+      dest="build/audao"
+      dbtype="oracle"
+      pkg="com.foo"
+  /&gt;</pre>
+</p>
+
+<p>
+	The problem of the previous example is the way how Ant instantiates custom tasks
+	with conjunction of the way how Java looks for XML, XSL and XPath Factories
+	(e.g. javax.xml.transform.TransformerFactory as for XSL).
+	Although the task <tt>audao</tt> is well defined and all libraries are found
+	by Ant in runtime (mainly xalan.jar), the Java itself loads different TransformerFactory
+	than is defined by xalan.jar - because it uses system classloader rather than
+	the one defined by Ant for the <tt>audao</tt> task.
+</p>
+
+<p>
+	So, the problem is that different XSLT implementations produce different results.
+	As we chose Xalan as the XSLT implementation, we cannot guarantee that other
+	XSLT implementation will produce correct results.
+</p>
+
+<p>
+	If you really want to call this task directly, then you need to provide Xalan
+	libraries to the Ant on the system level either by:
+	<ul>
+		<li>invoking ant with the <tt>-lib</tt> option: <tt>ant -lib /usr/local/audao-1.3/lib my-build.xml</tt></li>
+		<li>copying AuDAO's libraries into $HOME/.ant/lib</li>
+		<li>copying AuDAO's libraries into $ANT_HOME/lib</li>
+	</ul>
+</p>
+
+</div>
+
+</div> <!-- ant tools -->
+
+
+<div class="section">
+<a name="java_tools"></a>
+<h2>Plain Java Tools</h2>
+
+<p>
+	Currently we support only generating of DAO layer and SQL scripts.
+</p>
+
+
+<div class="subsection">
+<a name="audao_sh"></a>
+<h3>audao.sh (UNIX)</h3>
+
+<p>
+	The audao.sh UNIX script is located in the directory <i>AUDAO_HOME</i>/bin.
+	The invocation is as follows:
+	<pre class="shell">
+usage: audao.sh [OPTIONS] {oracle|mysql|gae} PACKAGE INPUT_XML {OUTPUT_DIR|OUTPUT_ZIP_FILE.zip}
+OPTIONS:
+        -g FILE_TYPES   or --generate FILE_TYPES
+                generates only specified types
+                FILE_TYPES is a comma separated list of file types:
+                        dto - the DTO files
+                        dao - the DAO files
+                        dao_impl - the DAO implementation files
+                        factory - the factory file
+                        factory_impl - the factory implementation file
+                        sql_create - the SQL create file
+                        sql_drop - the SQL drop file
+                        dto_impl - the DTO implementation files (GAE only)
+                        dto_gwt_serializer - the GWT custom serializer of DTOs files
+
+        -s      or --generate-dto-gwt-serializer
+                generates GWT customs serialzier for DTOs</pre>
+
+	example:
+	<pre class="prettyprint shell">
+$ audao.sh oracle com.foo my-config.xml build/src-gen</pre>
+
+	The previous command runs AuDAO on the source config my-config.xml into Java package com.foo
+	and using Oracle implementation. The output is generated into directory build/audao.
+</p>
+
+<p>
+	You can generate directly into z ZIP file which is recognized by the ".zip" suffix:
+	<pre class="prettyprint shell">
+$ audao.sh oracle com.foo my-config.xml sources.zip</pre>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="audao_sh"></a>
+<h3>Java Main Class (Universal)</h3>
+
+<p>
+	The audao.sh UNIX script actually invokes the Java class com.spoledge.audao.generator.Main.
+	The parameters are exactly the same as passed to the <a href="#audao_sh">audao.sh</a> script.
+</p>
+
+</div>
+
+
+</div> <!-- java_tools -->
+
+</div> <!-- chapter -->

@@ -1,0 +1,85 @@
+<div class="chapter">
+<a name="index"></a>
+<h1 class="chapter">AuDAO - SQL and Java DAO Generator</h1>
+
+<div class="section">
+	<p>
+		This is a Java DAO, DTO and SQL script generator for
+		<b>MySQL</b>, <b>Oracle</b><br/> and <b>Google App Engine</b>.
+	</p>
+
+	<p>
+		The input is a source configuration xml file which describes the tables (entities)
+		and their relations. The output is a set of SQL scripts and Java DAO layer which allows
+		you to access your data structures without any knowledge of the underlying datastore API.
+	</p>
+
+	<img src="images/audao-process.png"/>
+
+	<p>
+		For more information about DAO concept, please see <a href="http://en.wikipedia.org/wiki/Data_access_object" target="_blank">Wikipedia</a> or <a href="http://java.sun.com/blueprints/corej2eepatterns/Patterns/DataAccessObject.html" target="_blank">DAO Pattern</a>.
+	</p>
+
+	<p>
+		The generated Java DAO layer uses plain JDBC to access database (MySQL, Oracle).
+		No other frameworks or technologies are needed to run ! The code is fully under your control.
+	</p>
+
+	<p>
+		The generated Java DAO layer for Google App Engine (GAE) uses directly the GAE Datastore API now
+		(using DatastoreService).
+		It is also possible to generate DAO layer over JDO (using PersistenceManager),
+		but it is not recommended to use it for production environments due to performance issues.
+	</p>
+
+	<p>
+		The generated Java code requires Java 1.5 or higher.
+	</p>
+</div>
+
+<div class="section">
+	<h3>AuDAO Main Features</h3>
+
+	<p>
+		Write only one configuration file and let AuDAO generate all the following files:
+		<ul>
+			<li><b>SQL create</b> script which creates all DB structures like tables, views, indexes, foreign key constraints and even data inserting clauses ! <a href="doc-sql-features.html">Learn more...</a></li>
+			<li><b>SQL drop</b> script which deletes all structures created by the create script - this is useful for testing - just execute both scripts - drop and create - and your test DB is fresh again !</li>
+			<li><b>Java DTOs</b> (Data Transfer Objects) - which allow you to represent one DB record as a Java object
+				<ul>
+					<li>automatic mapping of DB types to Java types</li>
+					<li>mapping of allowed values in DB to Java <b>enumerations</b>
+						- <a href="doc-dao-features.html#enums">learn more...</a></li>
+					<li>column <b>references</b>
+						- <a href="doc-dao-features.html#refs">learn more...</a></li>
+					<li>inheritance is supported</li>
+					<li>can be used as DTOs for client applications developed using <b>Google Web Toolkit</b></li>
+				</ul>
+			</li>
+			<li><b>Java DAOs</b> (Data Access Objects) - which allow you to write applications independent of target DB type
+				<ul>
+					<li>methods generated:
+							<a href="doc-dao-features.html#methodFind">find</a>,
+							<a href="doc-dao-features.html#methodCount">count</a>,
+							<a href="doc-dao-features.html#methodInsert">insert</a>,
+							<a href="doc-dao-features.html#methodUpdate">update</a>,
+							<a href="doc-dao-features.html#methodDelete">delete</a>,
+							<a href="doc-dao-features.html#methodMove">move</a>,
+							<a href="doc-dao-features.html#methodTruncate">truncate</a>
+					</li>
+					<li>support for conditions based on defined DB indexes</li>
+					<li>support for explicit and dynamic conditions</li>
+				</ul>
+			</li>
+			<li><b>Java DAO Implementations</b> - which implement the DAO layer for selected DB type
+				<ul>
+					<li>automatic primary keys implemented by native DB features (sequences, autoincrements)</li>
+					<li>mapping and casting Java types to native DB types</li>
+				</ul>
+			</li>
+		</ul>
+	</p>
+</div>
+
+</div>
+

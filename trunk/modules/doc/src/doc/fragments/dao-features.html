@@ -1,0 +1,2536 @@
+<div class="chapter">
+<a name="dao-features"></a>
+<h1 class="chapter">Java DAO Features</h1>
+
+<p class="chapter-abstract">
+	This chapter describes all available Java DAO features of the AuDAO generator.
+</p>
+
+
+<div class="section">
+<a name="types"></a>
+<h2>Types</h2>
+
+<p>
+	Currently AuDAO supports static mapping between Java types
+	and datastore types. Custom mapping will be possible in future releases of AuDAO.
+</p>
+
+<p>
+	The current mapping is shown in the following table:
+</p>
+
+<table class="matrix" width="100%">
+	<tr class="header">
+		<td>AuDAO Type</td>
+		<td>Java Type</td>
+		<td>MySQL Type</td>
+		<td>Oracle Type</td>
+		<td>GAE Type</td>
+		<td>GAE/JDO Type</td>
+	</tr>
+
+	<tr>
+		<td><a href="#typeBoolean">boolean</a></td>
+		<td>boolean</td>
+		<td>TINYINT</td>
+		<td>NUMBER(1)</td>
+		<td>boolean</td>
+		<td>boolean</td>
+	</tr>
+
+	<tr>
+		<td><a href="#typeShort">short</a></td>
+		<td>short</td>
+		<td>SMALLINT</td>
+		<td>NUMBER(6)</td>
+		<td>short</td>
+		<td>short</td>
+	</tr>
+
+	<tr>
+		<td><a href="#typeInt">int</a></td>
+		<td>int</td>
+		<td>INT</td>
+		<td>NUMBER(11)</td>
+		<td>int</td>
+		<td>int</td>
+	</tr>
+
+	<tr>
+		<td><a href="#typeLong">long</a></td>
+		<td>long</td>
+		<td>BIGINT</td>
+		<td>NUMBER(19)</td>
+		<td>long</td>
+		<td>long</td>
+	</tr>
+
+	<tr>
+		<td><a href="#typeDouble">double</a></td>
+		<td>double</td>
+		<td>DOUBLE</td>
+		<td>FLOAT</td>
+		<td>double</td>
+		<td>double</td>
+	</tr>
+
+	<tr>
+		<td><a href="#typeString">String</a></td>
+		<td>java.lang.String</td>
+		<td>VARCHAR(max-length)</td>
+		<td>VARCHAR2(max-length)<br/>NVARCHAR2(max-length)</td>
+		<td>java.lang.String<br/>com.google.appengine.api.datastore.Text</td>
+		<td>java.lang.String</td>
+	</tr>
+
+	<tr>
+		<td><a href="#typeDate">Date</a></td>
+		<td>java.sql.Date</td>
+		<td>DATE</td>
+		<td>DATE</td>
+		<td>java.util.Date</td>
+		<td>java.util.Date</td>
+	</tr>
+
+	<tr>
+		<td><a href="#typeTimestamp">Timestamp</a></td>
+		<td>java.sql.Timestamp</td>
+		<td>DATETIME</td>
+		<td>DATE</td>
+		<td>java.util.Date</td>
+		<td>java.util.Date</td>
+	</tr>
+
+	<tr>
+		<td><a href="#typeByteArray">byte[]</a></td>
+		<td>byte[]</td>
+		<td>TINYBLOB<br/>BLOB<br/>MEDIUMBLOB<br/>LARGEBLOB</td>
+		<td>RAW(max-length)<br/>LONG RAW</td>
+		<td>com.google.appengine.api.datastore.ShortBlob<br/>com.google.appengine.api.datastore.Blob</td>
+		<td>n/a</td>
+	</tr>
+
+	<tr>
+		<td><a href="#typeSerializable">Serializable</a></td>
+		<td>java.io.Serializable<br/><i>custom class</i></td>
+		<td>TINYBLOB<br/>BLOB<br/>MEDIUMBLOB<br/>LARGEBLOB</td>
+		<td>RAW(max-length)<br/>LONG RAW</td>
+		<td>com.google.appengine.api.datastore.ShortBlob<br/>com.google.appengine.api.datastore.Blob<br/><i>GAE core type class</i></td>
+		<td>n/a</td>
+	</tr>
+
+	<tr>
+		<td><a href="#typeList">List</a></td>
+		<td>java.util.List<br/>java.util.List&lt;<i>GAE core type class</i>&gt;</td>
+		<td>n/a</td>
+		<td>n/a</td>
+		<td>java.util.List</td>
+		<td>n/a</td>
+	</tr>
+
+</table>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ColumnTypeType]">XSD - column</a>
+</p>
+
+
+<div class="subsection">
+<a name="typeBoolean"></a>
+<h3>Type Boolean</h3>
+
+<p>
+	The simplest type which is mapped to 0/1 integers in the database.
+	If the column can be null, then also null is the third possible value.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="typeShort"></a>
+<h3>Type Short</h3>
+
+<p>
+	The smallest integer type.
+	The advantage can be smaller occupation of space in datastore,
+	the drawback is casting in the Java side - short vs int.
+	But AuDAO generates overloaded methods in DTOs - for example column name 'x' of type short:
+
+	<pre class="prettyprint java">
+    public Short getX();
+    public void setX( Short x );
+    public void setX( int x );</pre>
+
+	This allows to call setters without casting:
+
+	<pre class="prettyprint java">
+    dto.setX( 0 ); // 0 is int
+    ...
+    short x = dto.getX();
+    dto.setX( x + 1 ); // x + 1 is int</pre>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="typeInt"></a>
+<h3>Type Int</h3>
+
+<p>
+	This is the standard integer type which is used in most cases.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="typeLong"></a>
+<h3>Type Long</h3>
+
+<p>
+	This is the biggest integer type.
+	Please consider using int instead of long anf use long only if really needed.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="typeDouble"></a>
+<h3>Type Double</h3>
+
+<p>
+	This is the only non-integer number type.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="typeString"></a>
+<h3>Type String</h3>
+
+<p>
+	The String type. Developer must always specify the maximum allowed length
+	by the <tt>max-length</tt> attribute. The length is checked when storing
+	data into database by <tt>insert</tt> or <tt>update</tt> methods
+	and if the actual length exceeds the allowed maximum, then <a href="[api:dao:DaoException]">DaoException</a> is thrown.
+</p>
+
+<p>
+	For GAE implementation (gae but not gaejdo) if the <tt>max-length</tt> exceeds 500 characters,
+	then the stored string
+	is automatically converted into <tt>com.google.appengine.api.datastore.Text</tt>.
+	It means, that you can store strings larger than 500 characters, but such field will not be indexed
+	in GAE at all.
+</p>
+
+<p>
+	Optionally the minimum length can be specified by the <tt>min-length</tt> attribute.
+	The minimum length is also checked by the DAO implementation classes at runtime.
+</p>
+
+<p class="note">
+	The minimum length constraint is not applied to null values by default.
+	If you do not allow null values, then you have to define it by the flag <tt>&lt;not-null/&gt;</tt>
+</p>
+
+<p>
+	International characters are supported in most cases.
+	But for compatibility in Oracle DB it is recommended to set the option <tt>i18n</tt> to true,
+	if you want to store international characters to Oracle DB.
+	By enabling this, the SQL script generate type NVARCHAR2 instead of VARCHAR2
+	and also SQL function NLSSORT us used for ordering.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="typeDate"></a>
+<h3>Type Date</h3>
+
+<p>
+	This type represent a date without time.
+	Using java.sql.Date as the Java type allows AuDAO to emulate it even
+	when the underlying datastore does not supports date well (GAE).
+</p>
+
+<p>
+	The current solution including the mapping to the underlying datastores
+	is the result of many analyses, experiments with different datatypes and testing. 
+</p>
+
+<p>
+	For more comfortable using AuDAO generates methods overloaded for type
+	<tt>java.util.Date</tt> in DTOs - for example column name 'x' of type Date:
+
+	<pre class="prettyprint java">
+    public java.sql.Date getX();
+    public void setX( java.sql.Date x );
+    public void setX( java.util.Date x );</pre>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="typeTimestamp"></a>
+<h3>Type Timestamp</h3>
+
+<p>
+	This type represent a date and time.
+	The corresponding Java type is <tt>java.sql.Timestamp</tt>.
+</p>
+
+<p>
+	The current solution including the mapping to the underlying datastores
+	is the result of many analyses, experiments with different datatypes and testing. 
+</p>
+
+<p>
+	For more comfortable using AuDAO generates methods overloaded for type
+	<tt>java.util.Date</tt> in DTOs - for example column name 'x' of type Timestamp:
+
+	<pre class="prettyprint java">
+    public java.sql.Timestamp getX();
+    public void setX( java.sql.Timestamp x );
+    public void setX( java.util.Date x );</pre>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="typeByteArray"></a>
+<h3>Type byte[]</h3>
+
+<p>
+	The byte array type. Developer must always specify the maximum allowed length
+	by the <tt>max-length</tt> attribute. The length is checked when storing
+	data into database by <tt>insert</tt> or <tt>update</tt> methods
+	and if the actual length exceeds the allowed maximum,
+	then <a href="[api:dao:DaoException]">DaoException</a> is thrown.
+</p>
+
+<p>
+	Optionally the minimum length can be specified by the <tt>min-length</tt> attribute.
+	The minimum length is also checked by the DAO implementation classes at runtime.
+</p>
+
+<p class="note">
+	The minimum length constraint is not applied to null values by default.
+	If you do not allow null values, then you have to define it by the flag <tt>&lt;not-null/&gt;</tt>
+</p>
+
+<p>
+	The byte array columns can be indexed as the underlying datastore allows it.
+	For example for GAE implementation only columns having declared at most 500 bytes can be indexed
+	(because they are stored as ShortBlob).
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="typeSerializable"></a>
+<h3>Type Serializable</h3>
+
+<p>
+	This is a custom type. In the datastore it is stored as the <a href="#typeByteArray">byte[]</a>.
+	It uses Java serialization mechanism to store and retrieve data.
+	All <tt>max-length</tt> and <tt>min-length</tt> constraints are applied as for type
+	<a href="#typeByteArray">byte[]</a>.
+</p>
+
+<p>
+	Developer can specify the <tt>class</tt> attribute when defining the type.
+	The <tt>class</tt> must be fully classified Java class name - or a simple name
+	if the class is automatically imported - from package java.lang.
+	If the class is not specified, then <tt>java.io.Serializable</tt> generic type is used.
+</p>
+
+<p>
+	The <tt>class</tt> attribute can contain a reference to an existing table - its DTO class
+	will be used. such reference must start with prefix "table:" and following by the table name.
+	Example of the XML:
+	<pre class="prettyprint xml">
+  &lt;!-- just generate BlobAddress DTO - no real DAO is needed --&gt;
+  &lt;table name="blob_address" abstract="true" force-dto="true" java="BlobAddress"&gt;
+    &lt;columns&gt;
+      &lt;column name="street"&gt;
+        &lt;type max-length="32"&gt;String&lt;/type&gt;
+      &lt;/column&gt;
+      &lt;column name="city"&gt;
+        &lt;type max-length="32"&gt;String&lt;/type&gt;
+      &lt;/column&gt;
+      &lt;column name="zip"&gt;
+        &lt;type max-length="32"&gt;String&lt;/type&gt;
+      &lt;/column&gt;
+      &lt;column name="country"&gt;
+        &lt;type max-length="32"&gt;String&lt;/type&gt;
+      &lt;/column&gt;
+    &lt;/columns&gt;
+  &lt;/table&gt;
+
+  &lt;table name="customer"&gt;
+    &lt;columns&gt;
+      &lt;column name="cust_id"&gt;
+        &lt;type&gt;long&lt;/type&gt;
+        &lt;auto/&gt;
+        &lt;pk/&gt;
+      &lt;/column&gt;
+			...
+      &lt;column name="address"&gt;
+        &lt;type max-length="500" class="<b>table:blob_address</b>"&gt;Serializable&lt;/type&gt;
+      &lt;/column&gt;
+    &lt;/columns&gt;
+  &lt;/table&gt;</pre>
+
+  and a part of the generated DTO Customer:
+	<pre class="prettyprint java">
+    public BlobAddress getAddress() { ... }</pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="[gae-features]#typecore">GAE Core Types</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="typeList"></a>
+<h3>Type List</h3>
+
+<p>
+	This is a special type supported only in GAE implementation.
+	It allows to store multiple values in one property.
+</p>
+
+<p>
+	Developer can optionally specify <tt>class</tt> the List will contain.
+	Such class must be a GAE core type class (e.g. String, Double, com.google.appengine.api.datastore.Key etc.):
+
+	<pre class="prettyprint xml">
+  &lt;column name="anon_list"&gt;
+    &lt;type&gt;List&lt;/type&gt;
+    &lt;edit/&gt;
+  &lt;/column&gt;
+  &lt;column name="string_list"&gt;
+    &lt;type class="String"&gt;List&lt;/type&gt;
+    &lt;edit/&gt;
+  &lt;/column&gt;</pre>
+
+  and a part of the generated DTO:
+	<pre class="prettyprint java">
+    public List getAnonList() { ... }
+    public List&lt;String&gt; getStringList() { ... }</pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="[gae-features]#typelist">GAE Types - Lists</a>
+</p>
+
+</div>
+
+
+
+<div class="subsection">
+<a name="enums"></a>
+<h3>Enumerations</h3>
+
+<p>
+	AuDAO allows to simply define and use enumerations as column types.
+	So there is no need to manually define constants - everything is generated for you.
+	Using Java <tt>enum</tt> is typesafe and saves the development time.
+</p>
+
+<p>
+	The enumeration is not a type, developer must still define the underlying database type.
+	The types <a href="#typeShort">short</a> and <a href="#typeInt">int</a> are supported.
+	The value of the column containing enumeration can be null or not-null.
+	Let's look at an example:
+	<pre class="prettyprint xml">
+  &lt;column name="payer_status"&gt;
+    &lt;type&gt;short&lt;/type&gt;
+    &lt;enum&gt;
+      &lt;value&gt;VERIFIED&lt;/value&gt;
+      &lt;value&gt;UNVERIFIED&lt;/value&gt;
+    &lt;/enum&gt;
+    &lt;edit/&gt;
+  &lt;/column&gt;</pre>
+
+	This enumeration contains 2 values + null (this can be also achieved
+	by <a href="#typeBoolean">boolean</a> type, but by enumeration we can add more values
+	in future !). The Java enum is generated as follows:
+
+	<pre class="prettyprint java">
+    public enum PayerStatus {
+        VERIFIED,
+        UNVERIFIED
+    }</pre>
+
+	Enumerations are not generated as standalone classes, but they are encapsulated
+	by the DTO which is related to the table where the enumeration is defined.
+</p>
+
+<p>
+	The mapping to database values shows the following formula:
+	<pre class="prettyprint java">
+    db_value = enum_object.ordinal() + 1</pre>
+	It means that the values stored in database are: 1, 2, 3,...
+</p>
+
+<p>
+	But you can also map enumeration values to explicit values - this allows
+	you to add more values in future without impact on your existing data:
+	<pre class="prettyprint xml">
+  &lt;column name="parameter_type"&gt;
+    &lt;type&gt;int&lt;/type&gt;
+    &lt;enum&gt;
+      &lt;value id="1"&gt;SYSTEM_MAX_MEMORY&lt;/value&gt;
+      &lt;value id="2"&gt;SYSTEM_TX_TIMEOUT&lt;/value&gt;
+      &lt;value id="10"&gt;USER_QUOTA_TIME&lt;/value&gt;
+      &lt;value id="11"&gt;USER_QUOTA_SPACE&lt;/value&gt;
+    &lt;/enum&gt;
+    &lt;not-null/&gt;
+  &lt;/column&gt;</pre>
+
+	The option <tt>id</tt> is the actual value which is stored into database.
+	You must provide <tt>id</tt> for all or for none of enumeration values.
+	Mixing of both types is not allowed.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ColumnEnumType]">XSD - enum</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="refs"></a>
+<h3>References</h3>
+
+<p>
+	Often you need to specify same type for many columns in different tables
+	or even in the same table. Copy&amp;paste has a big drawback - when you need
+	to change the type, you have to change it at several places. This can lead
+	to mistakes which can be found too late.
+</p>
+
+<p>
+	Fortunately by using AuDAO you can define the type once and let instruct AuDAO
+	to reuse it later as many times as you want.
+</p>
+
+<p>
+	It is easy - instead of defining the column type by the <tt>&lt;type&gt;</tt> tag,
+	you just link the column to another column be setting a <b>reference</b> to it:
+	<pre class="prettyprint xml">
+    &lt;column name="user_id"&gt;
+      <b>&lt;ref table="users"/&gt;</b>
+    &lt;/column&gt; </pre>
+</p>
+
+<p>
+	You can not only link to the other's table column, but also to the same table column
+	- often used when a tree hierarchy is modeled:
+	<pre class="prettyprint xml">
+    &lt;column name="segment_id"&gt;
+      &lt;type&gt;int&lt;/type&gt;
+      &lt;pk/&gt;
+    &lt;/column&gt;
+    &lt;column name="parent_segment_id"&gt;
+      <b>&lt;ref column="segment_id"/&gt;</b>
+    &lt;/column&gt; </pre>
+</p>
+
+<p>
+	Making a reference also causes generating of foreign key constraint in SQL scripts.
+	To disable this, you can use <tt>fk</tt> attribute. This is usefull when you just
+	want to share the same type accross independent tables:
+	<pre class="prettyprint xml">
+    &lt;column name="company_url"&gt;
+      &lt;ref table="webs" column="url" <b>fk="false"</b>/&gt;
+    &lt;/column&gt; </pre>
+</p>
+
+<p>
+	Referencing is supported for all types including enumerations.
+	This means that enumeration is defined only in the original table, 
+	but it can be used by other tables too.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:RefTableOptColumnOptType]">XSD - ref</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="transient"></a>
+<h3>Transient Columns</h3>
+
+<p>
+	Sometimes you need to flag some columns as <tt>transient</tt> to tell
+	a container not to store the values into a stream.
+</p>
+
+<p>
+	AuDAO let's you to distinguish among these transient types:
+	<ul>
+		<li>Java IO Serialization (option <tt>io</tt>)</li>
+		<li>GWT Custom Field Serializer (option <tt>gwt</tt>)</li>
+	</ul>
+</p>
+
+<p>
+	In the following example we do not want to serialize column "words" (e.g. it will
+	not be stored in GAE's memcache) at all. The column "tiles" will not be sent to
+	GWT serialization streams (save bandwidth):
+	<pre class="prettyprint xml">
+  &lt;column name="words"&gt;
+    &lt;type class="String"&gt;List&lt;/type&gt;
+    &lt;transient/&gt;
+  &lt;/column&gt;
+
+  &lt;column name="tiles"&gt;
+    &lt;type class="String"&gt;List&lt;/type&gt;
+    &lt;transient io="false"/&gt;
+  &lt;/column&gt; </pre>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="keys"></a>
+<h2>Keys</h2>
+
+
+<div class="subsection">
+<a name="primary-keys"></a>
+<h3>Primary Keys</h3>
+
+<p>
+	Records in datastore are uniquely identified by their primary keys.
+</p>
+
+<p>
+	For standards databases primary keys are optional.
+	Although there is possible to have primary keys containing more than one column,
+	it is recommended to prefer one-column primary keys whenever possible.
+</p>
+
+<p>
+	For Google App Engine every entity must have exactly one primary key field.
+	The type of the field must be either <tt>long</tt> or <tt>String</tt>.
+</p>
+
+<p>
+	<b>See also</b>: <a href="#autoincrement-pk">Autoincrement Primary Keys</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="parent-keys"></a>
+<h3>Parent Keys</h3>
+
+<p>
+	This is a special feature used for Google App Engine (both gae and gaejdo)
+	concerning parent-keys and transactions.  Other implementations ignores this feature.
+</p>
+
+<p>
+	Parent keys are defined as <a href="#refs">reference</a> with flag <tt>gae-parent</tt> set to true.
+	Each entity can have at most one parent-key column.
+	<pre class="prettyprint xml">
+    &lt;column name="user_id"&gt;
+      &lt;ref table="users" <b>gae-parent="true"</b>/&gt;
+    &lt;/column&gt; </pre>
+</p>
+
+<p class="note">
+	Using of the <tt>gae-parent</tt> columns affects the DAO method signatures for methods
+	which use <a href="#finderPk">primary key finder</a>. Such methods will contain also
+	the parent-key column as a parameter (prior the pk parameter).
+</p>
+
+<p>
+	<b>See also</b>: <a href="#ancestor-keys">Ancestor Keys</a>,
+									 <a href="#refs">References</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="ancestor-keys"></a>
+<h3>Ancestor Keys</h3>
+
+<p>
+	This is extended <a href="#parent-keys">parent key</a> feature used for Google App Engine
+	(only gae but not gaejdo).
+</p>
+
+<p>
+	If the parent key attribute refers to entity which also have a parent key attribute,
+	then we say that the entity has an ancestor key. There exists no limit of the ancestor key
+	length (or deep).
+</p>
+
+<p class="note">
+	Using of the ancestor keys affects the DAO method signatures for methods
+	which use <a href="#finderPk">primary key finder</a>. Such methods will contain all
+	the ancestor key attributes as parameters (prior the pk parameter).
+</p>
+
+<p class="note">
+	Using of the ancestor <tt>gae-parent</tt> columns affects the DTO: all the ancestor attributes are
+	added there. The reason is obvious: when inserting or updating a DTO object, the DAO
+	implementation must know the full ancestor hierarchy to uniquelly identify the object.
+</p>
+
+<p>
+	<b>See also</b>: <a href="#parent-keys">Parent Keys</a>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="autovalues"></a>
+<h2>Automatic Values</h2>
+
+<p>
+	AuDAO allows to generate values automatically in runtime.
+	It supports numeric and Date/Timestamp types and operations insert and update.
+</p>
+
+<p>
+	The columns which values should be filled automatically are tagged in the XML by the tag
+	<tt>&lt;auto/&gt;</tt>. The optional attribute <tt>on</tt> specifies when the value will be filled:
+	<ul>
+		<li><tt>on="insert"</tt> - on insert only - this is the default behaviour</li>
+		<li><tt>on="update"</tt> - on insert and also update operation</li>
+		<li><tt>on="update-only"</tt> - on update only</li>
+	</ul>
+</p>
+
+<p>
+	<b>XML Syntax:</b> <tt>&lt;auto/&gt;</tt> or <tt>&lt;auto on="update"/&gt;</tt>
+</p>
+
+
+<div class="subsection">
+<a name="autoincrement-pk"></a>
+<h3>Autoincrement Primary Keys</h3>
+
+<p>
+	When inserting new records, the DAO implementation autoincrements numeric <tt>&lt;auto/&gt;</tt>
+	<tt>&lt;pk/&gt;</tt> columns. The autoincrement function is always used even when the DTO's field is
+	already set. In that case the DTO's field is overwritten by the new unique value.
+</p>
+
+<p>
+	Autoincrement <b>numeric</b> primary keys are implemented using native datastore mechanisms
+	(autoincrement columns in MySQL, sequences in Oracle and automatic keys in GAE).
+</p>
+
+<p>
+	Using other than <tt>on="insert"</tt> operation is a nonsense.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="autoincrement-nonpk"></a>
+<h3>Autoincrement Fields (not pk)</h3>
+
+<p>
+	When inserting new records, the DAO implementation for Google App Engine also allows to autoincrement
+	numeric <tt>&lt;auto/&gt;</tt> non-<tt>&lt;pk/&gt;</tt> columns.
+	Unlike the <a href="#autoincrement-pk">autoincrement primary key fields</a>
+	the autoincrement function is used only when the DTO's field is not set.
+</p>
+
+<p>
+	Using other than <tt>on="insert"</tt> operation causes error.
+</p>
+
+<p>
+	This feature is only supported for <b>gae</b> DB type (not for gaejdo).
+</p>
+
+<p class="note">
+	The DAO implementation uses method <tt>allocateIds</tt> and passes the name of the entity
+	to generate a <tt>Key</tt>. Then the generated numeric Id is used as the automatic value.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="auto-date"></a>
+<h3>Automatic Date Fields</h3>
+
+<p>
+	When inserting new or updating existing records, the DAO implementation allows to set
+	Date <tt>&lt;auto/&gt;</tt> columns to the current date.
+</p>
+
+<p>
+	As for insert the automatic value is set only when the DTO's field is not set.
+	For update the automatic value is <b>always used</b>.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="auto-timestamp"></a>
+<h3>Automatic Timestamp Fields</h3>
+
+<p>
+	When inserting new or updating existing records, the DAO implementation allows to set
+	Timestamp <tt>&lt;auto/&gt;</tt> columns to the current date and time.
+</p>
+
+<p>
+	As for insert the automatic value is set only when the DTO's field is not set.
+	For update the automatic value is <b>always used</b>.
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="finders"></a>
+<h2>Finders</h2>
+
+<p>
+	Finder is a filter/condition used to find/delete/update/.. records.
+	Finders are used almost in all kinds of methods.
+</p>
+
+<p>
+	We say that a finder is unique when it returns only one record.
+	Otherwise the finder is non-unique. By default the only unique finder
+	is <a href="#finderPk">primary key finder</a> and <a href="#finderIndex">index finder</a>
+	associated with a unique index.
+</p>
+
+<p>
+	But developers can optionally force finders to be unique.
+	This option is allowed only for certain <a href="#methods">methods</a>.
+</p>
+
+
+<div class="subsection">
+<a name="finderAll"></a>
+<h3>All Finder</h3>
+
+<p>
+	It finds all records in the given table.
+</p>
+
+<p>
+	<b>XML Syntax:</b> <tt>&lt;all/&gt;</tt>
+</p>
+
+<p>
+	<b>Method Parameters</b>: none
+</p>
+
+<p class="note">
+	GAE implementation supports up to 1000 records to be found.
+	This means that no finder can return more than 1000 records.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="finderDynamic"></a>
+<h3>Dynamic Finder</h3>
+
+<p>
+	The condition of this finder is passed dynamically when calling
+	a method using this finder.
+</p>
+
+<p>
+	<b>XML Syntax:</b> <tt>&lt;dynamic/&gt;</tt>
+</p>
+
+<p>
+	<b>Method Parameters</b>: <tt>( String query, int offset, int count, Object... parameters )</tt><br/>
+	<ul>
+		<li><tt>query</tt> is the SQL/GQL/JDOQL dynamic query</li>
+		<li><tt>offset</tt> is the offset, starting by 0,1,2... - only for <a href="#findMethods">find methods</a></li>
+		<li><tt>count</tt> is the maximum number of returned items, -1 means unlimited
+		 - only for <a href="#findMethods">find methods</a></li>
+	</ul>
+</p>
+
+<p class="note">
+	You should be aware of non-portability issues when creating SQL/GQL/JDOQL queries
+	dynamically. It means that AuDAO cannot guarantee that your application will be portable
+	when using this kind of finder.
+</p>
+
+<p class="note">
+	The GQL query (for <b>gae</b> DB type) does not support operators <tt>!=</tt> and <tt>IN</tt> now.
+	Parsing of such queries will not fail, but only a warning is logged down.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="finderPk"></a>
+<h3>Primary Key Finder</h3>
+
+<p>
+	It finds exactly one record in the given table.
+	The condition is constructed according to the primary key structure.
+</p>
+
+<p>
+	<b>XML Syntax:</b> <tt>&lt;pk/&gt;</tt>
+</p>
+
+<p>
+	<b>Method Parameters</b>: <tt>( PK-TYPE pk )</tt>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="finderIndex"></a>
+<h3>Index Finder</h3>
+
+<p>
+	It finds one or more records in the given table.
+	The condition is constructed according to the index structure.
+</p>
+
+<p>
+	<b>XML Syntax:</b> <tt>&lt;index name="name_of_the_index"/&gt;</tt>
+</p>
+
+<p>
+	<b>Method Parameters</b>: <tt>( INDEX-COLUMN-1-TYPE col1, INDEX-COLUMN-2-TYPE col2, ... )</tt>
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:IndexFindType]">XSD - index finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="finderCondition"></a>
+<h3>Condition Finder</h3>
+
+<p>
+	The condition is defined in the AuDAO source configuration file.
+	There can exist several versions for different underlying implementations.
+	This allows authors to overcome portability problems with SQLs/GQLs/JDOQLs.
+</p>
+
+<p>
+	<b>XML Syntax:</b>
+	<pre class="prettyprint xml">
+  &lt;condition&gt;
+    &lt;query&gt;SQL or GQL or JDOQL query&lt;/query&gt;
+    &lt;query dbtype="type_of_the_database"&gt;Database specific SQL or GQL or JDOQL query&lt;/query&gt;
+    &lt;params&gt;
+      &lt;column name="mycolumn"/&gt;
+      &lt;param name="myextraparam" type="int"/&gt;
+      ...
+    &lt;/params&gt;
+  &lt;/condition&gt; </pre>
+</p>
+
+<p>
+	<b>Method Parameters</b>: <tt>( CONDITION-PARAM-1-TYPE param1, CONDITION-PARAM-2-TYPE param2, ... )</tt>
+</p>
+
+<p class="note">
+	The GQL query (for <b>gae</b> DB type) does not support operators <tt>!=</tt> and <tt>IN</tt> now.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConditionType]">XSD - condition finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="finderRef"></a>
+<h3>Reference Finder</h3>
+
+<p>
+	The condition is defined using a N:M reference table.
+	The reference table must contain at least two columns which types are defined
+	by reference. One of the column must refer to the current table.
+</p>
+
+<p>
+	<b>XML Syntax:</b> <tt>&lt;ref table="name_of_the_n_m_table"/&gt;</tt>
+</p>
+
+<p>
+	<b>Method Parameters</b>: <tt>( OTHER-TABLE-COLUMN-TYPE param )</tt>
+</p>
+
+<p>
+	<b>Example</b>:<br/>
+	We define Users, Roles and the N:M table which is called UserRoles.
+	In the Roles class we define method which finds all records for the given user:
+	<pre class="prettyprint xml">
+    &lt;table name="users"&gt;
+      &lt;columns&gt;
+        &lt;column name="user_id"&gt;
+          &lt;type&gt;int&lt;/type&gt;
+          &lt;auto/&gt;
+          &lt;pk/&gt;
+        &lt;/column&gt;
+        ...
+      &lt;/columns&gt;
+      ...
+    &lt;/table&gt;
+
+    &lt;table name="roles"&gt;
+      &lt;columns&gt;
+        &lt;column name="role_id"&gt;
+          &lt;type&gt;int&lt;/type&gt;
+          &lt;auto/&gt;
+          &lt;pk/&gt;
+        &lt;/column&gt;
+        &lt;column name="role_name"&gt;
+          &lt;type max-length="32" min-length="2"&gt;String&lt;/type&gt;
+          &lt;not-null/&gt;
+        &lt;/column&gt;
+      &lt;/columns&gt;
+
+      &lt;methods&gt;
+        &lt;find name="byUser"&gt;
+          <b>&lt;ref table="user_roles"/&gt;</b>
+          &lt;order-by&gt;
+            &lt;column name="role_name"/&gt;
+          &lt;/order-by&gt;
+        &lt;/find&gt;
+        ...
+      &lt;/methods&gt;
+    &lt;/table&gt;
+
+    &lt;table name="user_roles"&gt;
+      &lt;columns&gt;
+        &lt;column name="user_id"&gt;
+          &lt;ref table="users" column="user_id"/&gt;
+        &lt;/column&gt;
+        &lt;column name="role_id"&gt;
+          &lt;ref table="roles" column="role_id"/&gt;
+        &lt;/column&gt;
+      &lt;/columns&gt;
+    &lt;/table&gt; </pre>
+
+	The generated DAO for the roles table will contain the following method:
+	<pre class="prettyprint java">
+    public Role[] findByUser( Integer userId )</pre>
+</p>
+
+<p class="note">
+	Not supported by GAE at all.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:RefTableType]">XSD - reference finder</a>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="methods"></a>
+<h2>Methods</h2>
+
+
+<div class="subsection">
+<a name="methodCount"></a>
+<h3>Method Count</h3>
+
+<p>
+	This method counts records specified by a finder condition.
+	The condition can be based on primary key, non-unique index,
+	reference table (N:M relations) or it can be a raw condition.
+</p>
+
+<p>
+	The method name always starts with prefix <tt>count</tt>.
+</p>
+
+<p>
+	<b>Parameters</b>: depends on the finder type.
+</p>
+
+<p>
+	<b>Returns</b>: integer value representing the number of records found. 
+	It can return 0 (zero).
+</p>
+
+<p>
+	<b>Throws</b>: <a href="[api:dao:DBException]">DBException</a> when underlying DB operation fails.
+</p>
+
+<p class="note">
+	GAE implementation supports up to 1000 records to be found.
+	This means that no counter can return bigger number than 1000.
+</p>
+
+<p>
+	<b>See also</b>: <a href="#countMethods">all count methods</a>,
+									 <a href="[xsd:CountType]">XSD - count</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="methodFind"></a>
+<h3>Method Find</h3>
+
+<p>
+	This method finds record or records specified by a finder condition.
+	The condition can be based on primary key, unique or non-unique index,
+	reference table (N:M relations) or it can be a raw condition.
+</p>
+
+<p>
+	By adding a tag <tt>&lt;unique/&gt;</tt> you can force AuDAO to generate
+	unique find method - it means that the Java method will return only one
+	record. Otherwise AuDAO automatically recognizes which methods are unique or not.
+	See section <a href="#finders">finders</a> for more information.
+</p>
+
+<p>
+	By adding a tag <tt>&lt;range/&gt;</tt> you can force AuDAO to generate
+	find method with additional parameters - <tt>int offset</tt> and <tt>int count</tt>.
+	This allows you to restrict the number of result records at runtime.
+</p>
+
+<p>
+	Optionally by the clause <tt>&lt;order-by/&gt;</tt> an ordering of the result
+	records can be forced.
+</p>
+
+<p>
+	The method name always starts with prefix <tt>find</tt>.
+</p>
+
+<p>
+	<b>Parameters</b>: depends on the finder type.
+</p>
+
+<p>
+	<b>Returns</b>: for unique finders it returns one record found or null if not found.
+	For nonunique finders it returns always nonnull array containing the records found
+	or the array is empty.
+</p>
+
+<p>
+	<b>Throws</b>: <a href="[api:dao:DBException]">DBException</a> when underlying DB operation fails.
+</p>
+
+<p class="note">
+	GAE implementation supports up to 1000 records to be found.
+	This means that no finder can return bigger number of records than 1000 even
+	when the datastore contains more records.
+</p>
+
+<p>
+	<b>See also</b>: <a href="#findMethods">all find methods</a>,
+									 <a href="[xsd:FindType]">XSD - find</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="methodDelete"></a>
+<h3>Method Delete</h3>
+
+<p>
+	This method deletes one or more records specified by a finder condition.
+	The condition can be based on primary key, non-unique index,
+	reference table (N:M relations) or it can be a raw condition.
+</p>
+
+<p>
+	By adding a tag <tt>&lt;unique/&gt;</tt> you can force AuDAO to generate
+	unique delete method - it means that the method will delete only the first record.
+	Otherwise AuDAO automatically recognizes which methods are unique or not.
+	See section <a href="#finders">finders</a> for more information.
+</p>
+
+<p>
+	The method name always starts with prefix <tt>delete</tt>.
+</p>
+
+<p>
+	<b>Parameters</b>: depends on the finder type.
+</p>
+
+<p>
+	<b>Returns</b>: for unique finders it returns a boolean value - true means
+	that the record was really found and deleted.
+	For nonunique finders it returns integer value - the number or records
+	really found and deleted.
+</p>
+
+<p>
+	<b>Throws</b>: <a href="[api:dao:DaoException]">DaoException</a> when underlying DB operation fails.
+</p>
+
+<p class="note">
+	GAE implementation supports up to 500 records to be deleted at once.
+	This means that no delete method can delete bigger number than 500.
+</p>
+
+<p>
+	<b>See also</b>: <a href="#deleteMethods">all delete methods</a>,
+									 <a href="[xsd:DeleteType]">XSD - delete</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="methodInsert"></a>
+<h3>Method Insert</h3>
+
+<p>
+	This method creates exactly one record in the database.
+</p>
+
+<p>
+	The method name is always <tt>insert</tt>.
+</p>
+
+<p>
+	<b>Parameters</b>: one parameter - the DTO class associated with the table.
+</p>
+
+<p>
+	<b>Returns</b>: for tables without primary keys <tt>void</tt> is returned.
+	For tables with one primary key <tt>&lt;auto/&gt;</tt> column - the generated
+	autoincremented value is returned.
+</p>
+
+<p>
+	<b>Throws</b>: <a href="[api:dao:DaoException]">DaoException</a> when underlying DB operation fails.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="methodMove"></a>
+<h3>Method Move</h3>
+
+<p>
+	This method moves records specified by a finder condition from the current table
+	to the table by the AuDAO source configuration file.
+	The condition can be based on primary key, non-unique index, or it can be a raw condition.
+</p>
+
+<p>
+	The method name always starts with prefix <tt>move</tt>.
+</p>
+
+<p>
+	<b>Parameters</b>: depends on the finder type.
+</p>
+
+<p>
+	<b>Returns</b>: integer value representing the number of records moved. 
+	It can return 0 (zero).
+</p>
+
+<p>
+	<b>Throws</b>: <a href="[api:dao:DaoException]">DaoException</a> when underlying DB operation fails.
+</p>
+
+<p class="note">
+	Not supported by GAE at all.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:MoveType]">XSD - move</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="methodTruncate"></a>
+<h3>Method Truncate</h3>
+
+<p>
+	This method truncates whole table.
+</p>
+
+<p>
+	The method name is always <tt>truncate</tt>.
+</p>
+
+<p>
+	<b>Parameters</b>: no parameters.
+</p>
+
+<p>
+	<b>Returns</b>: void.
+</p>
+
+<p>
+	<b>Throws</b>: <a href="[api:dao:DaoException]">DaoException</a> when underlying DB operation fails.
+</p>
+
+<p class="note">
+	You must probably add additional database privileges to your account
+	when calling this method.
+</p>
+
+<p class="note">
+	Not supported by GAE at all.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:TruncateType]">XSD - truncate</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="methodUpdate"></a>
+<h3>Method Update</h3>
+
+<p>
+	This method updates one or more records specified by a finder condition.
+	The condition can be based on primary key, unique index,
+	or it can be a raw condition.
+</p>
+
+<p>
+	The method name always starts with prefix <tt>update</tt>.
+</p>
+
+<p>
+	<b>Parameters</b>: depends on the finder type.
+</p>
+
+<p>
+	<b>Returns</b>: for unique finders it returns a boolean value - true means
+	that the record was really found and updated.
+	For nonunique finders it returns integer value - the number or records
+	really found and updated.
+</p>
+
+<p>
+	<b>Throws</b>: <a href="[api:dao:DaoException]">DaoException</a> when underlying DB operation fails.
+</p>
+
+<p class="note">
+	GAE implementation only supports update and update column - by primary key.
+</p>
+
+<p>
+	<b>See also</b>: <a href="#updateMethods">basic update methods</a>,
+									 <a href="#updateBatchMethods">raw or batch update methods</a>,
+									 <a href="[xsd:EditModeType]">XSD - edit-mode</a>,
+									 <a href="[xsd:UpdateType]">XSD - update</a>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="countMethods"></a>
+<h2>Count Methods</h2>
+
+
+<div class="subsection">
+<a name="countAll"></a>
+<h3>Count All</h3>
+
+<p>
+	Counts all records.
+</p>
+
+<p>
+	The default method name is <tt>countAll</tt>.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;count name="all"&gt;
+      &lt;all/&gt;
+    &lt;/count&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Counts records.
+     */
+    public int countAll();</pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodCount">method count</a>, <a href="#finderAll">finder all</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="countDynamic"></a>
+<h3>Count By Dynamic Condition</h3>
+
+<p>
+	Counter method which counts records filtered by a dynamic condition.
+</p>
+
+<p>
+	The default method name is <tt>countDynamic</tt>.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;count name="dynamic"&gt;
+      &lt;dynamic/&gt;
+    &lt;/count&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Counts records.
+     */
+    public int countDynamic( String cond, Object... params ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodCount">method count</a>, <a href="#finderDynamic">finder dynamic</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="countByIndex"></a>
+<h3>Count By Index</h3>
+
+<p>
+	Counter method which count records specified by parameters related to existing index.
+</p>
+
+<p>
+	The default method name is <tt>countBy<i>ParameterNames</i></tt>.
+</p>
+
+<p>
+	When index contains more than one column, then all subsequent counters can be generated.
+	Fo example if a unique index of a table "my_table" contains String columns <tt>foo</tt> and <tt>bar</tt>,
+	then the following counter can be generated:
+	<ul>
+		<li><tt>public int countByFoo( String foo )</tt></li>
+	</ul>
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;indexes&gt;
+      &lt;index name="inx_segments"&gt;
+        &lt;columns&gt;
+          &lt;column name="segment_id"/&gt;
+        &lt;/columns&gt;
+      &lt;/index&gt;
+    &lt;/indexes&gt;
+    &lt;methods&gt;
+      &lt;count&gt;
+        &lt;index name="inx_segments"/&gt;
+      &lt;/count&gt;
+    &lt;/methods&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Counts records.
+     */
+    public int countBySegmentId( int segmentId ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodCount">method count</a>, <a href="#finderIndex">finder index</a>,
+									 <a href="[xsd:IndexFindType]">XSD - index finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="countByCondition"></a>
+<h3>Count By Condition</h3>
+
+<p>
+	Counter method which counts records filtered by a predefined condition.
+</p>
+
+<p>
+	There is no default method name - you must always provide one.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;count name="new"&gt;
+      &lt;condition&gt;
+        &lt;query&gt;&lt;[CDATA[created_date&gt;=?]]&gt;&lt;/query&gt;
+        &lt;params&gt;
+          &lt;column name="created_date"/&gt;
+        &lt;/params&gt;
+      &lt;/condition&gt;
+    &lt;/count&gt; </pre>
+	<pre class="prettyprint java">
+    /**
+     * Counts records.
+     */
+    public int countNew( Date createdDate ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodCount">method count</a>, <a href="#finderCondition">finder condition</a>,
+									 <a href="[xsd:ConditionType]">XSD - condition finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="countByRef"></a>
+<h3>Count By Reference</h3>
+
+<p>
+	Counter method which counts records by performing a lookup in N:M table.
+</p>
+
+<p>
+	There is no default method name - you must always provide one.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;count name="byUser"&gt;
+      &lt;ref table="user_roles"/&gt;
+    &lt;/count&gt; </pre>
+	<pre class="prettyprint java">
+    /**
+     * Counts records.
+     */
+    public int countByUser( Integer userId ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodCount">method count</a>, <a href="#finderRef">finder reference</a>,
+									 <a href="[xsd:RefTableType]">XSD - reference finder</a>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="deleteMethods"></a>
+<h2>Delete Methods</h2>
+
+
+<div class="subsection">
+<a name="deleteByPrimaryKey"></a>
+<h3>Delete By Primary Key</h3>
+
+<p>
+	Delete method which deletes one record specified by its primary key.
+	The method returns true if found and deleted or false if the record was not found.
+</p>
+
+<p>
+	The default method name is <tt>deleteByPrimaryKey</tt>.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;delete&gt;
+      &lt;pk/&gt;
+    &lt;/delete&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Deletes a record identified by its primary key.
+     * @return true iff the record was really deleted (existed)
+     */
+    public boolean deleteByPrimaryKey( int segmentId ) throws DaoException; </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodDelete">method delete</a>, <a href="#finderPk">primary key finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="deleteAll"></a>
+<h3>Delete All</h3>
+
+<p>
+	Deletes all records.
+</p>
+
+<p>
+	The default method name is <tt>deleteAll</tt>.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;delete&gt;
+      &lt;all/&gt;
+    &lt;/delete&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Deletes records.
+     * @return the number of records deleted
+     */
+    public int deleteAll() throws DaoException;
+	</pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodDelete">method delete</a>, <a href="#finderAll">finder all</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="deleteDynamic"></a>
+<h3>Delete By Dynamic Condition</h3>
+
+<p>
+	Delete method which deletes records filtered by a dynamic condition.
+	Returns number of records found and deleted.
+</p>
+
+<p>
+	The default method name is <tt>deleteDynamic</tt>.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;delete name="dynamic"&gt;
+      &lt;dynamic/&gt;
+    &lt;/delete&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Deletes records.
+     * @return the number of records deleted
+     */
+    public int deleteDynamic( String cond, Object... params ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodDelete">method delete</a>, <a href="#finderDynamic">finder dynamic</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="deleteByIndex"></a>
+<h3>Delete By Index</h3>
+
+<p>
+	Delete method which deletes records specified by parameters related to existing index.
+</p>
+
+<p>
+	The default method name is <tt>deleteBy<i>ParameterNames</i></tt>.
+</p>
+
+<p>
+	When index contains more than one column, then all subsequent delete methods can be generated.
+	Fo example if a unique index of a table "my_table" contains String columns <tt>foo</tt> and <tt>bar</tt>,
+	then the following delete methods can be generated:
+	<ul>
+		<li><tt>public boolean deleteByFooBar( String foo, String bar )</tt></li>
+		<li><tt>public int deleteByFoo( String foo )</tt></li>
+	</ul>
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;indexes&gt;
+      &lt;index name="inx_finstate_batch"&gt;
+        &lt;columns&gt;
+          &lt;column name="batch_id"/&gt;
+        &lt;/columns&gt;
+      &lt;/index&gt;
+    &lt;/indexes&gt;
+    &lt;methods&gt;
+      &lt;delete&gt;
+        &lt;index name="inx_finstate_batch"/&gt;
+      &lt;/delete&gt;
+    &lt;/methods&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Deletes records.
+     * @return the number of records deleted
+     */
+    public int deleteByBatchId( int batchId ) throws DaoException; </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodDelete">method delete</a>, <a href="#finderIndex">finder index</a>,
+									 <a href="[xsd:IndexFindType]">XSD - index finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="deleteByCondition"></a>
+<h3>Delete By Condition</h3>
+
+<p>
+	Delete method which deletes one or more records filtered by a predefined condition.
+</p>
+
+<p>
+	There is no default method name - you must always provide one.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;delete name="old"&gt;
+      &lt;condition&gt;
+        &lt;query&gt;&lt;[CDATA[created_date&lt;=?]]&gt;&lt;/query&gt;
+        &lt;params&gt;
+          &lt;column name="created_date"/&gt;
+        &lt;/params&gt;
+      &lt;/condition&gt;
+    &lt;/count&gt; </pre>
+	<pre class="prettyprint java">
+    /**
+     * Deletes records.
+     * @return the number of records deleted
+     */
+    public int deleteOld( Date createdDate ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodDelete">method delete</a>, <a href="#finderCondition">finder condition</a>,
+									 <a href="[xsd:ConditionType]">XSD - condition finder</a>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="findMethods"></a>
+<h2>Find Methods</h2>
+
+
+<div class="subsection">
+<a name="findByPrimaryKey"></a>
+<h3>Find By Primary Key</h3>
+
+<p>
+	Finder method which finds unique record specified by its primary key.
+	The method returns either the record found or null if not found.
+</p>
+
+<p>
+	The method can be generated by the following ways:
+	<ul>
+		<li>automatically when corresponding <tt>&lt;auto-find/&gt;</tt> flag is present</li>
+		<li>explicitly by <tt>methods/find/pk</tt></li>
+	</ul>
+
+	If the find method is explicitly defined then the <tt>&lt;auto-find/&gt;</tt>
+	flag has no effect.
+</p>
+
+<p>
+	The default method name is <tt>findByPrimaryKey</tt>.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;table name="users"&gt;
+      &lt;auto-find/&gt;
+      &lt;columns&gt;
+        &lt;column name="user_id"&gt;
+          &lt;type&gt;int&lt;/type&gt;
+          &lt;pk/&gt;
+        &lt;/column&gt;
+      &lt;/columns&gt;
+    &lt;/table&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Finds a record identified by its primary key.
+     * @return the record found or null
+     */
+    public User findByPrimaryKey( int userId ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodFind">method find</a>, <a href="#finderPk">primary key finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="findAll"></a>
+<h3>Find All</h3>
+
+<p>
+	Finds all records.
+</p>
+
+<p>
+	The default method name is <tt>findAll</tt>.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;find name="all"&gt;
+      &lt;all/&gt;
+      &lt;order-by&gt;
+        &lt;column name="role_name"/&gt;
+      &lt;/order-by&gt;
+    &lt;/find&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Finds records ordered by role_name.
+     */
+    public Role[] findAll();</pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodFind">method find</a>, <a href="#finderAll">all finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="findDynamic"></a>
+<h3>Find By Dynamic Condition</h3>
+
+<p>
+	Finder method which finds one or more records filtered by a dynamic condition.
+	Unique finders return either the record found or null if not found.
+	Non-unique finders return always non-null array - which can be empty if nothing was found.
+</p>
+
+<p>
+	The default method name is <tt>findDynamic</tt>.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;find name="dynamic"&gt;
+      &lt;dynamic/&gt;
+      &lt;order-by&gt;
+        &lt;column name="created_date"/&gt;
+      &lt;/order-by&gt;
+    &lt;/find&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Finds records ordered by created_date.
+     */
+    public LogHistory[] findDynamic( String cond, int offset, int count, Object... params ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodFind">method find</a>, <a href="#finderDynamic">dynamic finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="findByIndex"></a>
+<h3>Find By Index</h3>
+
+<p>
+	Finder method which finds records specified by parameters related to existing index.
+	Unique finders return either the record found or null if not found.
+	Non-unique finders return always non-null array - which can be empty if nothing was found.
+</p>
+
+<p>
+	The methods can be generated by the following ways:
+	<ul>
+		<li>automatically when corresponding <tt>&lt;auto-find/&gt;</tt> flag is present</li>
+		<li>explicitly by <tt>methods/find/index</tt></li>
+	</ul>
+
+	If the find method is explicitly defined for a given index and also the <tt>&lt;auto-find/&gt;</tt>
+	flag is present, then all corresponding methods will be generated. So it is the developer's
+	responsibility to avoid duplicate method names (either by specifying different name for the explicit
+	method or either by enabling only the preferred one).
+</p>
+
+<p>
+	The default method name is <tt>findBy<i>ParameterNames</i></tt>.
+</p>
+
+<p>
+	When index contains more than one column, then all subsequent finders can be generated.
+	Fo example if a unique index of a table "my_table" contains String columns <tt>foo</tt> and <tt>bar</tt>,
+	then the following finders can be generated:
+	<ul>
+		<li><tt>public MyTable findByFooBar( String foo, String bar )</tt></li>
+		<li><tt>public MyTable[] findByFoo( String foo )</tt></li>
+	</ul>
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;indexes&gt;
+      &lt;index name="inx_user_name"&gt;
+        &lt;unique/&gt;
+        &lt;columns&gt;
+          &lt;column name="user_name"/&gt;
+        &lt;/columns&gt;
+      &lt;/index&gt;
+    &lt;/indexes&gt;
+    &lt;methods&gt;
+      &lt;find&gt;
+        &lt;index name="inx_user_name"/&gt;
+      &lt;/find&gt;
+    &lt;/methods&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Finds a record.
+     */
+    public User findByUserName( String userName ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodFind">method find</a>, <a href="#finderIndex">index finder</a>,
+									 <a href="[xsd:IndexFindType]">XSD - index finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="findByCondition"></a>
+<h3>Find By Condition</h3>
+
+<p>
+	Finder method which finds one or more records filtered by a predefined condition.
+	Unique finders return either the record found or null if not found.
+	Non-unique finders return always non-null array - which can be empty if nothing was found.
+</p>
+
+<p>
+	There is no default method name - you must always provide one.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+
+    &lt;find name="firstRoot"&gt;
+      &lt;comment&gt;Finds the first root segment&lt;/comment&gt;
+      &lt;unique/&gt;
+      &lt;condition&gt;
+        &lt;query&gt;parent_segment_id IS NULL&lt;/query&gt;
+      &lt;/condition&gt;
+      &lt;order-by&gt;
+        &lt;column name="segment_id"/&gt; &lt;!-- must be id not name ! --&gt;
+      &lt;/order-by&gt;
+    &lt;/find&gt;
+
+    &lt;find name="new"&gt;
+      &lt;condition&gt;
+        &lt;query&gt;&lt;[CDATA[created_date&gt;=?]]&gt;&lt;/query&gt;
+        &lt;params&gt;
+          &lt;column name="created_date"/&gt;
+        &lt;/params&gt;
+      &lt;/condition&gt;
+    &lt;/count&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Finds the first root segment ordered by segment_id.
+     */
+    public Segment findFirstRoot(  );
+
+    /**
+     * Finds records.
+     */
+    public Segment findNew( Date createdDate  ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodFind">method find</a>, <a href="#finderCondition">condition finder</a>,
+									 <a href="[xsd:ConditionType]">XSD - condition finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="findByRef"></a>
+<h3>Find By Reference</h3>
+
+<p>
+	Finder method which finds records by performing a lookup in N:M table.
+	Returns always non-null array - which can be empty if nothing was found.
+</p>
+
+<p>
+	There is no default method name - you must always provide one.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;find name="byUser"&gt;
+      &lt;ref table="user_roles"/&gt;
+      &lt;order-by&gt;
+        &lt;column name="role_name"/&gt;
+      &lt;/order-by&gt;
+    &lt;/find&gt; </pre>
+	<pre class="prettyprint java">
+    /**
+     * Finds records ordered by role_name.
+     */
+    public Role[] findByUser( Integer userId ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodFind">method find</a>, <a href="#finderRef">reference finder</a>,
+									 <a href="[xsd:RefTableType]">XSD - reference finder</a>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="updateMethods"></a>
+<h2>Update Methods</h2>
+
+<p>
+	These methods can be used for modifying one or more columns of one record.
+	The record is always retrieved by its primary key.
+</p>
+
+<div class="subsection">
+<a name="update"></a>
+<h3>Update By Primary Key</h3>
+
+<p>
+	Update method which updates one record specified by its primary key.
+	The method returns true if the record was found and changes were applied or false.
+</p>
+
+<p>
+	The method is generated when at least one column flag <tt>&lt;edit/&gt;</tt> is present
+	and the table option <tt>&lt;edit-mode/&gt;</tt> is missing or its value is <tt>row</tt>.
+</p>
+
+<p>
+	The method signature is always:
+	<pre class="prettyprint java">
+    public boolean update( PK-TYPE pk, DTO-TYPE dto ) throws DaoException; </pre>
+</p>
+
+<p>
+	The first parameter specifies the primary key.
+	The second parameter is a DTO object containing new values - values to be changed.
+	But only columns with tag <tt>&lt;edit/&gt;</tt> can be updated by this method.
+	The DTO object remembers which fields were set, so the best practice is to create a new empty
+	object and set only fields you want to change. Reusing of existing object can cause unpredictable
+	results if you do not trace filed changes by your own.
+</p>
+
+<p>
+	You can also assign <tt>null</tt> value to the DTO field. Depending on the nullable flag,
+	it will result to:
+	<ul>
+		<li>setting <tt>null</tt> value into database - if the column hos no <tt>not-null</tt> flag</li>
+		<li>resetting DTO's value to "unchanged" - if the column hos <tt>not-null</tt> flag</li>
+	</ul>
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;table name="users"&gt;
+      &lt;columns&gt;
+        &lt;column name="user_id"&gt;
+          &lt;type&gt;int&lt;/type&gt;
+          &lt;pk/&gt;
+        &lt;/column&gt;
+        &lt;column name="user_name"&gt;
+          &lt;type max-length="32"&gt;String&lt;/type&gt;
+          &lt;not-null/&gt;
+          &lt;edit/&gt;
+        &lt;/column&gt;
+        &lt;column name="full_name"&gt;
+          &lt;type max-length="128"&gt;String&lt;/type&gt;
+          &lt;edit/&gt;
+        &lt;/column&gt;
+				...
+      &lt;/columns&gt;
+    &lt;/table&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Updates one record found by primary key.
+     * @return true iff the record was really updated (=found and any change was really saved)
+     */
+    public boolean update( int userId, User dto ) throws DaoException; </pre>
+	
+	And the usage:
+	<pre class="prettyprint java">
+    User dto = new User();
+    dto.setUserName( "foo" );
+    dao.update( userId, dto ); // updates only user_name
+
+    dto.setUserName( "foo2" );
+    dto.setFullName( "bar" );
+    dao.update( userId, dto ); // updates both
+
+    dto.setUserName( null );
+    dto.setFullName( null );
+    dao.update( userId, dto ); // updates only full_name </pre>
+</p>
+
+
+<p>
+	<b>See also</b>: <a href="#methodUpdate">method update</a>,
+									 <a href="[xsd:EditModeType]">XSD - edit-mode</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="update"></a>
+<h3>Update Column By Primary Key</h3>
+
+<p>
+	Update method which updates one column of one record specified by its primary key.
+	The method returns true if the record was found and changes were applied or false.
+</p>
+
+<p>
+	The method is generated when at least one column flag <tt>&lt;edit/&gt;</tt> is present
+	and the table option <tt>&lt;edit-mode/&gt;</tt> equals to <tt>column</tt>.
+	Then as many <tt>updateX</tt> methods are generated as many columns are tagged
+	by the <tt>&lt;edit/&gt;</tt> tag.
+</p>
+
+<p>
+	The method signature is always:
+	<pre class="prettyprint java">
+    public boolean updateCOLUMN( PK-TYPE pk, COLUMN-TYPE val ) throws DaoException; </pre>
+</p>
+
+<p>
+	The first parameter specifies the primary key.
+	The second parameter is the new value of the column.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;table name="users"&gt;
+      &lt;edit-mode&gt;column&lt;/edit-mode&gt;
+      &lt;columns&gt;
+        &lt;column name="user_id"&gt;
+          &lt;type&gt;int&lt;/type&gt;
+          &lt;pk/&gt;
+        &lt;/column&gt;
+        &lt;column name="user_name"&gt;
+          &lt;type max-length="32"&gt;String&lt;/type&gt;
+          &lt;not-null/&gt;
+          &lt;edit/&gt;
+        &lt;/column&gt;
+        &lt;column name="full_name"&gt;
+          &lt;type max-length="128"&gt;String&lt;/type&gt;
+          &lt;edit/&gt;
+        &lt;/column&gt;
+				...
+      &lt;/columns&gt;
+    &lt;/table&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Updates one record found by primary key.
+     * @return true iff the record was really updated (=found and any change was really saved)
+     */
+    public boolean updateUserName( int userId, String userName ) throws DaoException;
+
+    /**
+     * Updates one record found by primary key.
+     * @return true iff the record was really updated (=found and any change was really saved)
+     */
+    public boolean updateFullName( int userId, String fullName ) throws DaoException; </pre>
+</p>
+
+
+<p>
+	<b>See also</b>: <a href="#methodUpdate">method update</a>
+									 <a href="[xsd:EditModeType]">XSD - edit-mode</a>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="updateBatchMethods"></a>
+<h2>Raw or Batch Update Methods</h2>
+
+<p>
+	These methods can be used for modifying one or more columns of one or more records at once.
+	The records can be retrieved by different finders.
+	These methods are not currently supported by GAE implementation due to using
+	the direct SQL "update set" command.
+</p>
+
+<p>
+	The SQL "update set" clause and its parameters is defined by tag <tt>&lt;set&gt;</tt>.
+
+	<pre class="prettyprint xml">
+    &lt;set&gt;
+      &lt;query&gt;segment_id = ?&lt;/query&gt;
+      &lt;params&gt;
+        &lt;column name="segment_id"/&gt;
+      &lt;/params&gt;
+    &lt;/set&gt; </pre>
+
+	A shorthand version for that is:
+	<pre class="prettyprint xml">
+    &lt;set&gt;
+      &lt;params&gt;
+        &lt;column name="segment_id"/&gt;
+      &lt;/params&gt;
+    &lt;/set&gt; </pre>
+</p>
+
+<p>
+	The other advantage of these methods is the possibility to update records
+	without passing any parameters from runtime - as the following example shows:
+
+	<pre class="prettyprint xml">
+    &lt;set&gt;
+      &lt;query&gt;counter = counter + 1&lt;/query&gt;
+    &lt;/set&gt; </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:UpdateType]">XSD - update</a>,
+                   <a href="[xsd:UpdateSetType]">XSD - update set</a>
+</p>
+
+
+<div class="subsection">
+<a name="updateByPrimaryKey"></a>
+<h3>Raw Update By Primary Key</h3>
+
+<p>
+	Update method which updates one record specified by its primary key.
+	The method returns true if found and updated or false if the record was not found.
+</p>
+
+<p>
+	This method has almost the same functionalities
+	as the <a href="#updateMethods">standard update methods</a>, but also gives you possibility
+	to use direct SQL in update clause.
+</p>
+
+<p>
+	The default method name is <tt>updateByPrimaryKey</tt>.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;update name="incCounter"&gt;
+      &lt;set&gt;
+        &lt;query&gt;counter = counter + 1&lt;/query&gt;
+      &lt;/set&gt;
+      &lt;pk/&gt;
+    &lt;/update&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Updates a record identified by its primary key.
+     */
+    public boolean updateIncCounter( int counterId ) throws DaoException; </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodUpdate">method update</a>, <a href="#finderPk">primary key finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="updateAll"></a>
+<h3>Batch Update All</h3>
+
+<p>
+	Updates all records.
+</p>
+
+<p>
+	The default method name is <tt>updateAll</tt>.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;update name="incCounter"&gt;
+      &lt;set&gt;
+        &lt;query&gt;counter = counter + 1&lt;/query&gt;
+      &lt;/set&gt;
+      &lt;all/&gt;
+    &lt;/update&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Updates records.
+     */
+    public int updateIncCounter() throws DaoException; </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodUpdate">method update</a>, <a href="#finderAll">all finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="updateDynamic"></a>
+<h3>Update By Dynamic Condition</h3>
+
+<p>
+	Update method which updates records filtered by a dynamic condition.
+	Returns number of records found and deleted.
+</p>
+
+<p>
+	The default method name is <tt>updateDynamic</tt>.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;update name="segment"&gt;
+      &lt;set&gt;
+        &lt;query&gt;segment_id = ?&lt;/query&gt;
+        &lt;params&gt;
+          &lt;column name="segment_id"/&gt;
+        &lt;/params&gt;
+      &lt;/set&gt;
+      &lt;dynamic/&gt;
+    &lt;/update&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Updates records.
+     */
+    public int updateSegment( Integer newSegmentId, String cond, Object... params ) throws DaoException; </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodUpdate">method update</a>, <a href="#finderDynamic">dynamic finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="updateByIndex"></a>
+<h3>Batch Update By Index</h3>
+
+<p>
+	Update method which updates records specified by parameters related to existing index.
+</p>
+
+<p>
+	The default method name is <tt>updateBy<i>ParameterNames</i></tt>.
+</p>
+
+<p>
+	When index contains more than one column, then all subsequent update methods can be generated.
+	Fo example if a unique index of a table "my_table" contains String columns <tt>foo</tt> and <tt>bar</tt>,
+	then the following update methods can be generated:
+	<ul>
+		<li><tt>public boolean updateByFooBar( UPDATE-SET_PARAMS, String foo, String bar )</tt></li>
+		<li><tt>public int updateByFoo( UPDATE-SET-PARAMS, String foo )</tt></li>
+	</ul>
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;indexes&gt;
+      &lt;index name="inx_finstate_batch"&gt;
+        &lt;columns&gt;
+          &lt;column name="batch_id"/&gt;
+        &lt;/columns&gt;
+      &lt;/index&gt;
+    &lt;/indexes&gt;
+    &lt;methods&gt;
+      &lt;update&gt;
+        &lt;set&gt;
+          &lt;params&gt;
+            &lt;column name="finstate_changed"/&gt;
+          &lt;/params&gt;
+        &lt;/set&gt;
+        &lt;index name="inx_finstate_batch"/&gt;
+      &lt;/update&gt;
+    &lt;/methods&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Updates records.
+     */
+    public int updateByBatchId( Boolean finstateChanged, int batchId ) throws DaoException; </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodDelete">method update</a>, <a href="#finderIndex">index finder</a>,
+									 <a href="[xsd:IndexFindType]">XSD - index finder</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="updateByCondition"></a>
+<h3>Batch Update By Condition</h3>
+
+<p>
+	Batch update method which updates one or more records filtered by a predefined condition.
+</p>
+
+<p>
+	There is no default method name - you must always provide one.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+    &lt;update name="segmentHasCreditInfo"&gt;
+      &lt;set&gt;
+        &lt;params&gt;
+          &lt;column name="segment_id"/&gt;
+        &lt;/params&gt;
+      &lt;/set&gt;
+      &lt;condition&gt;
+        &lt;query&gt;segment_id=? and party_id in (select party_id from financial_states where batch_id=?)&lt;/query&gt;
+        &lt;params&gt;
+          &lt;column name="segment_id"/&gt;
+          &lt;param name="batchId" type="int"/&gt;
+        &lt;/params&gt;
+      &lt;/condition&gt;
+    &lt;/update&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Updates records.
+     */
+    public int updateSegmentHasCreditInfo( Integer newSegmentId, Integer segmentId, Integer batchId ) throws DaoException; </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="#methodUpdate">method update</a>, <a href="#finderCondition">condition finder</a>,
+									 <a href="[xsd:ConditionType]">XSD - condition finder</a>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+</div> <!-- chapter -->
+

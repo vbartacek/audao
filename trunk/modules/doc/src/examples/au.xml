@@ -1,0 +1,17 @@
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+	<tables>
+		<table name="users">
+			<columns>
+				<column name="user_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="user_name">
+					<type max-length="32">String</type>
+					<not-null/>
+				</column>
+			</columns>
+		</table>
+	</tables>
+</database>
