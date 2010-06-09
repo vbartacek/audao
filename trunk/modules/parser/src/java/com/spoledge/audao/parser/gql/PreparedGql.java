@@ -64,18 +64,21 @@ public class PreparedGql {
     private DatastoreService ds;
     private String gql;
     private QueryType queryType;
-    private GqlExtTree tree;
+    private CommonTree tree;
+    private TokenStream tokenStream;
 
 
     ////////////////////////////////////////////////////////////////////////////
     // Constructors
     ////////////////////////////////////////////////////////////////////////////
 
-    PreparedGql( DatastoreService ds, String gql, QueryType queryType, GqlExtTree tree ) {
+    PreparedGql( DatastoreService ds, String gql, QueryType queryType,
+                 CommonTree tree, TokenStream tokenStream ) {
         this.ds = ds;
         this.gql = gql;
         this.queryType = queryType;
         this.tree = tree;
+        this.tokenStream = tokenStream;
     }
 
 
@@ -101,9 +104,7 @@ public class PreparedGql {
         if (queryType.isUpdate())
             throw new IllegalStateException("Mismatched query type - use executeUpdate() instead");
 
-        execute( params );
-
-        return tree.getEntityIterable();
+        return execute( params ).getEntityIterable();
     }
 
 
@@ -117,9 +118,7 @@ public class PreparedGql {
         if (!queryType.isUpdate())
             throw new IllegalStateException("Mismatched query type - use executeQuery() instead");
 
-        execute( params );
-
-        return tree.getRecordCounter();
+        return execute( params ).getRecordCounter();
     }
 
 
@@ -129,9 +128,15 @@ public class PreparedGql {
      *
      * @param params the parameters to the GQL (referenced by :1, :2, ...)
      */
-    public void execute( Object... params ) {
+    public GqlExtTree execute( Object... params ) {
         try {
-            tree.gqlext( ds, params );
+            CommonTreeNodeStream nodes = new CommonTreeNodeStream( tree );
+            nodes.setTokenStream( tokenStream );
+
+            GqlExtTree treeParser = new GqlExtTree( nodes );
+            treeParser.gqlext( ds, params );
+
+            return treeParser;
         }
         catch (RecognitionException e) {
             log.error("execute(): " + formatError( gql, e ), e);

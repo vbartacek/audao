@@ -81,6 +81,15 @@ public class GqlExtDynamicTest extends AbstractSelectDynamicTest {
         };
     }
 
+    /**
+     * Found a Bug in distro.
+     */
+    @Test 
+    public void testExtColumnExpr02() {
+        executeQuery( "SELECT cos(:1*3.1415/180) as 'cos' FROM dual", 30);
+    }
+
+
     @Test 
     public void testExtSoftWhere() {
         test( 3, "SELECT * FROM Employee WHERE SOFT employeeNumber=employeeNumber");
