@@ -8,6 +8,59 @@
 </p>
 
 <div class="section">
+<a name="config"></a>
+<h2>Config Element</h2>
+
+<p>
+	All extra configurations are specified by the <tt>config</tt> element
+	in the source XML file.
+</p>
+
+<p>
+	The optional <tt>config</tt> element can be defined on the global level (<tt>/database/config</tt>)
+	or on the local table level (<tt>/database/tables/table/config</tt>).
+	If both configs are specified for the given table, then the local config overrides the global one
+	- but only for the <tt>config</tt>'s subelements defined by the local config.
+</p>
+
+<p><b>Example:</b>
+	<pre class="prettyprint xml">
+  &lt;database xmlns="http://www.spoledge.com/audao" version="1.0"&gt;
+    &lt;config&gt;
+      &lt;dto serial-version="-1"/&gt;
+      &lt;dao-impl&gt;
+        &lt;root&gt;com.foo.MyRootDaoImpl&lt;/root&gt;
+      &lt;/dao-impl&gt;
+    &lt;/config&gt;
+
+    &lt;tables&gt;
+      &lt;table name="test_table"&gt;
+        &lt;config&gt;
+          &lt;dto serial-version="-1234567890"/&gt;
+        &lt;/config&gt;
+        ...
+      &lt;/table&gt;
+    &lt;/tables&gt;
+  &lt;/database&gt;</pre>
+
+  The result <tt>test_table</tt>'s config override's the <tt>dto</tt> subelement,
+  but also inherits the global <tt>dao-impl</tt> subelement.
+</p>
+
+<p>
+  The only difference between the local and the global configuration is that subelement
+  <tt>factory</tt> is allowed only in the global config (factory is only one class for all tables).
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConfigType]">XSD - global config</a>,
+                    <a href="[xsd:ConfigTableType]">XSD - local config</a>
+</p>
+
+</div> <!-- config -->
+
+
+<div class="section">
 <a name="dto"></a>
 <h2>DTO Classes</h2>
 
@@ -359,8 +412,69 @@ public class Entity extends AbstractDto {
 
 </div>
 
+
+<div class="subsection">
+<a name="daoimpl_default_cache"></a>
+<h3>Default DTO cache</h3>
+
+<p class="note">
+	The caching mechanism is currently implemented only for Google App Engine target dbtype
+	(as of AuDAO version 1.5).
+</p>
+
+<p>
+  You can configure the default common cache which will be used by these operations (methods):
+  <ul>
+    <li><a href="[dao-features]#findByPrimaryKey">method find by primary key</a></li>
+    <li><a href="[dao-features]#methodInsert">method insert</a></li>
+    <li><a href="[dao-features]#updateMethods">basic update methods</a></li>
+    <li><a href="[dao-features]#deleteByPrimaryKey">method delete by primary key</a></li>
+  </ul>
+</p>
+
+<p>
+	The cache is implemented as a static field, so different DAO instances share the same cache.
+	The cache is also synchronized, so you can use multiple DAO instances in different threads
+	without fear.
+</p>
+
+<p>
+	The mandatory attribute <tt>max-size</tt> specifies how many DTO objects can be cached at most:
+
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dao-impl&gt;
+      &lt;default-cache max-size="50"/&gt;
+    &lt;/dao-impl&gt;
+  &lt;/config&gt; </pre>
+</p>
+
+<p>
+	The optional attribute <tt>expire-millis</tt> specifies how long the DTO can be cached -
+	if the attribute is not specified, then the item can be cached forever:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dao-impl&gt;
+      &lt;default-cache max-size="50" expire-millis="60000"/&gt;
+    &lt;/dao-impl&gt;
+  &lt;/config&gt; </pre>
+</p>
+
+<p class="note">
+	The attributes <tt>max-size</tt> and <tt>expire-millis</tt> are used for L1 - memory -
+	caches. The implementation for Google App Engine uses combined L1+L2 caches - memory + MemcacheService
+	using <a href="[api:dao]">ChainedDtoCache</a>.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:DefaultCacheType]">XSD - default-cache</a>,
+                    <a href="[gae-features]#caches">GAE - Caches</a>
+</p>
+
+</div>
+
+
 </div> <!-- dao -->
 
 
 </div> <!-- chapter -->
-

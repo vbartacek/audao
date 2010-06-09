@@ -33,6 +33,7 @@
 	/>
 
 
+	<xsl:param name="version"/>
 	<xsl:param name="skeleton_path"/>
 	<xsl:param name="isindex"/>
 	<xsl:param name="release_notes_short"/>
@@ -94,6 +95,14 @@
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
 			<xsl:apply-templates select="$fragment/*"/>
+		</xsl:copy>
+	</xsl:template>
+
+
+	<xsl:template match="html:p[@id='version']">
+		<xsl:copy>
+			<xsl:apply-templates select="@*"/>
+			<xsl:value-of select="$version"/>
 		</xsl:copy>
 	</xsl:template>
 

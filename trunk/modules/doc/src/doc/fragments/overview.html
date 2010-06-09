@@ -636,6 +636,9 @@ public class Foo {
 
                 success = true;
             }
+            catch (java.util.ConcurrentModificationException e) {
+                if (i+1 == MAX_ATTEMPTS) throw e;
+            }
             finally {
                 // release reference
                 contexts.get().ds = null;

@@ -109,6 +109,7 @@
 			includes="*.html"
 		>
 			<mapper type="glob" from="*.html" to="doc-*.html"/>
+			<param name="version" expression="${version}"/>
 			<param name="skeleton_path" expression="${skeleton.html}"/>
 		</xslt>
 
@@ -117,6 +118,7 @@
 			in="${build.tmp.dir}/index.html"
 			out="${build.doc.dir}/index.html"
 		>
+			<param name="version" expression="${version}"/>
 			<param name="skeleton_path" expression="${skeleton.html}"/>
 			<param name="isindex" expression="1"/>
 			<param name="release_notes_short" expression="${build.tmp.dir}/release-notes-short.html"/>
