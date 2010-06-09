@@ -1,0 +1,301 @@
+<?xml version="1.0"?>
+<project name="doc" basedir="." default="dist">
+
+	<!-- IMPORT THE COMMON PROPERTIES AND TARGETS -->
+	<import file="../../build-commons.xml"/>
+
+	<!-- SECTION PROPERTIES -->
+
+	<property name="xsl.dir" location="${src.dir}/xsl"/>
+	<property name="doc.dir" location="${src.dir}/doc"/>
+	<property name="examples.dir" location="${src.dir}/examples"/>
+	<property name="examples.xml" location="${examples.dir}/examples.xml"/>
+	<property name="fragments.dir" location="${doc.dir}/fragments"/>
+	<property name="fragments.xml" location="${fragments.dir}/fragments.xml"/>
+	<property name="skeleton.html" location="${doc.dir}/skeleton.html"/>
+
+	<property name="xsdrefs.xml" location="../schemas/build/refs.xml"/>
+
+	<property name="build.examples.dir" location="${build.dir}/examples"/>
+	<property name="build-examples.xml" location="${build.dir}/build-examples.xml"/>
+	<property name="build.fragments.dir" location="${build.dir}/fragments"/>
+	<property name="build.html.dir" location="${build.dir}/html"/>
+	<property name="build.doc.dir" location="${build.html.dir}"/>
+	<property name="build.web.dir" location="${build.dir}/web"/>
+	<property name="build.tmp.dir" location="${build.dir}/tmp"/>
+
+	<!-- SECTION FILESET AND CLASSPATH -->
+
+	<path id="compile.path">
+	</path>
+
+	<!-- SECTION TARGETS -->
+
+	<target name="gen-static" description="Generates static documentation.">
+		<mkdir dir="${build.doc.dir}"/>
+		<property name="frag.dir" location="${build.tmp.dir}/doc"/>
+		<mkdir dir="${frag.dir}"/>
+
+		<xslt
+			style="${xsl.dir}/htmlexamples.xsl"
+			in="${fragments.dir}/examples.html"
+			out="${frag.dir}/examples.html"
+		>
+			<param name="xsdrefs_xml" expression="${xsdrefs.xml}"/>
+			<param name="fragments_xml" expression="${fragments.xml}"/>
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+			<param name="examples_xml" expression="${examples.xml}"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/htmlfrag.xsl"
+			basedir="${fragments.dir}"
+			destdir="${frag.dir}"
+		>
+			<mapper type="glob" from="*.html" to="*.html"/>
+			<param name="xsdrefs_xml" expression="${xsdrefs.xml}"/>
+			<param name="fragments_xml" expression="${fragments.xml}"/>
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/htmlfrag.xsl"
+			in="${doc.dir}/index.html"
+			out="${build.tmp.dir}/index.html"
+		>
+			<param name="xsdrefs_xml" expression="${xsdrefs.xml}"/>
+			<param name="fragments_xml" expression="${fragments.xml}"/>
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+			<param name="nocontents" expression="1"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/htmlindex.xsl"
+			in="${fragments.xml}"
+			out="${frag.dir}/index.html"
+		>
+			<param name="fragments_dir" expression="${fragments.dir}"/>
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/htmlwebnews.xsl"
+			in="${fragments.dir}/release-notes.html"
+			out="${build.tmp.dir}/release-notes-short.html"
+		>
+			<param name="page" expression="release-notes"/>
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/htmlwebnews.xsl"
+			in="${fragments.dir}/news.html"
+			out="${build.tmp.dir}/news-short.html"
+		>
+			<param name="page" expression="news"/>
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/htmldoc.xsl"
+			basedir="${frag.dir}"
+			destdir="${build.doc.dir}"
+			includes="*.html"
+		>
+			<mapper type="glob" from="*.html" to="doc-*.html"/>
+			<param name="skeleton_path" expression="${skeleton.html}"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/htmldoc.xsl"
+			in="${build.tmp.dir}/index.html"
+			out="${build.doc.dir}/index.html"
+		>
+			<param name="skeleton_path" expression="${skeleton.html}"/>
+			<param name="isindex" expression="1"/>
+			<param name="release_notes_short" expression="${build.tmp.dir}/release-notes-short.html"/>
+			<param name="news_short" expression="${build.tmp.dir}/news-short.html"/>
+		</xslt>
+
+		<copy todir="${build.html.dir}">
+			<fileset dir="${doc.dir}">
+				<include name="favicon.ico"/>
+				<include name="images/audao-logo.png"/>
+				<include name="images/audao-process.png"/>
+				<include name="images/body-background.png"/>
+				<include name="images/exception-icons.png"/>
+				<include name="images/message-icons.png"/>
+				<include name="images/screen-download.png"/>
+				<include name="styles/**"/>
+				<include name="scripts/**"/>
+			</fileset>
+			<fileset dir="../schemas/build/doc"/>
+			<fileset dir="../schemas/src/schema" includes="audao.xsd"/>
+		</copy>
+
+	</target>
+
+
+	<target name="gen-web" description="Generates web documentation.">
+		<mkdir dir="${build.web.dir}"/>
+		<property name="frag.dir" location="${build.tmp.dir}/web"/>
+		<mkdir dir="${frag.dir}"/>
+
+		<xslt
+			style="${xsl.dir}/htmlexamples.xsl"
+			in="${fragments.dir}/examples.html"
+			out="${frag.dir}/examples.html"
+		>
+			<param name="xsdrefs_xml" expression="${xsdrefs.xml}"/>
+			<param name="fragments_xml" expression="${fragments.xml}"/>
+			<!--
+			<param name="prefix" expression="doc.jsp?page="/>
+			<param name="extension" expression=""/>
+			-->
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+			<param name="examples_xml" expression="${examples.xml}"/>
+		</xslt>
+
+		<sleep seconds="1"/>
+
+		<xslt
+			style="${xsl.dir}/htmlfrag.xsl"
+			basedir="${fragments.dir}"
+			destdir="${frag.dir}"
+		>
+			<mapper type="glob" from="*.html" to="*.html"/>
+			<param name="xsdrefs_xml" expression="${xsdrefs.xml}"/>
+			<param name="fragments_xml" expression="${fragments.xml}"/>
+			<!--
+			<param name="prefix" expression="doc.jsp?page="/>
+			<param name="extension" expression=""/>
+			-->
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/htmlindex.xsl"
+			in="${fragments.xml}"
+			out="${build.web.dir}/index.jsp"
+		>
+			<param name="fragments_dir" expression="${fragments.dir}"/>
+			<!--
+			<param name="prefix" expression="doc.jsp?page="/>
+			<param name="extension" expression=""/>
+			-->
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/htmlweb.xsl"
+			basedir="${frag.dir}"
+			destdir="${build.web.dir}"
+		>
+			<mapper type="glob" from="*.html" to="*.jsp"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/htmlwebnews.xsl"
+			in="${fragments.dir}/release-notes.html"
+			out="${build.web.dir}/release-notes-short.jsp"
+		>
+			<param name="page" expression="release-notes"/>
+			<!--
+			<param name="prefix" expression="doc.jsp?page="/>
+			<param name="extension" expression=""/>
+			-->
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/htmlwebnews.xsl"
+			in="${fragments.dir}/news.html"
+			out="${build.web.dir}/news-short.jsp"
+		>
+			<param name="page" expression="news"/>
+			<!--
+			<param name="prefix" expression="doc.jsp?page="/>
+			<param name="extension" expression=""/>
+			-->
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/atom.xsl"
+			in="${fragments.dir}/news.html"
+			out="${build.web.dir}/news.xml"
+		>
+			<param name="page" expression="news"/>
+			<param name="xsdrefs_xml" expression="${xsdrefs.xml}"/>
+			<param name="prefix" expression="doc-"/>
+			<param name="extension" expression=".html"/>
+		</xslt>
+
+
+		<mkdir dir="${build.tmp.dir}/treecollaps"/>
+		<xslt
+			style="${xsl.dir}/treecollaps.xsl"
+			basedir="${examples.dir}"
+			destdir="${build.tmp.dir}/treecollaps"
+		>
+			<mapper type="glob" from="*.xml" to="*.html"/>
+		</xslt>
+
+	</target>
+
+
+	<target name="examples">
+		<mkdir dir="${build.examples.dir}"/>
+		<mkdir dir="${build.examples.dir}/dao"/>
+		<mkdir dir="${build.examples.dir}/jar"/>
+		<mkdir dir="${build.examples.dir}/sql"/>
+		<mkdir dir="${build.examples.dir}/xml"/>
+
+		<fixcrlf
+			srcdir="${examples.dir}"
+			excludes="examples.xml"
+			destdir="${build.examples.dir}/xml"
+			eol="dos"
+		/>
+
+		<xslt
+			style="${xsl.dir}/build-examples.xsl"
+			in="${examples.xml}"
+			out="${build-examples.xml}"
+		/>
+
+		<copy todir="${build.dir}/fake-distro/lib">
+			<fileset dir="../embed/dist" includes="*.jar"/>
+			<fileset dir="../embed/lib" includes="*.jar"/>
+			<fileset dir="${lib.global}/commons" includes="commons-logging*.jar"/>
+			<fileset dir="${xalan.home}">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="${build.dir}/fake-distro/lib" file="${antlr-runtime.jar}"/>
+
+		<ant antfile="${build-examples.xml}" inheritAll="false">
+			<property name="audao.home" location="${build.dir}/fake-distro"/>
+			<property name="gae.home" location="${gae.home}"/>
+		</ant>
+	</target>
+
+
+	<target name="dist" description="Generates all.">
+		<antcall target="examples"/>
+		<antcall target="gen-static"/>
+		<antcall target="gen-web"/>
+	</target>
+
+</project>

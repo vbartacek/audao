@@ -1,0 +1,558 @@
+/*
+ * Todoizer common styles
+ * (C) Copyright 2009 Spolecne s.r.o.
+ */
+
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.right {
+    float: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.display-block {
+    display: block;
+}
+
+.display-none {
+    display: none;
+}
+
+
+.fc-bold {
+    font-weight: bold;
+}
+
+.fc-bigger {
+    font-size: 120%;
+}
+
+.fc-deleted {
+    text-decoration: line-through;
+}
+
+.fc-border {
+    border: 1px outset #ccc;
+}
+
+.fc-border-inv {
+    border: 1px inset #ccc;
+}
+
+.fc-border-groove {
+    border: 2px groove #ccc;
+}
+
+.fc-panel {
+    position: relative;
+    padding-top: 0.5em;
+}
+
+.fc-panel-caption {
+    position: absolute;
+    top: 0px;
+    left: 15px;
+    padding: 0px 5px;
+    background: #fff;
+    color: #555;
+    font-weight: bold;
+}
+
+.fc-panel-content {
+    border: 1px solid #aaa;
+    padding: 0.75em 0.5em;
+}
+
+.fc-banner {
+    background: #c67e3f;
+    color: #fff;
+    position: relative;
+    width: 100%;
+}
+
+.fc-window {
+/*    border: 2px outset #d7dfe0;*/
+    border: 1px solid #c67e3f;
+    background: #c6b3a2;
+    margin-bottom: 5px;
+}
+
+.fc-window-caption {
+    position: relative;
+    width: 100%;
+    height: 19px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background: #c67e3f;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+}
+
+.fc-window-caption .gwt-Button {
+    float: right;
+    background: url('../images/plus-minus.png') no-repeat;
+    width: 20px;
+    height: 20px;
+    border: 1px outset #dd3333;
+    cursor: pointer;
+}
+
+.fc-window-caption .gwt-Button-minus {
+    background-position: -18px 0px;
+}
+
+.fc-window-caption .gwt-Label {
+    line-height: 20px;
+}
+
+.fc-window-content {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.fc-loading {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: url('../images/ajax-loader.gif');
+}
+
+.fc-button-panel button {
+    margin: 5px;
+}
+
+.fc-header-label {
+    background: #a3bcd2;
+    border: 2px groove #ddd;
+    padding: 1px 3px;
+    margin: -1px;
+}
+
+.fc-bigger-label {
+    font-weight: bold;
+    font-size: 120%;
+    padding: 1px 3px;
+}
+
+
+.fc-table-list {
+    cursor: default;
+    width: 100%;
+}
+
+.fc-table-list .fc-header {
+/*    border: 1px outset #ccc; */
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 3px;
+    padding-right: 3px;
+/*    font-weight: bold;
+    text-align: center;*/
+}
+
+.fc-table-list .fc-header-selected {
+    border: 1px inset #ccc;
+    padding-top: 2px;
+    padding-bottom: 0px;
+    padding-left: 4px;
+    padding-right: 2px;
+    background: #cbd3d4;
+    font-weight: bold;
+    text-align: center;
+}
+
+.fc-table-list .fc-row {
+    background: #fff;
+    border-bottom: 1px solid #bbb;
+}
+
+.fc-table-list .fc-row:hover {
+    background: #ffffcc;
+}
+
+.fc-table-list .fc-row-selected {
+    background: #555;
+    color: #fff;
+}
+
+.fc-table-list .fc-cell {
+    border-bottom: 1px solid #ddd;
+    padding: 0px 3px;
+}
+
+
+.fc-table {
+    cursor: default;
+    width: 100%;
+}
+
+.fc-table .fc-header {
+    padding: 1px 5px;
+    font-weight: bold;
+    text-align: right;
+    border-bottom: 1px solid #ddd;
+}
+
+.fc-table .fc-cell {
+    background: #fff;
+    border-bottom: 1px solid #bbb;
+    padding: 1px 5px;
+}
+
+.fc-table .fc-cell:hover {
+    background: #ffffcc;
+}
+
+
+.fc-message-box {
+    border: 1px solid #555;
+    margin-bottom: 10px;
+}
+
+.fc-message-box .fc-message {
+    position: relative;
+    padding: 5px;
+}
+
+.fc-message-box .fc-message .label {
+    text-align: center;
+    font-size: 140%;
+    color: #fff;
+}
+
+.fc-message-box .fc-detail {
+    padding: 10px;
+    text-align: left;
+    font-size: small;
+}
+
+.fc-message .icon {
+    position: absolute;
+    left: 2;
+    top: 4;
+    background: url('../images/message-icons.png') no-repeat;
+    width: 24px;
+    height: 24px;
+}
+
+.fc-message-box-ok {
+    border-color: #3c3;
+}
+
+.fc-message-box-ok .fc-message {
+    background: #0c0;
+}
+
+.fc-message-box-ok .fc-detail {
+    background: #dfd;
+    color: #0c0;
+}
+
+.fc-message-box-ko {
+    border-color: #c33;
+}
+
+.fc-message-box-ko .fc-message {
+    background: #c00;
+}
+
+.fc-message-box-ko .fc-detail {
+    background: #fdd;
+    color: #c00;
+}
+
+.fc-message-box-ko .fc-message .icon {
+    background-position: -72px 0;
+}
+
+.fc-message-box-warn {
+    border-color: #bb9900;
+}
+
+.fc-message-box-warn .fc-message {
+    background: #ddbb00;
+}
+
+.fc-message-box-warn .fc-message .icon {
+    background-position: -24px 0;
+}
+
+.fc-message-box-warn .fc-detail {
+    background: #ffd;
+    color: #777700;
+}
+
+
+.fc-field-icon {
+    margin-left: auto;
+    margin-right: auto;
+    width: 20px;
+    height: 20px;
+    background: url('../images/field-iconsbg.png') no-repeat;
+    background-position: -60px 0px;
+}
+
+.fc-field-icon-tr {
+    margin-left: auto;
+    margin-right: auto;
+    width: 20px;
+    height: 20px;
+    background: url('../images/field-icons.png') no-repeat;
+    background-position: -60px 0px;
+}
+
+.fc-field-icon-container {
+    margin-right: 3px;
+}
+
+.fc-field-icon-container .fc-field-icon {
+    margin-left: 3px;
+}
+
+.fc-field-icon-ok {
+    background-position: 0px 0px;
+}
+
+.fc-field-icon-ko {
+    background-position: -20px 0px;
+}
+
+.fc-field-icon-modified {
+    background-position: -40px 0px;
+}
+
+
+input, textarea, select {
+    font-size: small;
+}
+
+input[type=text], input[type=password], textarea, select {
+    background: #fff;
+}
+
+input[disabled], input[type=button][disabled], input[type=submit][disabled], textarea[disabled], select[disabled]  {
+    background: #d7dfe0;
+    color: #888;
+}
+
+input[type=text], input[type=password], input[type=file] {
+    margin: 0;
+    padding: 1px 2px;
+    border: 1px solid #888;
+}
+
+input[type=button], input[type=submit], button {
+    margin: 0;
+    padding: 1px 3px;
+    text-decoration: none;
+    cursor: pointer;
+    cursor: hand;
+    background: #9ae;
+    border: 2px outset #9ae;
+    color: #118;
+}
+
+input[type=button]:active, input[type=submit]:active, button:active {
+    border: 2px inset #9ae;
+}
+
+input[type=button][disabled]:active, input[type=submit][disabled]:active, button[disabled]:active {
+    border: 2px outset #9ae;
+}
+
+input[type=button][disabled], input[type=submit][disabled], button[disabled] {
+    cursor: default;
+}
+
+input[type=radio] {
+    padding: 1px 2px;
+}
+
+textarea {
+    padding: 1px 2px;
+    border: 1px solid #888;
+}
+
+select {
+    border: 1px solid #888;
+}
+
+.narrowbox {
+    border: 1px solid #55f;
+    margin-top: 3px;
+    margin-bottom: 10px;
+}
+
+.boxheader {
+    background: #55f;
+    color: #fff;
+    font-weight: bold;
+    padding: 3px;
+    text-align: center;
+}
+
+.boxcontent {
+    padding: 5px;
+    font-size: 90%;
+    color: #128;
+    background: #f0f0ff;
+}
+
+.boxcontent ul {
+    padding: 0;
+    margin: 0;
+}
+
+.boxcontent li {
+    display: block;
+    list-style: outside none;
+    list-style-type: none;
+    padding: 5px 0;
+}
+
+.boxcontent li > p {
+    margin-left: 5px;
+    font-size: 90%;
+}
+
+.boxcontent li a {
+    color: #00a !important;
+}
+
+.boxcontent .date {
+    color: #888;
+    font-size: 90%;
+}
+
+.exception {
+    position: relative;
+    width: 100%;
+}
+
+.exception .icon-exception {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: url('../images/exception-icons.png') no-repeat;
+    width: 16px;
+    height: 16px;
+}
+
+.exception div.exception-ERROR {
+    background-position: -16px 0;
+}
+
+.exception div.exception-FATAL_ERROR {
+    background-position: -32px 0;
+}
+
+.exception .detail {
+    margin-left: 20px;
+}
+
+
+table.borders {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.borders td {
+}
+
+table.borders td.topleft {
+    background: url('../images/borders.png') no-repeat 0 -40px;
+    width: 20px;
+    height: 20px;
+}
+
+table.borders td.topcenter {
+    background: url('../images/borders.png') repeat-x;
+    height: 20px;
+}
+
+table.borders td.topright {
+    background: url('../images/borders.png') no-repeat -20px -40px;
+    width: 20px;
+    height: 20px;
+}
+
+table.borders td.centerleft {
+    background: url('../images/borders-vert.png') repeat-y;
+    width: 20px;
+}
+
+table.borders td.centercenter {
+}
+
+table.borders td.centerright {
+    background: url('../images/borders-vert.png') repeat-y -20px 0;
+    width: 20px;
+}
+
+table.borders td.bottomleft {
+    background: url('../images/borders.png') no-repeat 0 -60px;
+    width: 20px;
+    height: 20px;
+}
+
+table.borders td.bottomcenter {
+    background: url('../images/borders.png') repeat-x 0 -20px;
+    height: 20px;
+}
+
+table.borders td.bottomright {
+    background: url('../images/borders.png') no-repeat -20px -60px;
+    width: 20px;
+    height: 20px;
+}
+
+
+table.form {
+    border-collapse: collapse;
+}
+
+table.form td {
+    padding: 3px 10px;
+}
+
+table.form td.header {
+    background: #78c;
+    color: #fff;
+    font-weight: bold;
+}
+
+table.form td.sep {
+    background: #abf;
+}
+
+table.form td.label {
+    width: 25%;
+    background: #9ae;
+}
+
+table.form td.req {
+    font-weight: bold;
+}
+
+table.form td.value {
+    background: #cdf;
+}
+

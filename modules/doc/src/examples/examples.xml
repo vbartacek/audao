@@ -1,0 +1,75 @@
+<examples xmlns="http://www.spoledge.com/audao/doc/examples">
+
+	<example name="reg_users">
+		<label>Simple table - registered users</label>
+		<description>
+			This is the simplest example containing one table.
+			The table is also used by this site's datastore.
+		</description>
+		<audao package="com.spoledge.audao.web.db" dbtype="gae"/>
+	</example>
+
+	<example name="todoizer">
+		<label>Todoizer source</label>
+		<link href="http://vb-todoizer.appspot.com">
+			<prefix>the source for the </prefix>
+			<label>Todoizer</label>
+		</link>
+		<link href="http://wiki.gug.cz/pro-vyvojare-1/online-dilna-gugcz">
+			<prefix>2nd place in a developers contest 2009/10 by </prefix>
+			<label>wiki.gug.cz</label>
+		</link>
+		<description>
+			This is the full source of Todoizer's DB configuration.
+			Todoizer is running on Google App Engine.
+		</description>
+		<audao package="com.spoledge.todoizer.db" dbtype="gaejdo"/>
+	</example>
+
+	<example name="todoizer-2">
+		<label>Todoizer source (version 2.0)</label>
+		<link href="http://vb-todoizer.appspot.com">
+			<prefix>the new source for the </prefix>
+			<label>Todoizer</label>
+		</link>
+		<link href="http://wiki.gug.cz/pro-vyvojare-1/online-dilna-gugcz">
+			<prefix>2nd place in a developers contest 2009/10 by </prefix>
+			<label>wiki.gug.cz</label>
+		</link>
+		<description>
+			This is the full source of Todoizer's DB configuration rewritten to GAE low-level implementation.
+			Todoizer is running on Google App Engine.
+		</description>
+		<audao package="com.spoledge.todoizer.db" dbtype="gae"/>
+	</example>
+
+	<example name="logging">
+		<label>DB logging</label>
+		<link href="http://www.spoledge.com/en/solutions/facicredit-en.html">
+			<prefix>used by </prefix>
+			<label>FaciCredit</label>
+		</link>
+		<description>
+			An example of DB structures for Database logging/auditing.
+			This is often used in enterprise applications where you need to find
+			history about who, when and what was done with a given database record.
+		</description>
+		<audao package="com.spoledge.facicredit.db" dbtype="oracle"/>
+	</example>
+
+	<example name="seo">
+		<label>SEO example</label>
+		<link href="http://www.spoledge.com/en/solutions/facicredit-en.html">
+			<prefix>used by </prefix>
+			<label>FaciCredit</label>
+		</link>
+		<description>
+			This is an example of search engine optimization used by a standalone application.
+			A basic word indexing is implemented to achieve fast full-text search in selected
+			entities and their attributes. This allows to provide suggestion boxes on client
+			side.
+		</description>
+		<audao package="com.spoledge.facicredit.db" dbtype="mysql"/>
+	</example>
+
+</examples>

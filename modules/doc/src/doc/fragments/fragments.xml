@@ -1,0 +1,10 @@
+<fragments xmlns="http://www.spoledge.com/audao/doc/fragments">
+	<fragment name="overview"/>
+	<fragment name="feature-matrix"/>
+	<fragment name="sql-features"/>
+	<fragment name="dao-features"/>
+	<fragment name="gae-features"/>
+	<fragment name="generator-output"/>
+	<fragment name="generator-tools"/>
+	<fragment name="examples"/>
+</fragments>
