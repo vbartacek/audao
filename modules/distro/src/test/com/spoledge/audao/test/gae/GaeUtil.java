@@ -15,41 +15,19 @@
  */
 package com.spoledge.audao.test.gae;
 
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalMemcacheServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 
 import com.spoledge.audao.db.dao.gae.DatastoreServiceProvider;
 import com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl;
 
 
-public class GaeUtil {
-
-    private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
-         new LocalDatastoreServiceTestConfig(),
-         new LocalMemcacheServiceTestConfig()
-         );
-
-    protected DatastoreService ds;
-
-    public void setUp() {
-        helper.setUp();
-
-        ds = DatastoreServiceFactory.getDatastoreService();
-    }
+public class GaeUtil extends GaeUtilRaw {
 
 
     public void tearDown() {
         GaeAbstractDaoImpl.clearEntityCache();
 
-        helper.tearDown();
-    }
-
-    public DatastoreService getDatastoreService() {
-        return ds;
+        super.tearDown();
     }
 
 

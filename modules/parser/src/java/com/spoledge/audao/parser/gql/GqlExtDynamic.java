@@ -97,13 +97,9 @@ public class GqlExtDynamic {
                 log.debug("prepare(): gql=" + gql + ", tree=" + tree.toStringTree());
             }
 
-            CommonTreeNodeStream nodes = new CommonTreeNodeStream( tree );
-            nodes.setTokenStream( parser.getTokenStream());
-            GqlExtTree treeParser = new GqlExtTree( nodes );
-
             PreparedGql.QueryType qt = PreparedGql.QueryType.valueOf( parser.getQueryType().name());
 
-            return new PreparedGql( ds, gql, qt, treeParser );
+            return new PreparedGql( ds, gql, qt, tree, parser.getTokenStream());
         }
         catch (RecognitionException e) {
             log.error("prepare(): " + formatError( gql, e ), e);

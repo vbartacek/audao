@@ -43,6 +43,7 @@
 		<fileset dir="${gae.home}/lib/testing"/>
 		<fileset dir="${gwt.home}" includes="gwt-user.jar"/>
 		<fileset dir="${build.tests.dir}" includes="*/*.jar"/>
+		<fileset dir="${distro.lib.dir}" includes="audao-runtime-gql*.jar"/>
 	</path>
 
 	<path id="run-test.path">
@@ -58,8 +59,25 @@
 		<fileset dir="${gae.home}/lib/impl"/>
 		<fileset dir="${gae.home}/lib/testing"/>
 		<fileset dir="${gwt.home}" includes="gwt-user.jar"/>
-		<fileset dir="${distro.lib.dir}" includes="audao-runtime-gql*.jar"/>
+		<fileset dir="${distro.lib.dir}" includes="audao-runtime-gql-*.jar"/>
 		<fileset dir="${build.tests.dir}" includes="*-gae/*.jar"/>
+	</path>
+
+	<path id="junit-gql.path">
+		<path refid="run-test.path"/>
+		<pathelement path="${antlr-runtime.jar}"/>
+		<fileset dir="${gae.home}/lib/impl"/>
+		<fileset dir="${gae.home}/lib/testing"/>
+		<fileset dir="${distro.lib.dir}" includes="audao-runtime-${version}.jar"/>
+		<fileset dir="${distro.lib.dir}" includes="audao-runtime-gql-${version}.jar"/>
+	</path>
+
+	<path id="junit-gqlext.path">
+		<path refid="run-test.path"/>
+		<pathelement path="${antlr-runtime.jar}"/>
+		<fileset dir="${gae.home}/lib/impl"/>
+		<fileset dir="${gae.home}/lib/testing"/>
+		<fileset dir="${distro.lib.dir}" includes="audao-runtime-gqlext-${version}.jar"/>
 	</path>
 
 	<path id="junit-mysql.path">
@@ -80,6 +98,8 @@
 		<exclude name="**/*Abstract*Test.class"/>
 		<exclude name="**/*Abstract*Tests.class"/>
 		<exclude name="**/jdbc/**"/>
+		<exclude name="**/gae/gql/**"/>
+		<exclude name="**/gae/gqlext/**"/>
 	</fileset>
 
 	<fileset id="junit-jdbc.fs" dir="${build.classes-test.dir}">
@@ -88,7 +108,17 @@
 		<exclude name="**/*Abstract*Test.class"/>
 		<exclude name="**/*Abstract*Tests.class"/>
 		<exclude name="**/gae/**"/>
+		<exclude name="**/gae/gql/**"/>
+		<exclude name="**/gae/gqlext/**"/>
 		<exclude name="**/gwt/**"/>
+	</fileset>
+
+	<fileset id="junit-gql.fs" dir="${build.classes-test.dir}">
+		<include name="**/gae/gql/*Test.class"/>
+	</fileset>
+
+	<fileset id="junit-gqlext.fs" dir="${build.classes-test.dir}">
+		<include name="**/gae/gqlext/*Test.class"/>
 	</fileset>
 
 	<!-- SECTION TARGETS -->
@@ -140,7 +170,8 @@
 			</fileset>
 			<fileset dir="${build.classes.dir}">
 				<include name="com/spoledge/audao/generator/**"/>
-				<include name="com/spoledge/audao/parser/gql/GqlStatic*"/>
+				<include name="com/spoledge/audao/parser/gql/GqlStatic.class"/>
+				<include name="com/spoledge/audao/parser/gql/impl/GqlStatic*"/>
 				<include name="com/spoledge/util/**"/>
 			</fileset>
 			<manifest>
@@ -166,7 +197,24 @@
 		<jar destfile="${distro.lib.dir}/audao-runtime-gql-${version}.jar">
 			<fileset dir="${build.classes.dir}">
 				<include name="com/spoledge/audao/db/gae/GQLDynamicQuery.class"/>
-				<include name="com/spoledge/audao/parser/gql/GqlDynamic*"/>
+				<include name="com/spoledge/audao/parser/gql/GqlDynamic.class"/>
+				<include name="com/spoledge/audao/parser/gql/impl/GqlDynamic*"/>
+				<include name="com/spoledge/audao/parser/gql/impl/ParserUtils.class"/>
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-Jdk" value="${java.version}"/>
+				<attribute name="Build-Platform" value="${os.name} ${os.arch} ${os.version}"/>
+			</manifest>
+		</jar>
+
+		<jar destfile="${distro.lib.dir}/audao-runtime-gqlext-${version}.jar">
+			<fileset dir="${build.classes.dir}">
+				<include name="com/spoledge/audao/parser/gql/GqlExtDynamic.class"/>
+				<include name="com/spoledge/audao/parser/gql/PreparedGql*.class"/>
+				<include name="com/spoledge/audao/parser/gql/impl/ParserUtils.class"/>
+				<include name="com/spoledge/audao/parser/gql/impl/GqlExt*"/>
+				<include name="com/spoledge/audao/parser/gql/impl/soft/**"/>
 			</fileset>
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
@@ -178,11 +226,13 @@
 		<zip destfile="${distro.src.dir}/audao-sources-${version}.zip">
 			<fileset dir="${build.java-src.dir}">
 				<include name="com/spoledge/audao/db/**"/>
-				<include name="com/spoledge/audao/parser/gql/GqlDynamic*.java"/>
+				<include name="com/spoledge/audao/parser/gql/**"/>
+				<exclude name="com/spoledge/audao/parser/gql/GqlStatic.java"/>
 			</fileset>
 			<fileset dir="../parser/src">
 				<include name="grammar/GqlLexer.g"/>
 				<include name="grammar/GqlDynamic.g"/>
+				<include name="grammar/GqlExt*.g"/>
 			</fileset>
 		</zip>
 
@@ -268,6 +318,8 @@
 		<antcall target="compile-test"/>
 
 		<antcall target="test-gae"/>
+		<antcall target="test-gql"/>
+		<antcall target="test-gqlext"/>
 		<antcall target="test-mysql"/>
 		<antcall target="test-oracle"/>
 	</target>
@@ -277,6 +329,20 @@
 		<antcall target="junit">
 			<param name="junit-fs" value="junit-no-jdbc.fs"/>
 			<param name="junit-path" value="junit-gae.path"/>
+		</antcall>
+	</target>
+
+	<target name="test-gql" if="gae.test">
+		<antcall target="junit">
+			<param name="junit-fs" value="junit-gql.fs"/>
+			<param name="junit-path" value="junit-gql.path"/>
+		</antcall>
+	</target>
+
+	<target name="test-gqlext" if="gae.test">
+		<antcall target="junit">
+			<param name="junit-fs" value="junit-gqlext.fs"/>
+			<param name="junit-path" value="junit-gqlext.path"/>
 		</antcall>
 	</target>
 

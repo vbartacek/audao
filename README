@@ -124,6 +124,11 @@ DAO-implementation - Oracle
     * "auto" integer columns are implemented using sequences
     * sorting: internationalization support using NLSSORT()
 
+DAO-implementation - Google App Engine
+    * 'List' and 'gae:*' special types
+    * gae-parent references
+    * views are not supported
+
 
 Building
 --------
