@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+	<tables>
+		<auto-find/>
+
+		<table name="registered_users">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="user_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="gae_user_id">
+					<type max-length="500">String</type>
+					<not-null/>
+				</column>
+				<column name="user_name">
+					<type max-length="500">String</type>
+					<not-null/>
+				</column>
+				<column name="created_date">
+					<type>Date</type>
+					<auto/>
+					<not-null/>
+				</column>
+				<column name="last_login_date">
+					<type>Timestamp</type>
+					<auto/>
+					<not-null/>
+					<edit/>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_user_gaeid">
+					<unique/>
+					<columns>
+						<column name="gae_user_id"/>
+					</columns>
+				</index>
+			</indexes>
+		</table>
+
+
+		<table name="todo_items">
+			<columns>
+				<column name="todo_item_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="user_id">
+					<ref table="registered_users"/>
+					<not-null/>
+				</column>
+				<column name="created_date">
+					<type>Timestamp</type>
+					<auto/>
+					<not-null/>
+				</column>
+				<column name="todo_text">
+					<type max-length="500">String</type>
+					<not-null/>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_todo_user">
+					<no-find/>
+					<columns>
+						<column name="user_id"/>
+					</columns>
+				</index>
+			</indexes>
+			<methods>
+
+				<count>
+					<index name="inx_todo_user"/>
+				</count>
+
+				<find>
+					<range/>
+					<index name="inx_todo_user"/>
+					<order-by>
+						<column name="created_date"/>
+					</order-by>
+				</find>
+
+				<find name="byUserIdDesc">
+					<range/>
+					<index name="inx_todo_user"/>
+					<order-by>
+						<column name="created_date" desc="true"/>
+					</order-by>
+				</find>
+
+				<delete>
+					<pk/>
+				</delete>
+
+			</methods>
+		</table>
+
+
+		<table name="tags">
+			<columns>
+				<column name="tag_name">
+					<type max-length="100">String</type>
+					<pk/>
+				</column>
+				<column name="tag_id">
+					<type>long</type>
+					<auto/>
+					<not-null/>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_tag_id">
+					<unique/>
+					<columns>
+						<column name="tag_id"/>
+					</columns>
+				</index>
+			</indexes>
+			<methods>
+				<find name="byTagName">
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<table name="user_tags">
+			<columns>
+				<column name="user_tag_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="user_id">
+					<ref table="registered_users" gae-parent="true"/>
+					<not-null/>
+				</column>
+				<column name="tag_id">
+					<ref table="tags"/>
+					<not-null/>
+				</column>
+			</columns>
+			<methods>
+				<find name="byUserIdTagId">
+					<unique/>
+					<condition>
+						<query>ANCESTOR IS KEY('RegisteredUser', :1) AND tagId = :2</query>
+						<params>
+							<column name="user_id"/>
+							<column name="tag_id"/>
+						</params>
+					</condition>
+				</find>
+			</methods>
+		</table>
+
+
+		<table name="todo_tags">
+			<columns>
+				<column name="todo_tag_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="todo_item_id">
+					<ref table="todo_items" gae-parent="true"/>
+					<not-null/>
+				</column>
+				<column name="user_tag_id">
+					<ref table="user_tags"/>
+					<not-null/>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_todotag_usertag">
+					<no-find/>
+					<columns>
+						<column name="user_tag_id"/>
+					</columns>
+				</index>
+				<index name="inx_todotag_todo">
+					<columns>
+						<column name="todo_item_id"/>
+					</columns>
+				</index>
+			</indexes>
+			<methods>
+				<count>
+					<index name="inx_todotag_usertag"/>
+				</count>
+
+				<find name="byUserTagId">
+					<range/>
+					<index name="inx_todotag_usertag"/>
+					<order-by>
+						<column name="todo_tag_id"/>
+					</order-by>
+				</find>
+
+				<find name="byUserTagIdDesc">
+					<range/>
+					<index name="inx_todotag_usertag"/>
+					<order-by>
+						<column name="todo_tag_id" desc="true" />
+					</order-by>
+				</find>
+
+				<delete>
+					<index name="inx_todotag_todo"/>
+				</delete>
+			</methods>
+		</table>
+
+	</tables>
+
+</database>

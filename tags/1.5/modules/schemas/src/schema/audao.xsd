@@ -1,0 +1,1626 @@
+<?xml version="1.0"?>
+<!--
+ * Copyright 2010 Spolecne s.r.o. (www.spoledge.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *-->
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.spoledge.com/audao"
+	targetNamespace="http://www.spoledge.com/audao"
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified"
+>
+
+	<!--======================= Name Types ================================-->
+
+	<!-- Oracle names are limited to 30 characters -->
+	<!-- We add 3 chars "pk_" to the table name, so the max. length is 27 -->
+
+	<xs:simpleType name="NameType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="[a-zA-Z][a-zA-Z0-9_]*" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="SchemaNameType">
+		<xs:restriction base="NameType">
+			<xs:maxLength value="30" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="TableNameType">
+		<xs:restriction base="NameType">
+			<xs:maxLength value="30" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="ViewNameType">
+		<xs:restriction base="NameType">
+			<xs:maxLength value="30" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="IndexNameType">
+		<xs:restriction base="NameType">
+			<xs:maxLength value="30" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="SequenceNameType">
+		<xs:restriction base="NameType">
+			<xs:maxLength value="30" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="ColumnNameType">
+		<xs:restriction base="NameType">
+			<xs:maxLength value="30" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="JavaFullNameType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="[a-zA-Z][a-zA-Z0-9_.]*" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<!--======================= Misc Types ================================-->
+
+
+	<xs:simpleType name="EditModeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="column"/>
+			<xs:enumeration value="row"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="ColumnTypeListType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="boolean"/>
+			<xs:enumeration value="short"/>
+			<xs:enumeration value="int"/>
+			<xs:enumeration value="long"/>
+			<xs:enumeration value="double"/>
+			<xs:enumeration value="String"/>
+			<xs:enumeration value="Date"/>
+			<xs:enumeration value="Timestamp"/>
+			<xs:enumeration value="byte[]"/>
+			<xs:enumeration value="Serializable"/>
+			<xs:enumeration value="List"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="EqualityType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="full"/>
+			<xs:enumeration value="columns"/>
+			<xs:enumeration value="pk"/>
+			<xs:enumeration value="identity"/>
+			<xs:enumeration value="none"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:complexType name="ColumnTypeType">
+		<xs:simpleContent>
+			<xs:extension base="ColumnTypeListType">
+				<xs:attribute name="min-length" type="xs:int" use="optional">
+					<xs:annotation>
+						<xs:documentation>
+							The minimum length of the field.
+							For String type the unit is a character.
+							For byte[] and Serializable types the unit is a byte.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="max-length" type="xs:int" use="optional">
+					<xs:annotation>
+						<xs:documentation>
+							The maximum length of the field - mandatory for String and byte[] types.
+							Optional for Serializable field - if not set, then no checks are performed;
+							the maximum types are used (longblob, long raw, Blob).
+
+							If Serializable class is a 'gae:' core class (e.g. GeoPt), then the core class
+							is used unless max-length is specified.
+
+							For String type the unit is a character.
+							For byte[] and Serializable types the unit is a byte.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="i18n" type="xs:boolean" use="optional">
+					<xs:annotation>
+						<xs:documentation>
+							Only for 'String' type:
+							if true, then international characters are expected to be stored in this column.
+							Used for Oracle: type NVARCHAR2 instead of VARCHAR2.
+							Also internationalization is enabled for sorting.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="class" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation>
+							Optionally for 'Serializable' and 'List' types:
+							it specifies the target class for the given column and the generic List type resp.
+							A full java name must be specified for custom classes.
+							The default class for 'Serializable' type is 'java.io.Serializable',
+							for 'List' type it is 'java.util.List' (not generic).
+
+							The classes in package java.lang can be specified shortly: e.g. 'String'.
+							The generated other DTO classes can be specified as 'table:table_name'.
+
+						  GAE only: the GAE core classes can be specified shortly as 'gae:ShortClassName' -
+							fo example 'gae:GeoPt' or 'gae:User'. In such case no attribute @max-length
+							should be specified, otherwise even the core class would be converted to ShortBlob
+							or Blob according to the @max-length's value.
+
+							GAE only: the items of the 'List' types are automatically converted to blobs,
+							unless the class is a GAE core class ('gae:*' + 'String', 'Long', ..).
+							But if the type is 'Serializable' and class is 'java.util.List',
+							then a native GAE List type is used - no conversions of the list's item is performed
+							and it is the developer's responsibility to pass only core GAE types to the list.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="ColumnEnumType">
+		<xs:sequence>
+			<xs:element name="value" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="NameType">
+							<xs:attribute name="id" type="xs:int" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="ColumnReferenceType">
+		<xs:sequence>
+			<xs:element name="comment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						A comment which is copied to the java code.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="ColumnNameType" use="required"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="ColumnReferenceParamType">
+		<xs:sequence>
+			<xs:element name="comment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						A comment which is copied to the java code.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="ColumnNameType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					The name of the referenced column.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="java" type="NameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The Java name - use this if you want to specify your own name
+					or when a collision of names occurs (e.g. two same columns in one query).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="list" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>
+					For GAE only: forces to use List&lt;column-type&gt; parameter instead
+					of the simple type.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="ColumnOrderReferenceType">
+		<xs:attribute name="name" type="ColumnNameType" use="required"/>
+		<xs:attribute name="desc" type="xs:boolean" use="optional"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="ColumnsType">
+		<xs:sequence>
+			<xs:element name="column" type="ColumnReferenceType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="RefTableType">
+		<xs:attribute name="table" type="TableNameType" use="required"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="RefTableAliasType">
+		<xs:attribute name="table" type="TableNameType" use="required"/>
+		<xs:attribute name="alias" type="xs:token" use="required"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="RefTableAliasColumnOptType">
+		<xs:attribute name="table" type="TableNameType" use="optional"/>
+		<xs:attribute name="alias" type="xs:token" use="optional"/>
+		<xs:attribute name="column" type="ColumnNameType" use="optional"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="RefTableColumnType">
+		<xs:attribute name="table" type="TableNameType" use="required"/>
+		<xs:attribute name="column" type="ColumnNameType" use="required"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="RefTableColumnOptType">
+		<xs:attribute name="table" type="TableNameType" use="required"/>
+		<xs:attribute name="column" type="ColumnNameType" use="optional"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="RefTableOptColumnOptType">
+		<xs:attribute name="table" type="TableNameType" use="optional"/>
+		<xs:attribute name="column" type="ColumnNameType" use="optional"/>
+		<xs:attribute name="fk" type="xs:boolean" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>
+					Specifies whether foreign key should be created in the database.
+					It is true by default, but sometimes it is useful to disable this
+					- for example when you only want to share the same type of the column
+					without fk contraint.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="gae-parent" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>
+					This is currently used only for GAE and ignored for other implementations.
+					When the "gae-parent" option is enabled, and the target column is a primary key,
+					then a "Key" field is generated. If unilateral relation is detected,
+					then it is handled as a parent-key relation. Thus the entities are
+					in the same entity group and transactions are supported.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="AutoFindType">
+		<xs:attribute name="pk" type="xs:boolean" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>
+					This attribute specifies whether method "findByPrimaryKey" will be automatically generated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="index" type="xs:boolean" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>
+					This attribute specifies whether "frindByXXX" methods based on existing indexes
+					will be automatically generated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="ParamsType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="column" type="ColumnReferenceParamType">
+				<xs:annotation>
+					<xs:documentation>
+						A column which is used as the reference for parameter name and type.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="param">
+				<xs:complexType>
+					<xs:attribute name="name" type="NameType" use="required">
+						<xs:annotation>
+							<xs:documentation>
+								The parameter name.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="type" type="ColumnTypeListType" use="required">
+						<xs:annotation>
+							<xs:documentation>
+								The parameter type.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="class" type="xs:string" use="optional">
+						<xs:annotation>
+							<xs:documentation>
+								The Java class to use for Serializable ans List types.
+								See the ColumnTypeType documentation.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="list" type="xs:boolean" use="optional" default="false">
+						<xs:annotation>
+							<xs:documentation>
+								For GAE only: forces to use List&lt;param-type&gt; parameter instead
+								of the simple type.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+
+
+	<xs:complexType name="IndexFindType">
+		<xs:attribute name="name" type="IndexNameType" use="required"/>
+		<xs:attribute name="level" type="xs:int" use="optional" default="1">
+			<xs:annotation>
+				<xs:documentation>
+					The level of the index to be generated. Level 1 means all parameters, level 2 all but one ...
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="list" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>
+					For GAE only: forces to use List&lt;@class&gt; parameter instead
+					of the default type (Object or @class).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="ConditionType">
+		<xs:sequence>
+			<xs:element name="query" type="StringWithDbType" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						An SQL condition used for preparing statement - for SQL use "?" for parameters,
+						for Google App Engine (gae) use numbered parameters like ":1", ":2" etc.,
+						for Google App Engine - JDO (gaejdo) use implicit parameters like ":myParamName".
+						You can define different queries for different DB types.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="params" minOccurs="0" type="ParamsType">
+				<xs:annotation>
+					<xs:documentation>
+						Finder parameters which are passed to the prepared statement.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="UpdateSetType">
+		<xs:sequence>
+			<xs:element name="query" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						An SQL "SET" clause (without "SET") used for preparing statement - use "?" for parameters.
+						If not set, then it is automatically generated using the params/column definitions.
+						If not set, no params/param definitions are allowed.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="params" minOccurs="0" type="ParamsType">
+				<xs:annotation>
+					<xs:documentation>
+						Parameters which are passed to the prepared statement.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="StringWithDbType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="dbtype" type="xs:token" use="optional">
+					<xs:annotation>
+						<xs:documentation>
+							The underlying DB type like 'mysql', 'oracle', 'gae' or 'gaejdo'.
+							If you let it empty then it will indicate the default or independent content.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+
+	<!--======================= GAE Ext Types ================================-->
+
+	<xs:complexType name="GaeColumnExtType">
+		<xs:attribute name="unindexed" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					GAE only: when set to "true", then this property is stored as unindexed property
+					and you cannot search by it in future. This can save datastore space.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="empty" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					GAE only: when set to "true", then null values are never stored - the property
+					is not set at all. This can save datastore space.
+					NOTE: You cannot search for null values in future. 
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<!--======================= Table Types ================================-->
+
+	<xs:complexType name="ColumnType">
+		<xs:sequence>
+			<xs:element name="comment" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A comment which is copied to the java code.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element name="type" type="ColumnTypeType"/>
+					<xs:element name="enum" type="ColumnEnumType" minOccurs="0"/>
+					<xs:element name="auto" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Flag: if present, then this column is automatically filled when inserting
+								a new or updating an existing record.
+								Autoincrement (mysql) or sequences (oracle) are used for "short", "int" and "long" columns.
+								The current date is used for "Date" columns.
+								The current date and time is used for "Timestamp" columns.
+								The default mode is 'insert'.
+								The 'update' mode allows to update Date and Timestamp columns for both 'insert' and 'update' operations.
+								For integer types only the 'insert' mode is valid.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:attribute name="sequence" type="SequenceNameType" use="optional">
+								<xs:annotation>
+									<xs:documentation>
+										The sequence name used for oracle DB.
+										The default value is "seq_" + the name of the table.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="start" type="xs:int" use="optional">
+								<xs:annotation>
+									<xs:documentation>
+										The start value used for sequences in oracle DB.
+										The default value is "1".
+									</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="on" use="optional" default="insert">
+								<xs:annotation>
+									<xs:documentation>
+										The event when the auto-filling is enabled.
+										The 'update' and 'update-only' value is allowed only for 'Date' and 'Timestamp' types.
+									</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="insert"/>
+										<xs:enumeration value="update"/>
+										<xs:enumeration value="update-only"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:element name="ref" type="RefTableOptColumnOptType">
+					<xs:annotation>
+						<xs:documentation>
+							Reference to other (table's) column.
+							If the column name is not specified, then it is the same as the current column's name.
+							The type (including enums) are taken from the other column's type.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="transient" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Flags the column as transient - data are not serialized.
+						Optional attributes allow you to specify the serialization policy exactly
+						("io"=java IO, "gwt"=GWT serialization)
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="io" type="xs:boolean" use="optional" default="true"/>
+					<xs:attribute name="gwt" type="xs:boolean" use="optional" default="true"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="not-null" minOccurs="0"/>
+			<xs:element name="pk" minOccurs="0"/>
+			<xs:element name="default-value" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Defines default value (Java syntax: e.g. 1, 2.2, true, "abcd", com.foo.CONSTANT )
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="edit" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Flags the collumn as editable - it means that this column can be updated.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="gae" type="GaeColumnExtType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						GAE only extension attributes.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="ColumnNameType" use="required"/>
+		<xs:attribute name="java" type="NameType" use="optional"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="IndexType">
+		<xs:sequence>
+			<xs:element name="unique" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Flag: if present, then the index is unique.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="no-find" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Flag: if present, then no finder method is generated for this index.
+						If one or more level is specified, then only the level is not generated.
+						The levels are numbered 1,2,3,...
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="level" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:attribute name="no" type="xs:int" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="columns" type="ColumnsType"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="IndexNameType" use="required"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="FindType">
+		<xs:sequence>
+			<xs:element name="comment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						A comment which is copied to the java code.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice minOccurs="0">
+				<xs:element name="unique">
+					<xs:annotation>
+						<xs:documentation>
+							Flag: if present, then the finder is unique and returns one record at most.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="range">
+					<xs:annotation>
+						<xs:documentation>
+							Flag: if present, then the finder method will contain "offset" and "count" variables.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="all">
+					<xs:annotation>
+						<xs:documentation>
+							A special finder: finds all records.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="dynamic">
+					<xs:annotation>
+						<xs:documentation>
+							A generic finder - allows to pass SQL condition + parameters.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="pk">
+					<xs:annotation>
+						<xs:documentation>
+							Find a record by its primary key.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="index" type="IndexFindType">
+					<xs:annotation>
+						<xs:documentation>
+							Condition constructed using existing index.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="condition" type="ConditionType">
+					<xs:annotation>
+						<xs:documentation>
+							Explicit finder - allows to pass parameters to predefined SQL.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ref" type="RefTableType">
+					<xs:annotation>
+						<xs:documentation>
+							Finds records by a reference.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="order-by" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="column" type="ColumnOrderReferenceType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="use-no-cache" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Forces not using default cache - can be used only for "pk" finder types.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="NameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The name of the finder - the java name is constructed as "find" + ucfirst(@name).
+					The attribute is optional for condition types: "all" (findAll),
+					"dynamic" (findDynamic), pk (findByPrimaryKey) and "index" (findBy + index columns).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="limit" type="xs:int" use="optional" default="-1">
+			<xs:annotation>
+				<xs:documentation>
+					Limits the result.
+					Only applicable for non-unique finders.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="CountType">
+		<xs:sequence>
+			<xs:element name="comment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						A comment which is copied to the java code.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice>
+				<xs:element name="all">
+					<xs:annotation>
+						<xs:documentation>
+							A special finder: finds all records.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="dynamic">
+					<xs:annotation>
+						<xs:documentation>
+							A generic finder - allows to pass SQL condition + parameters.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="index" type="IndexFindType">
+					<xs:annotation>
+						<xs:documentation>
+							Condition constructed using existing index.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="condition" type="ConditionType">
+					<xs:annotation>
+						<xs:documentation>
+							Explicit finder - allows to pass parameters to predefined SQL.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ref" type="RefTableType">
+					<xs:annotation>
+						<xs:documentation>
+							Finds records by a reference.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="name" type="NameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The name of the finder - the java name is constructed as "count" + ucfirst(@name).
+					The attribute is optional for condition types: "all" (countAll),
+					"dynamic" (countDynamic), pk (countByPrimaryKey) and "index" (countBy + index columns).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="UpdateType">
+		<xs:sequence>
+			<xs:element name="comment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						A comment which is copied to the java code.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="unique" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Flag: if present, then the update is unique
+						and if more than one record is updated, then a DaoException is thrown.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="set" type="UpdateSetType">
+				<xs:annotation>
+					<xs:documentation>
+						Describes which columns will be updated and how.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice>
+				<xs:element name="all">
+					<xs:annotation>
+						<xs:documentation>
+							Updates all records.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="dynamic">
+					<xs:annotation>
+						<xs:documentation>
+							A generic update - allows to pass SQL condition + parameters.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="index" type="IndexFindType">
+					<xs:annotation>
+						<xs:documentation>
+							Condition constructed using existing index.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="condition" type="ConditionType">
+					<xs:annotation>
+						<xs:documentation>
+							Explicit update - allows to pass parameters to predefined SQL.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="pk">
+					<xs:annotation>
+						<xs:documentation>
+							Updates record by its primary key.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="name" type="NameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The name of the method - the java name is constructed as "update" + ucfirst(@name).
+					The attribute is optional for condition types: "all" (updateAll),
+					"dynamic" (updateDynamic), pk (updateByPrimaryKey) and "index" (updateBy + index columns).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="TruncateType">
+		<xs:sequence>
+			<xs:element name="comment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						A comment which is copied to the java code.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="DeleteType">
+		<xs:sequence>
+			<xs:element name="comment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						A comment which is copied to the java code.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="unique" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Flag: if present, then the delete is unique
+						and if more than one record is deleted, then a DaoException is thrown.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice>
+				<xs:element name="all">
+					<xs:annotation>
+						<xs:documentation>
+							Deletes all records.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="dynamic">
+					<xs:annotation>
+						<xs:documentation>
+							A generic delete - allows to pass SQL condition + parameters.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="index" type="IndexFindType">
+					<xs:annotation>
+						<xs:documentation>
+							Condition constructed using existing index.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="condition" type="ConditionType">
+					<xs:annotation>
+						<xs:documentation>
+							Explicit delete - allows to pass parameters to predefined SQL.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="pk">
+					<xs:annotation>
+						<xs:documentation>
+							Deletes record by its primary key.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="name" type="NameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The name of the delete - the java name is constructed as "delete" + ucfirst(@name).
+					The attribute is optional for condition types: "all" (deleteAll),
+					"dynamic" (deleteDynamic), pk (deleteByPrimaryKey) and "index" (deleteBy + index columns).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="MoveType">
+		<xs:sequence>
+			<xs:element name="comment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						A comment which is copied to the java code.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice>
+				<xs:element name="all">
+					<xs:annotation>
+						<xs:documentation>
+							Moves all records.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="dynamic">
+					<xs:annotation>
+						<xs:documentation>
+							A generic move - allows to pass SQL condition + parameters.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="index" type="IndexFindType">
+					<xs:annotation>
+						<xs:documentation>
+							Condition constructed using existing index.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="condition" type="ConditionType">
+					<xs:annotation>
+						<xs:documentation>
+							Explicit move - allows to pass parameters to predefined SQL.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="name" type="NameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The name of the move - the java name is constructed as "move" + ucfirst(@name).
+					The attribute is optional for condition types: "all" (moveAll),
+					"dynamic" (moveDynamic), pk (moveByPrimaryKey) and "index" (moveBy + index columns).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="target" type="TableNameType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					The target table.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="RowType">
+		<xs:sequence>
+			<xs:element name="c" type="xs:string" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<!--======================= Config Types ================================-->
+
+	<xs:complexType name="DefaultCacheType">
+		<xs:attribute name="max-size" type="xs:int" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					The maximum number of cached pairs (key,value).
+					This is used only for L1 caches (Memory).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="expire-millis" type="xs:int" use="optional" default="-1">
+			<xs:annotation>
+				<xs:documentation>
+					The number of milliseconds after which the cached item expires.
+					If not specified or a negative number is specified, then items never expires.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="l2-expire-millis" type="xs:int" use="optional" default="-1">
+			<xs:annotation>
+				<xs:documentation>
+					L2 cache expiration period - currently used for GAE (MemcacheService).
+					The number of milliseconds after which the cached item expires.
+					If not specified or a negative number is specified, then items never expires.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="ConfigDtoType">
+		<xs:sequence>
+			<xs:element name="root" type="JavaFullNameType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						The full java name of a specific parent class for each DTO.
+						The default is com.spoledge.audao.db.dto.AbstractDto .
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="enum-column" type="xs:boolean" default="false" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Enables generating of the "Column" enumeration in every DTO class.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="serial-version" type="xs:int" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Forces the Serializable's static attribute serialVersionUID to be a specific number.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="equality" type="EqualityType" default="columns" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Defines how methods equals() and hashCode() will be constructed.
+					"full" = compares all column values and also "modified" flags.
+					"columns" = compares all column values.
+					"pk" = compares only primary key (and gae parent keys if exist).
+					"identity" = same as no equals() nor hashCode() methods were generated, but if parent exists,
+										then the parent's methods are overriden.
+					"none" = no equals() not hashCode() methods are generated. If a parent exists,
+										then the parent's methods are used.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="gwt-compatible" type="xs:boolean" default="false" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Forces DTOs to be GWT compatible.
+					Currently these differences are applied:
+						- method hashCode(): "double" columns "Float.floatToIntBits(val)" is not GWT compatible,
+								and is replaced by "(int)val".
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="ConfigDaoType">
+		<xs:sequence>
+			<xs:element name="root" type="JavaFullNameType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						The full java name of a specific parent class for each DAO.
+						The default is com.spoledge.audao.db.dao.AbstractDao .
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="method-get-order-expr" type="xs:boolean" default="false" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Enables generating of the "getOrderExpr" method in every DTO class.
+					This also forces generating of the "Column" enumeration in every DTO class.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="ConfigDaoImplType">
+		<xs:sequence>
+			<xs:element name="root" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						The full java name of a specific parent class for each DAO Impl.
+						The default is either com.spoledge.audao.db.dao.AbstractDaoImpl (mysql|oracle) or 
+						com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl (gae) or
+						com.spoledge.audao.db.dao.gae.GaeJdoAbstractDaoImpl (gaejdo) depending on the dbtype.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="JavaFullNameType">
+							<xs:attribute name="dbtype" type="xs:token" use="optional">
+								<xs:annotation>
+									<xs:documentation>
+										The target database type the root is applied for.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="default-cache" minOccurs="0" type="DefaultCacheType">
+				<xs:annotation>
+					<xs:documentation>
+						The default cache configuration.
+						The default cache is that cache which is filled by the insert and find/pk (findByPrimaryKey)
+						methods and peeked by the find/pk method.
+						If no default cache is set, then data are not cached.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="ConfigFactoryType">
+		<xs:sequence>
+			<xs:element name="create-params" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Specifies whether the createXXXDao() methods will have parameter
+						(Connection or PersistenceManager or DatastoreService) or not. 
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+
+					<xs:attribute name="default" type="xs:boolean" default="true" use="optional">
+						<xs:annotation>
+							<xs:documentation>
+								Enables implicit method without parameters
+								- the Connection/PM is retrieved via current Factory.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+
+					<xs:attribute name="connection" type="xs:boolean" default="false" use="optional">
+						<xs:annotation>
+							<xs:documentation>
+								Enables method with parameter of type Connection
+								- the Connection is passed directly to DAO implementation.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+
+					<xs:attribute name="pm" type="xs:boolean" default="false" use="optional">
+						<xs:annotation>
+							<xs:documentation>
+								Enables method with parameter of type PersistenceManager (GAE - JDO)
+								- the PersistenceManager is passed directly to DAO implementation.
+								This is used by 'gaejdo' dbtype.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+
+					<xs:attribute name="gaeds" type="xs:boolean" default="false" use="optional">
+						<xs:annotation>
+							<xs:documentation>
+								Enables method with parameter of type DatastoreService (GAE)
+								- the DatastoreService is passed directly to DAO implementation.
+								This is used by 'gae' dbtype.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+
+					<xs:attribute name="direct" type="xs:boolean" default="false" use="optional">
+						<xs:annotation>
+							<xs:documentation>
+								Enables method with parameter of type Connection or PersistenceManager
+								(depends on the dbtype)
+								- the Connection/PersistenceManager/DatastoreService is passed directly to DAO implementation.
+								This option can cause problems when developing for multiple DB types,
+								because the DAOFactory methods signatures depend on the target DB type.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<!--======================= View Types ================================-->
+
+	<xs:complexType name="ColumnViewType">
+		<xs:choice>
+			<xs:sequence>
+				<xs:element name="type" type="ColumnTypeType"/>
+				<xs:element name="enum" type="ColumnEnumType" minOccurs="0"/>
+				<xs:element name="not-null" minOccurs="0"/>
+			</xs:sequence>
+			<xs:sequence>
+				<xs:element name="ref" type="RefTableAliasColumnOptType">
+					<xs:annotation>
+						<xs:documentation>
+							Reference to a table's column.
+							If the column name is not specified, then it is the same as the current column's name.
+							The type (including enums) and nullable flag are taken from the other column's type.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="null" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+							Forces column to be not "not-null".
+							When joining tables this can often happen - the original column is not-null,
+							but the column in the view can be null.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:choice>
+		<xs:attribute name="name" type="ColumnNameType" use="required"/>
+		<xs:attribute name="java" type="NameType" use="optional"/>
+	</xs:complexType>
+
+
+	<!--======================= Super Types ================================-->
+
+	<xs:complexType name="TableType">
+		<xs:sequence>
+			<xs:element name="comment" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A comment which is copied to the java code.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="config" minOccurs="0" type="ConfigTableType">
+				<xs:annotation>
+					<xs:documentation>
+						The local configuration options which affect the SQL and DAO generator.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice minOccurs="0">
+				<xs:element name="read-only">
+					<xs:annotation>
+						<xs:documentation>
+							Flags the table as a read-only.
+							No insert/update/delete/move methods are generated.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="edit-mode" type="EditModeType">
+					<xs:annotation>
+						<xs:documentation>
+							The edit mode for the table. Default is 'row'.
+							NOTE: for the 'row' mode you must flag at least one column by the 'edit' flag
+									in order to be the 'update' method generated.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="auto-find" type="AutoFindType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Flag: specifies whether finders are automatically generated for all tables.
+						See more information on AutoFindType.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="columns" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						A list of all columns.
+						This can be omitted when extending a table or creating an abstract table.
+						If omitted and the table extends another table, then instead
+						of generating own DTO class, the DTO class of the parent table is used.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="column" type="ColumnType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="indexes" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="index" type="IndexType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="methods" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:choice maxOccurs="unbounded">
+							<xs:element name="count" type="CountType"/>
+							<xs:element name="find" type="FindType"/>
+							<xs:element name="update" type="UpdateType"/>
+							<xs:element name="delete" type="DeleteType"/>
+							<xs:element name="truncate" type="TruncateType"/>
+							<xs:element name="move" type="MoveType"/>
+						</xs:choice>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="data" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="row" type="RowType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="TableNameType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					The name of the table/entity.
+					This is the name used for DB table.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="schema" type="SchemaNameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					If specified, then the schema name is prepended to the table name
+					and all asociated objects (indexes, sequences).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="java" type="NameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					A Java name used for generating names of DTO, DAO and DAO-implementation classes.
+					The default Java name is constructed from the table name.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="abstract" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>
+					If true, then no real DB table is created/used and the java classes
+					are flagged as abstract.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="force-dto" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>
+					If this is true, then using of the table's own DTO is forced rather
+					using of inherited one.
+					For abstract classes this also forces to stop using generic DTO template &lt;T&gt;.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="extends" type="TableNameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The name of the parent table.
+					All generated DTO, DAO and DAO-impl classes extend the parent classes if exist.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="prefix-index" type="NameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The prefix add for all index names.
+					Usefull when defining an index in the parent table.
+					The different prefixes defined by child tables avoid conflicts in the "create tables" SQL.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<xs:complexType name="ViewType">
+		<xs:sequence>
+
+			<xs:element name="tables">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ref" type="RefTableAliasType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="columns">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="column" type="ColumnViewType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="sql" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						The SQL definition of the view.
+						If not present, then it is generated as specified by the "tables" and "columns" sections.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:choice>
+						<xs:element name="query" type="StringWithDbType" minOccurs="0" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>
+									A full SQL query which will be used to generate the view (SELECT .. FROM ...).
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:sequence>
+							<xs:element name="columns" type="StringWithDbType" minOccurs="0" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>
+										A definition of columns of the view: e.g: "*" or "t1.id, t2.name, t3.amount".
+										The alias prefixes must be used exactly as specified in the "tables" section.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="from" type="StringWithDbType" minOccurs="0" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>
+										A definition of the "from" part of the SQL, e.g.: "accounts a left join users u on a.created_by=u.user_id". 
+										The alias prefixes must be used exactly as specified in the "tables" section.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="where" type="StringWithDbType" minOccurs="0" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>
+										An optional "where" condition used for truncating the result, e.g: "a.account_type=1".
+										The alias prefixes must be used exactly as specified in the "tables" section.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="methods" minOccurs="0">
+				<xs:complexType>
+					<xs:choice maxOccurs="unbounded">
+						<xs:element name="count" type="CountType"/>
+						<xs:element name="find" type="FindType"/>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="ViewNameType" use="required"/>
+		<xs:attribute name="schema" type="SchemaNameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					If specified, then the schema name is prepended to the view name.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="java" type="NameType" use="optional"/>
+	</xs:complexType>
+
+
+	<xs:complexType name="ConfigType">
+		<xs:sequence>
+			<xs:element name="dto" type="ConfigDtoType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Configuration options for DTO classes.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="dao" type="ConfigDaoType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Configuration options for DAO classes.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="dao-impl" type="ConfigDaoImplType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Configuration options for DAO Impl classes.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="factory" type="ConfigFactoryType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Configuration options for DAO factory.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="ConfigTableType">
+		<xs:sequence>
+			<xs:element name="dto" type="ConfigDtoType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Configuration options for DTO classes.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="dao" type="ConfigDaoType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Configuration options for DAO classes.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="dao-impl" type="ConfigDaoImplType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Configuration options for DAO Impl classes.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="DatabaseType">
+		<xs:sequence>
+			<xs:element name="config" minOccurs="0" type="ConfigType">
+				<xs:annotation>
+					<xs:documentation>
+						The global configuration options which affect the SQL and DAO generator.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="tables" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="auto-find" type="AutoFindType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>
+									Flag: specifies whether finders are automatically generated for this table.
+									This value overrides global auto-find value.
+									See more information on AutoFindType.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="table" type="TableType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="views" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="view" type="ViewType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="version" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					The version of the AUDAO schema.
+					The current version is 1.0.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="schema" type="SchemaNameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					If specified, then the schema name is prepended to all objects.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+	<!--======================= TOP-LEVEL ELEMENTS ================================-->
+
+	<xs:element name="database" type="DatabaseType"/>
+
+</xs:schema>

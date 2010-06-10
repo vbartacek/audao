@@ -1,0 +1,390 @@
+<?xml version="1.0"?>
+<project name="distro" basedir="." default="dist">
+
+	<!-- IMPORT THE COMMON PROPERTIES AND TARGETS -->
+	<import file="../../build-commons.xml"/>
+
+	<!-- SECTION PROPERTIES -->
+
+	<property name="xsl.dir" location="${src.dir}/xsl"/>
+	<property name="test-db.dir" location="${src.dir}/db-test"/>
+	<property name="tests.xml" location="${test-db.dir}/tests.xml"/>
+
+	<property name="build.java-src.dir" location="${build.dir}/java"/>
+	<property name="build.jar.dir" location="${build.dir}/jar"/>
+
+	<property name="build.tests.dir" location="${build.dir}/tests"/>
+	<property name="build-tests.xml" location="${build.dir}/build-tests.xml"/>
+
+	<property name="distro.dir" location="${build.dir}/audao-${version}"/>
+	<property name="distro.bin.dir" location="${distro.dir}/bin"/>
+	<property name="distro.lib.dir" location="${distro.dir}/lib"/>
+	<property name="distro.doc.dir" location="${distro.dir}/docs"/>
+	<property name="distro.src.dir" location="${distro.dir}/src"/>
+	<property name="distro.schema.dir" location="${distro.dir}/schemas"/>
+	<property name="distro.sample.dir" location="${distro.dir}/samples"/>
+	<property name="distro.tools.dir" location="${distro.dir}/tools"/>
+
+	<!-- SECTION FILESET AND CLASSPATH -->
+
+	<path id="recompile.path">
+		<fileset dir="${distro.lib.dir}" includes="*.jar"/>
+		<fileset dir="${gae.home}/lib/user">
+			<include name="*.jar"/>
+			<include name="orm/jdo2*.jar"/>
+		</fileset>
+	</path>
+
+	<path id="compile-test.path">
+		<pathelement path="${antlr-runtime.jar}"/>
+		<pathelement path="${log4j.jar}"/>
+		<fileset dir="${lib.global}/junit"/>
+		<fileset dir="${gae.home}/lib/impl"/>
+		<fileset dir="${gae.home}/lib/testing"/>
+		<fileset dir="${gwt.home}" includes="gwt-user.jar"/>
+		<fileset dir="${build.tests.dir}" includes="*/*.jar"/>
+		<fileset dir="${distro.lib.dir}" includes="audao-runtime-gql*.jar"/>
+	</path>
+
+	<path id="run-test.path">
+		<pathelement path="${log4j.jar}"/>
+		<fileset dir="${lib.global}/junit"/>
+		<fileset dir="${distro.lib.dir}" includes="commons-logging*.jar"/>
+		<pathelement path="${build.classes-test.dir}"/>
+	</path>
+
+	<path id="junit-gae.path">
+		<path refid="run-test.path"/>
+		<pathelement path="${antlr-runtime.jar}"/>
+		<fileset dir="${gae.home}/lib/impl"/>
+		<fileset dir="${gae.home}/lib/testing"/>
+		<fileset dir="${gwt.home}" includes="gwt-user.jar"/>
+		<fileset dir="${distro.lib.dir}" includes="audao-runtime-gql-*.jar"/>
+		<fileset dir="${build.tests.dir}" includes="*-gae/*.jar"/>
+	</path>
+
+	<path id="junit-gql.path">
+		<path refid="run-test.path"/>
+		<pathelement path="${antlr-runtime.jar}"/>
+		<fileset dir="${gae.home}/lib/impl"/>
+		<fileset dir="${gae.home}/lib/testing"/>
+		<fileset dir="${distro.lib.dir}" includes="audao-runtime-${version}.jar"/>
+		<fileset dir="${distro.lib.dir}" includes="audao-runtime-gql-${version}.jar"/>
+	</path>
+
+	<path id="junit-gqlext.path">
+		<path refid="run-test.path"/>
+		<pathelement path="${antlr-runtime.jar}"/>
+		<fileset dir="${gae.home}/lib/impl"/>
+		<fileset dir="${gae.home}/lib/testing"/>
+		<fileset dir="${distro.lib.dir}" includes="audao-runtime-gqlext-${version}.jar"/>
+	</path>
+
+	<path id="junit-mysql.path">
+		<path refid="run-test.path"/>
+		<fileset dir="${lib.global}" includes="jdbc/mysql/*.jar"/>
+		<fileset dir="${build.tests.dir}" includes="*-mysql/*.jar"/>
+	</path>
+
+	<path id="junit-oracle.path">
+		<path refid="run-test.path"/>
+		<fileset dir="${lib.global}" includes="jdbc/oracle/*.jar"/>
+		<fileset dir="${build.tests.dir}" includes="*-oracle/*.jar"/>
+	</path>
+
+	<fileset id="junit-no-jdbc.fs" dir="${build.classes-test.dir}">
+		<include name="**/*Test.class"/>
+		<include name="**/*Tests.class"/>
+		<exclude name="**/*Abstract*Test.class"/>
+		<exclude name="**/*Abstract*Tests.class"/>
+		<exclude name="**/jdbc/**"/>
+		<exclude name="**/gae/gql/**"/>
+		<exclude name="**/gae/gqlext/**"/>
+	</fileset>
+
+	<fileset id="junit-jdbc.fs" dir="${build.classes-test.dir}">
+		<include name="**/*Test.class"/>
+		<include name="**/*Tests.class"/>
+		<exclude name="**/*Abstract*Test.class"/>
+		<exclude name="**/*Abstract*Tests.class"/>
+		<exclude name="**/gae/**"/>
+		<exclude name="**/gae/gql/**"/>
+		<exclude name="**/gae/gqlext/**"/>
+		<exclude name="**/gwt/**"/>
+	</fileset>
+
+	<fileset id="junit-gql.fs" dir="${build.classes-test.dir}">
+		<include name="**/gae/gql/*Test.class"/>
+	</fileset>
+
+	<fileset id="junit-gqlext.fs" dir="${build.classes-test.dir}">
+		<include name="**/gae/gqlext/*Test.class"/>
+	</fileset>
+
+	<!-- SECTION TARGETS -->
+
+	<target name="recompile-audao">
+		<mkdir dir="${build.java-src.dir}"/> 
+
+		<copy todir="${build.java-src.dir}">
+			<fileset dir="../common/src/java">
+				<exclude name="com/spoledge/util/context/**" />
+				<exclude name="com/spoledge/util/proxy/**" />
+			</fileset>
+			<fileset dir="../generator/src/java"/>
+			<fileset dir="../embed/src/java"/>
+			<fileset dir="../parser/src/java"/>
+			<fileset dir="../parser/build/src-gen"/>
+		</copy>
+
+		<mkdir dir="${build.classes.dir}"/> 
+
+		<javac
+			destdir="${build.classes.dir}"
+			classpathref="recompile.path"
+			source="1.5"
+			target="1.5"
+			debug="true"
+			deprecation="true"
+			optimize="false"
+		>
+			<src path="${build.java-src.dir}"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+	</target>
+
+
+	<target name="make-audao-jars" depends="recompile-audao">
+		<mkdir dir="${build.jar.dir}"/> 
+
+		<unjar dest="${build.jar.dir}">
+			<fileset dir="../embed">
+				<include name="lib/*.jar"/>
+				<include name="dist/*.jar"/>
+			</fileset>
+		</unjar>
+
+		<jar destfile="${distro.dir}/audao-${version}.jar">
+			<fileset dir="${build.jar.dir}">
+				<exclude name="com/**" />
+			</fileset>
+			<fileset dir="${build.classes.dir}">
+				<include name="com/spoledge/audao/generator/**"/>
+				<include name="com/spoledge/audao/parser/gql/GqlStatic.class"/>
+				<include name="com/spoledge/audao/parser/gql/impl/GqlStatic*"/>
+				<include name="com/spoledge/util/**"/>
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-Jdk" value="${java.version}"/>
+				<attribute name="Build-Platform" value="${os.name} ${os.arch} ${os.version}"/>
+				<attribute name="Class-Path" value="lib/commons-logging-1.1.1.jar lib/xalan.jar lib/serializer.jar lib/xercesImpl.jar lib/xml-apis.jar lib/antlr-runtime-3.2.jar"/>
+				<attribute name="Main-Class" value="com.spoledge.audao.generator.Main"/>
+			</manifest>
+		</jar>
+
+		<jar destfile="${distro.lib.dir}/audao-runtime-${version}.jar">
+			<fileset dir="${build.classes.dir}">
+				<include name="com/spoledge/audao/db/**"/>
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-Jdk" value="${java.version}"/>
+				<attribute name="Build-Platform" value="${os.name} ${os.arch} ${os.version}"/>
+			</manifest>
+		</jar>
+
+		<jar destfile="${distro.lib.dir}/audao-runtime-gql-${version}.jar">
+			<fileset dir="${build.classes.dir}">
+				<include name="com/spoledge/audao/db/gae/GQLDynamicQuery.class"/>
+				<include name="com/spoledge/audao/parser/gql/GqlDynamic.class"/>
+				<include name="com/spoledge/audao/parser/gql/impl/GqlDynamic*"/>
+				<include name="com/spoledge/audao/parser/gql/impl/ParserUtils.class"/>
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-Jdk" value="${java.version}"/>
+				<attribute name="Build-Platform" value="${os.name} ${os.arch} ${os.version}"/>
+			</manifest>
+		</jar>
+
+		<jar destfile="${distro.lib.dir}/audao-runtime-gqlext-${version}.jar">
+			<fileset dir="${build.classes.dir}">
+				<include name="com/spoledge/audao/parser/gql/GqlExtDynamic.class"/>
+				<include name="com/spoledge/audao/parser/gql/PreparedGql*.class"/>
+				<include name="com/spoledge/audao/parser/gql/impl/ParserUtils.class"/>
+				<include name="com/spoledge/audao/parser/gql/impl/GqlExt*"/>
+				<include name="com/spoledge/audao/parser/gql/impl/soft/**"/>
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-Jdk" value="${java.version}"/>
+				<attribute name="Build-Platform" value="${os.name} ${os.arch} ${os.version}"/>
+			</manifest>
+		</jar>
+
+		<zip destfile="${distro.src.dir}/audao-sources-${version}.zip">
+			<fileset dir="${build.java-src.dir}">
+				<include name="com/spoledge/audao/db/**"/>
+				<include name="com/spoledge/audao/parser/gql/**"/>
+				<exclude name="com/spoledge/audao/parser/gql/GqlStatic.java"/>
+			</fileset>
+			<fileset dir="../parser/src">
+				<include name="grammar/GqlLexer.g"/>
+				<include name="grammar/GqlDynamic.g"/>
+				<include name="grammar/GqlExt*.g"/>
+				<include name="jsp/**"/>
+			</fileset>
+		</zip>
+
+		<zip destfile="${distro.src.dir}/audao-gae-gwt-emul-${version}.zip">
+			<fileset dir="../gwt-emul/src/java"/>
+		</zip>
+
+	</target>
+
+
+	<target name="copy-libraries">
+		<copy todir="${distro.lib.dir}">
+			<fileset dir="${xalan.home}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${lib.global}/commons">
+				<include name="commons-logging*.jar"/>
+			</fileset>
+		</copy>
+		<copy file="${antlr-runtime.jar}" todir="${distro.lib.dir}"/>
+	</target>
+
+
+	<target name="copy-doc">
+		<copy todir="${distro.doc.dir}">
+			<fileset dir="../doc/build/html"/>
+		</copy>
+		<copy todir="${distro.doc.dir}">
+			<fileset dir="../doc/build">
+				<include name="examples/**"/>
+			</fileset>
+		</copy>
+		<fixcrlf file="${distro.doc.dir}/audao.xsd" eol="dos"/>
+	</target>
+
+
+	<target name="copy-other">
+		<copy file="${conf.local}/audao.sh" todir="${distro.bin.dir}"/>
+		<chmod file="${distro.bin.dir}/audao.sh" perm="a+x"/>
+		<fixcrlf file="${conf.local}/README.txt" destdir="${distro.dir}" eol="dos"/>
+		<fixcrlf file="${conf.local}/LICENSE.txt" destdir="${distro.dir}" eol="dos"/>
+		<fixcrlf srcdir="${conf.local}" includes="build-*.xml" destdir="${distro.tools.dir}" eol="dos"/>
+	</target>
+
+
+	<target name="zip-it">
+		<mkdir dir="${dist.dir}"/>
+		<zip destfile="${dist.dir}/audao-${version}.zip">
+			<fileset dir="${build.dir}" includes="audao-${version}/**"/>
+		</zip>
+	</target>
+
+
+	<target name="dist" description="Creates a distribution">
+		<mkdir dir="${distro.dir}"/>
+		<mkdir dir="${distro.src.dir}"/>
+		<mkdir dir="${distro.tools.dir}"/>
+		<antcall target="copy-libraries"/>
+		<antcall target="make-audao-jars"/>
+		<antcall target="copy-doc"/>
+		<antcall target="copy-other"/>
+		<!-- we do not need it - it is zipped dynamically in the web app
+		<antcall target="zip-it"/>
+		-->
+	</target>
+
+
+	<!-- ======================= TESTING ====================== -->
+
+	<target name="test" description="Tests the distribution">
+		<xslt
+			style="${xsl.dir}/build-tests.xsl"
+			in="${tests.xml}"
+			out="${build-tests.xml}"
+		/>
+
+		<ant antfile="${build-tests.xml}" inheritAll="false">
+			<property name="audao.home" location="${distro.dir}"/>
+			<property name="gae.home" location="${gae.home}"/>
+			<property name="gwt.home" location="${gwt.home}"/>
+		</ant>
+
+		<antcall target="compile-test"/>
+
+		<antcall target="test-gae"/>
+		<antcall target="test-gql"/>
+		<antcall target="test-gqlext"/>
+		<antcall target="test-mysql"/>
+		<antcall target="test-oracle"/>
+	</target>
+
+
+	<target name="test-gae" if="gae.test">
+		<antcall target="junit">
+			<param name="junit-fs" value="junit-no-jdbc.fs"/>
+			<param name="junit-path" value="junit-gae.path"/>
+		</antcall>
+	</target>
+
+	<target name="test-gql" if="gae.test">
+		<antcall target="junit">
+			<param name="junit-fs" value="junit-gql.fs"/>
+			<param name="junit-path" value="junit-gql.path"/>
+		</antcall>
+	</target>
+
+	<target name="test-gqlext" if="gae.test">
+		<antcall target="junit">
+			<param name="junit-fs" value="junit-gqlext.fs"/>
+			<param name="junit-path" value="junit-gqlext.path"/>
+		</antcall>
+	</target>
+
+	<target name="test-mysql" if="mysql.url">
+		<antcall target="test-jdbc">
+			<param name="dbtype" value="mysql"/>
+			<param name="jdbc.driver" value="${mysql.driver}"/>
+			<param name="jdbc.url" value="${mysql.url}"/>
+			<param name="jdbc.username" value="${mysql.username}"/>
+			<param name="jdbc.password" value="${mysql.password}"/>
+		</antcall>
+	</target>
+
+	<target name="test-oracle" if="oracle.url">
+		<antcall target="test-jdbc">
+			<param name="dbtype" value="oracle"/>
+			<param name="jdbc.driver" value="${oracle.driver}"/>
+			<param name="jdbc.url" value="${oracle.url}"/>
+			<param name="jdbc.username" value="${oracle.username}"/>
+			<param name="jdbc.password" value="${oracle.password}"/>
+		</antcall>
+	</target>
+
+
+	<target name="test-jdbc">
+		<antcall target="sql-execute">
+			<param name="sql-execute.src" value="${build.tests.dir}/blobs-${dbtype}/sql/drop-tables.sql"/>
+		</antcall>
+		<antcall target="sql-execute">
+			<param name="sql-execute.src" value="${build.tests.dir}/dao-${dbtype}/sql/drop-tables.sql"/>
+		</antcall>
+		<antcall target="sql-execute">
+			<param name="sql-execute.src" value="${build.tests.dir}/dao-${dbtype}/sql/create-tables.sql"/>
+		</antcall>
+		<antcall target="sql-execute">
+			<param name="sql-execute.src" value="${build.tests.dir}/blobs-${dbtype}/sql/create-tables.sql"/>
+		</antcall>
+		<antcall target="junit">
+			<param name="junit-fs" value="junit-jdbc.fs"/>
+			<param name="junit-path" value="junit-${dbtype}.path"/>
+		</antcall>
+	</target>
+
+</project>

@@ -1,0 +1,76 @@
+AuDAO Documentation README (for developers)
+-------------------------------------------
+
+This module generates HTML documentation for both:
+    * standalone AuDAO distribution
+    * web application
+
+
+Shared Dcoumentation
+--------------------
+
+The documentation shared by both forms is located
+in the directory src/doc/fragments.
+
+The directory contains HTML fragments which can be viewed by standard web
+browsers. The directory also contains file fragments.xml containing
+a list of all fragments/pages of the documentation.
+The order is significant.
+
+This module parses all HTML fragments and generates:
+    * build/html/   = standalone documentation
+    * build/web/    = documentation for web
+
+Parsing process is responsible for the following:
+    * generating main contents page
+    * generating contents section at the top of each page
+    * generating navigation sections at the top and bottom of each page
+    * prepending chapter, section and subsection numbers to each header
+    * replacing hyperlinks when forced
+
+The HTML fragments should have the following tree structure:
+
+----------------------------
+<div class="chapter">
+<a name="fragment-name"></a>
+<h1 class="chapter">Chapter Name</h1>
+<p class="chapter-abstract">Optional Abstract</p>
+
+...
+<div class=section">
+<a name="section-name"></a>
+<h2>Section Header</h2>
+
+....
+<div class=subsection">
+<a name="subsection-name"></a>
+<h3>Sub-Section Header</h3>
+...
+</div>
+
+</div> <!-- section -->
+
+</div> <!-- chapter -->
+----------------------------
+
+The hyperlinks are replaced as follows:
+    * <a href="[xsd:type-name]">link</a>
+        -> the whole href is replaced by link to audao.html
+
+    * <a href="[api:type]">class</a>
+        -> the whole href is replaced by link to Javadoc API com/spoledge/audao/db/<type>/<class>.html.
+
+    * <a href="[api:type:class]">link</a>
+        -> the whole href is replaced by link to Javadoc API com/spoledge/audao/db/<type>/<class>.html.
+
+    * <a href="[fragment-name]#anchor-name">link</a>
+        -> the fragment-name is replaced by the page name
+
+
+Examples Dcoumentation
+----------------------
+
+The examples page is generated from src/examples directory.
+The metadata is stored in examples.xml.
+
+

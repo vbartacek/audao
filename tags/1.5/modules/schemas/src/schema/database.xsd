@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright 2010 Spolecne s.r.o. (www.spoledge.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *-->
+<xs:schema
+	elementFormDefault="qualified"
+	targetNamespace="http://www.spoledge.com/audao/inspector/database"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:hfp="http://www.w3.org/2001/XMLSchema-hasFacetAndProperty"
+	xmlns:db="http://www.spoledge.com/audao/inspector/database">
+
+	<xs:element name="metadata" type="db:MetadataType"/>
+	<xs:element name="space" type="db:SpaceType"/>
+	<xs:element name="tables" type="db:TablesType"/>
+	<xs:element name="table" type="db:TableType"/>
+
+	<xs:complexType name="MetadataType">
+		<xs:sequence>
+			<xs:element name="connection">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="url" type="xs:string"/>
+						<xs:element name="login" type="xs:string"/>
+						<xs:element minOccurs="0" name="password" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="driver">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="name" type="xs:string"/>
+						<xs:element name="class-name" type="xs:string"/>
+						<xs:element minOccurs="0" name="is-jdbc-compliant"/>
+						<xs:element name="version" type="xs:string"/>
+						<xs:element name="major-version" type="xs:int"/>
+						<xs:element name="minor-version" type="xs:int"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="product">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="name" type="xs:string"/>
+						<xs:element name="version" type="xs:string"/>
+						<xs:element minOccurs="0" name="major-version" type="xs:int"/>
+						<xs:element minOccurs="0" name="minor-version" type="xs:int"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="sql">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="max-lengths">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="catalog-name" type="xs:int"/>
+									<xs:element name="schema-name" type="xs:int"/>
+									<xs:element name="table-name" type="xs:int"/>
+									<xs:element name="column-name" type="xs:int"/>
+									<xs:element name="user-name" type="xs:int"/>
+									<xs:element name="procedure-name" type="xs:int"/>
+									<xs:element name="cursor-name" type="xs:int"/>
+									<xs:element name="char-literal" type="xs:int"/>
+									<xs:element name="statement" type="xs:int"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+
+						<xs:element name="max-items">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="columns-in-table" type="xs:int"/>
+									<xs:element name="columns-in-index" type="xs:int"/>
+									<xs:element name="columns-in-select" type="xs:int"/>
+									<xs:element name="columns-in-group-by" type="xs:int"/>
+									<xs:element name="columns-in-order-by" type="xs:int"/>
+									<xs:element name="tables-in-select" type="xs:int"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+
+						<xs:element name="stores-identifiers">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element minOccurs="0" name="lower-case"/>
+									<xs:element minOccurs="0" name="lower-case-quoted"/>
+									<xs:element minOccurs="0" name="mixed-case"/>
+									<xs:element minOccurs="0" name="mixed-case-quoted"/>
+									<xs:element minOccurs="0" name="upper-case"/>
+									<xs:element minOccurs="0" name="upper-case-quoted"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+
+						<xs:element name="terms">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="catalog" type="xs:string"/>
+									<xs:element name="schema" type="xs:string"/>
+									<xs:element name="procedure" type="xs:string"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+
+						<xs:element name="separators">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="catalog" type="xs:string"/>
+									<xs:element name="identifier-quote" type="xs:string"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+
+						<xs:element minOccurs="0" name="keywords">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element maxOccurs="unbounded" name="keyword" type="xs:string"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+
+						<xs:element name="supports">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element minOccurs="0" name="subqueries-in-comparisons"/>
+									<xs:element minOccurs="0" name="subqueries-in-exists"/>
+									<xs:element minOccurs="0" name="subqueries-in-ins"/>
+									<xs:element minOccurs="0" name="subqueries-in-quantifieds"/>
+									<xs:element minOccurs="0" name="stored-procedures"/>
+									<xs:element minOccurs="0" name="transactions"/>
+									<xs:element minOccurs="0" name="union"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="types">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="0" name="type">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="name" type="xs:string"/>
+									<xs:element name="data-type" type="xs:string"/>
+									<xs:element name="precision" type="xs:long"/>
+									<xs:element minOccurs="0" name="literal-prefix" type="xs:string"/>
+									<xs:element minOccurs="0" name="literal-suffix" type="xs:string"/>
+									<xs:element minOccurs="0" name="create-params" type="xs:string"/>
+									<xs:element minOccurs="0" name="nullable" type="xs:boolean"/>
+									<xs:element minOccurs="0" name="case-sensitive"/>
+									<xs:element minOccurs="0" name="searchable">
+										<xs:complexType>
+											<xs:choice minOccurs="0">
+												<xs:element name="only-like"/>
+												<xs:element name="no-like"/>
+											</xs:choice>
+										</xs:complexType>
+									</xs:element>
+									<xs:element minOccurs="0" name="unsigned"/>
+									<xs:element minOccurs="0" name="fixed-prec-scale"/>
+									<xs:element minOccurs="0" name="auto-increment"/>
+									<xs:element minOccurs="0" name="local-type-name" type="xs:string"/>
+									<xs:element minOccurs="0" name="minimum-scale" type="xs:int"/>
+									<xs:element minOccurs="0" name="maximum-scale" type="xs:int"/>
+									<xs:element name="num-prec-radix" type="xs:int"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="SpaceType">
+		<xs:sequence>
+			<xs:element name="catalog-name" type="xs:string"/>
+			<xs:element name="schema-name" type="xs:string"/>
+			<xs:element name="tables">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="unbounded" name="table" type="db:NameRefType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="NameRefType">
+		<xs:complexContent>
+			<xs:restriction base="xs:anyType">
+				<xs:attribute name="name" type="db:DBObjectName" use="required"/>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TablesType">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="table" type="db:TableType"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TableType">
+		<xs:sequence>
+			<xs:element name="catalog-name" type="xs:string"/>
+			<xs:element name="schema-name" type="xs:string"/>
+			<xs:element name="type" type="xs:string"/>
+			<xs:element minOccurs="0" name="columns">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" name="column" type="db:ColumnType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element minOccurs="0" name="primary-key" type="db:PrimaryKeyType"/>
+			<xs:element minOccurs="0" name="indexes">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" name="index" type="db:IndexType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="db:TableName" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="ColumnType">
+		<xs:sequence>
+			<xs:element name="data-type" type="xs:string"/>
+			<xs:element name="type-name" type="xs:string"/>
+			<xs:element name="column-size" type="xs:int"/>
+			<xs:element minOccurs="0" name="decimal-digits" type="xs:int"/>
+			<xs:element name="num-prec-radix" type="xs:int"/>
+			<xs:element minOccurs="0" name="nullable" type="xs:boolean"/>
+			<xs:element minOccurs="0" name="remarks" type="xs:string"/>
+			<xs:element minOccurs="0" name="column-def" type="xs:string"/>
+			<xs:element minOccurs="0" name="char-octet-length" type="xs:int"/>
+			<xs:element name="ordinal-position" type="xs:int"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="db:ColumnName" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="PrimaryKeyType">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" name="column" type="db:NameRefType"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="db:PrimaryKeyName" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name="IndexType">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="is-unique"/>
+			<xs:element minOccurs="0" name="type" type="xs:string"/>
+			<xs:element maxOccurs="unbounded" name="column" type="db:NameRefType"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="db:IndexName" use="required"/>
+	</xs:complexType>
+
+	<xs:simpleType name="DBObjectName">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="32"/>
+			<xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TableName">
+		<xs:restriction base="db:DBObjectName"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="ColumnName">
+		<xs:restriction base="db:DBObjectName"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="PrimaryKeyName">
+		<xs:restriction base="db:DBObjectName"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="IndexName">
+		<xs:restriction base="db:DBObjectName"/>
+	</xs:simpleType>
+</xs:schema>

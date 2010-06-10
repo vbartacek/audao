@@ -1,0 +1,480 @@
+<div class="chapter">
+<a name="generator-output"></a>
+<h1 class="chapter">Generator Output and Tweaking</h1>
+
+<p class="chapter-abstract">
+	AuDAO generates the Java DAO sources using templates.
+	We will show how to change the default behavior.
+</p>
+
+<div class="section">
+<a name="config"></a>
+<h2>Config Element</h2>
+
+<p>
+	All extra configurations are specified by the <tt>config</tt> element
+	in the source XML file.
+</p>
+
+<p>
+	The optional <tt>config</tt> element can be defined on the global level (<tt>/database/config</tt>)
+	or on the local table level (<tt>/database/tables/table/config</tt>).
+	If both configs are specified for the given table, then the local config overrides the global one
+	- but only for the <tt>config</tt>'s subelements defined by the local config.
+</p>
+
+<p><b>Example:</b>
+	<pre class="prettyprint xml">
+  &lt;database xmlns="http://www.spoledge.com/audao" version="1.0"&gt;
+    &lt;config&gt;
+      &lt;dto serial-version="-1"/&gt;
+      &lt;dao-impl&gt;
+        &lt;root&gt;com.foo.MyRootDaoImpl&lt;/root&gt;
+      &lt;/dao-impl&gt;
+    &lt;/config&gt;
+
+    &lt;tables&gt;
+      &lt;table name="test_table"&gt;
+        &lt;config&gt;
+          &lt;dto serial-version="-1234567890"/&gt;
+        &lt;/config&gt;
+        ...
+      &lt;/table&gt;
+    &lt;/tables&gt;
+  &lt;/database&gt;</pre>
+
+  The result <tt>test_table</tt>'s config override's the <tt>dto</tt> subelement,
+  but also inherits the global <tt>dao-impl</tt> subelement.
+</p>
+
+<p>
+  The only difference between the local and the global configuration is that subelement
+  <tt>factory</tt> is allowed only in the global config (factory is only one class for all tables).
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConfigType]">XSD - global config</a>,
+                    <a href="[xsd:ConfigTableType]">XSD - local config</a>
+</p>
+
+</div> <!-- config -->
+
+
+<div class="section">
+<a name="dto"></a>
+<h2>DTO Classes</h2>
+
+<p>
+	The generating of DTO classes can be influenced by the <tt>config/dto</tt>
+	element in the source configuration XML file.
+</p>
+
+
+<div class="subsection">
+<a name="dto_serial_version"></a>
+<h3>Serializing - serialVersionUID</h3>
+
+<p>
+	If you serialize your DTO objects - into a stream or for example into a (web) session,
+	then you can get error when retrieving old objects, but you already have installed
+	a new versions of the DTO (e.g. with new fields).
+</p>
+
+<p>
+	To overcome these problems you can set the Serializable static field "serialVersionUID"
+	explicitly:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dto serial-version="-1"/&gt;
+  &lt;/config&gt; </pre>
+
+	This will generate the following line in the Java DTO code:
+	<pre class="prettyprint java">
+    public static final long serialVersionUID = -1L;
+	</pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConfigDtoType]">XSD - config DTO</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="dto_equality"></a>
+<h3>Methods equals() and hashCode()</h3>
+
+<p>
+	Prior to AuDAO version 1.3 the DTO classes did not override the Object's methods
+	<tt>equals(Object)</tt> and <tt>hashCode()</tt>.
+	Now AuDAO is able to generate them and even more it is possible to choose
+	among several possible implementations.
+</p>
+
+<p>
+	<b>Syntax:</b>
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dto equality="pk"/&gt;
+  &lt;/config&gt; </pre>
+
+	The allowed values are:
+	<ul>
+		<li>"full" - compares all column values and also "modified" flags. Use this if you want
+				to compare/store into hash tables DTOs which do not have their DB peers.</li>
+		<li>"columns" - compares all column values (default). Use this if you want
+				to compare/store into hash tables DTOs which are only partially filled.</li>
+		<li>"pk" - compares only primary key
+				(and GAE <a href="[dao-features]#parent-keys">parent keys</a> if exist).
+				Use this if you want to compare/store into hash tables DTOs
+				which are inserted/fetched from datastore.</li>
+		<li>"identity" - same as if no <tt>equals</tt> nor <tt>hashCode</tt> methods were generated,
+				but if parent exists, then the parent's methods are overriden.
+				Use this if you want to be sure that the "native" implementation is used.</li>
+		<li>"none" - no <tt>equals</tt> nor <tt>hashCode</tt> methods are generated. If a parent exists,
+				then the parent's methods are used. Use this if you do not use <tt>equals</tt> nor
+				<tt>hashCode</tt> methods at all. Also use this for compatibility with AuDAO 1.2 behavior.</li>
+	</ul>
+</p>
+
+<p class="note">
+	The <tt>equality</tt> attribute influences implementation of both <tt>equals</tt>
+	and <tt>hashCode</tt> methods. It is not possible to choose the algorithms independently.
+</p>
+
+<p class="note">
+	The implementation of the <tt>hashCode</tt> method can be influenced also by
+	the <a href="#dto_gwt_compatible">gwt-compatible</a> attribute's value.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConfigDtoType]">XSD - config DTO</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="dto_enum_column"></a>
+<h3>Enum Column</h3>
+
+<p>
+	Sometimes you may need to make "reflection" of the table's column.
+	For example if you want to call JDBC statements directly, but without
+	losing control on the column names you are using.
+</p>
+
+<p>
+	AuDAO allows you to generate a Java enumeration within the DTO class
+	which describes all the column in the table.
+	This is achieved by enabling the <tt>enum-column</tt> option as follows:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dto enum-column="true"/&gt;
+  &lt;/config&gt; </pre>
+
+	which is generated into (Entity has only two columns "entity_id" and "entity_name"):
+	<pre class="prettyprint java">
+/**
+ * This is a DTO class.
+ *
+ * @author generated
+ */
+public class Entity extends AbstractDto {
+
+    public enum Column {
+        ENTITY_ID( "entity_id" ),
+        ENTITY_NAME( "entity_name" );
+
+        private final String columnName;
+
+        Column( String columnName ) {
+            this.columnName = columnName;
+        }
+
+        public String columnName() {
+            return columnName;
+        }
+
+        @Override
+        public String toString() {
+            return columnName;
+        }
+    };
+		...  </pre>
+</p>
+
+<p>
+	Now you can access the column names from Java and compiler will check that the column names still
+	exist.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConfigDtoType]">XSD - config/dto</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="dto_gwt_compatible"></a>
+<h3>Compatible DTOs with GWT (Google Web Toolkit)</h3>
+
+<p>
+	If you want to generate DTO compatible with GWT (Java DTOs that can be converted
+	into JavaScript by GWT without problems), then you should enable the <tt>gwt-compatible</tt> flag.
+</p>
+
+<p>
+	<b>Syntax:</b>
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dto gwt-compatible="true"/&gt;
+  &lt;/config&gt; </pre>
+</p>
+
+<p>
+	Currently these differences are applied:
+	<ul>
+		<li>method <tt>hashCode()</tt>: if the hash code is computed using
+			a <a href="[dao-features]#typeDouble">double</a> column,
+			then instead of using <tt>Float.floatToIntBits(column)</tt> which is not GWT compatible,
+			the generator will just produce <tt>(int)column</tt>.</li>
+	</ul>
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConfigDtoType]">XSD - config DTO</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="dto_root"></a>
+<h3>DTO Root Class</h3>
+
+<p>
+	If you need to specify a different root parent class than the default one 
+  (<a href="[api:dto]">AbstractDto</a>), then you can specify it also in <tt>config</tt>:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dto&gt;
+      &lt;root&gt;com.foo.MyRootDto&lt;/root&gt;
+    &lt;/dto&gt;
+  &lt;/config&gt; </pre>
+</p>
+
+<p class="note">
+	Your parent class should still extend the original <a href="[api:dto]">AbstractDto</a>.
+</p>
+
+<p class="note">
+	You must provide a correct classpath including your custom DTO root class when compiling classes.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConfigDtoType]">XSD - config/dto</a>
+</p>
+
+</div>
+
+
+</div> <!-- dto -->
+
+
+<div class="section">
+<a name="dao"></a>
+<h2>DAO Classes</h2>
+
+<p>
+	The generating of DAO classes can be influenced by the <tt>config/dao</tt>
+	element in the source configuration XML file.
+</p>
+
+
+<div class="subsection">
+<a name="dao_method_get_order_expr"></a>
+<h3>Method getOrderExpr</h3>
+
+<p>
+	For sorting in Oracle it is handy to have a method which will
+	return the ORDER BY expression according to column type.
+	If you define string columns for international charactes (<tt>i18n</tt> is true),
+	then such methods will return Oracle specific sorting function for
+	that column.
+</p>
+
+<p>
+	The following definition:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dao method-get-order-expr="true"/&gt;
+  &lt;/config&gt; </pre>
+
+	will generate the following Java DAO:
+	<pre class="prettyprint java">
+    /**
+     * Returns the expression used for ORDER BY clause.
+     * @return the order expression for the given column, for example:
+     *           company_name (MySQL)
+     *           NLSSORT(company_name, 'NLS_SORT=generic_m') (Oracle)
+     */
+    public String getOrderExpr( Entity.Column col ); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConfigDaoType]">XSD - config/dao</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="dao_root"></a>
+<h3>DAO Root Class</h3>
+
+<p>
+	If you need to specify a different root parent class than the default one 
+  (<a href="[api:dao]">AbstractDao</a>), then you can specify it also in <tt>config</tt>:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dao&gt;
+      &lt;root&gt;com.foo.MyRootDao&lt;/root&gt;
+    &lt;/dao&gt;
+  &lt;/config&gt; </pre>
+</p>
+
+<p class="note">
+	You must provide a correct classpath including your custom DTO root class when compiling classes.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConfigDaoType]">XSD - config/dao</a>
+</p>
+
+</div>
+
+</div> <!-- dao -->
+
+
+<div class="section">
+<a name="daoimpl"></a>
+<h2>DAO Implementation Classes</h2>
+
+<p>
+	The generating of DAO classes can be influenced by the <tt>config/dao-impl</tt>
+	element in the source configuration XML file.
+</p>
+
+
+<div class="subsection">
+<a name="daoimpl_root"></a>
+<h3>DAO Impl Root Class</h3>
+
+<p>
+	If you need to specify a different root parent class than the default one 
+  (<a href="[api:dao]">AbstractDaoImpl</a>, <a href="[api:dao/gae]">GaeAbstractDaoImpl</a>
+	or <a href="[api:dao/gae]">GaeJdoAbstractDaoImpl</a>),
+	then you can specify it also in <tt>config</tt>:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dao-impl&gt;
+      &lt;root&gt;com.foo.MyRootDaoImpl&lt;/root&gt;
+    &lt;/dao-impl&gt;
+  &lt;/config&gt; </pre>
+</p>
+
+<p>
+	To avoid mismatch configurations for multiple targets, you may specify the target database type:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dao-impl&gt;
+      &lt;root dbtype="oracle"&gt;com.foo.MyOracleRootDaoImpl&lt;/root&gt;
+      &lt;root dbtype="mysql"&gt;com.foo.MySQLRootDaoImpl&lt;/root&gt;
+      &lt;root&gt;com.foo.MyDefaultRootDaoImpl&lt;/root&gt;
+    &lt;/dao-impl&gt;
+  &lt;/config&gt; </pre>
+</p>
+
+<p class="note">
+	Your parent class should still extend the original root parent !
+</p>
+
+<p class="note">
+	You must provide a correct classpath including your custom DTO root class when compiling classes.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConfigDaoImplType]">XSD - config/dao-impl</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="daoimpl_default_cache"></a>
+<h3>Default DTO cache</h3>
+
+<p class="note">
+	The caching mechanism is currently implemented only for Google App Engine target dbtype
+	(as of AuDAO version 1.5).
+</p>
+
+<p>
+  You can configure the default common cache which will be used by these operations (methods):
+  <ul>
+    <li><a href="[dao-features]#findByPrimaryKey">method find by primary key</a></li>
+    <li><a href="[dao-features]#methodInsert">method insert</a></li>
+    <li><a href="[dao-features]#updateMethods">basic update methods</a></li>
+    <li><a href="[dao-features]#deleteByPrimaryKey">method delete by primary key</a></li>
+  </ul>
+</p>
+
+<p>
+	The cache is implemented as a static field, so different DAO instances share the same cache.
+	The cache is also synchronized, so you can use multiple DAO instances in different threads
+	without fear.
+</p>
+
+<p>
+	The mandatory attribute <tt>max-size</tt> specifies how many DTO objects can be cached at most:
+
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dao-impl&gt;
+      &lt;default-cache max-size="50"/&gt;
+    &lt;/dao-impl&gt;
+  &lt;/config&gt; </pre>
+</p>
+
+<p>
+	The optional attribute <tt>expire-millis</tt> specifies how long the DTO can be cached -
+	if the attribute is not specified, then the item can be cached forever:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dao-impl&gt;
+      &lt;default-cache max-size="50" expire-millis="60000"/&gt;
+    &lt;/dao-impl&gt;
+  &lt;/config&gt; </pre>
+</p>
+
+<p class="note">
+	The attributes <tt>max-size</tt> and <tt>expire-millis</tt> are used for L1 - memory -
+	caches. The implementation for Google App Engine uses combined L1+L2 caches - memory + MemcacheService
+	using <a href="[api:dao]">ChainedDtoCache</a>.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:DefaultCacheType]">XSD - default-cache</a>,
+                    <a href="[gae-features]#caches">GAE - Caches</a>
+</p>
+
+</div>
+
+
+</div> <!-- dao -->
+
+
+</div> <!-- chapter -->

@@ -1,0 +1,9 @@
+<module rename-to="gwtemul">
+
+	<inherits name="com.spoledge.ui"/>
+
+	<entry-point class="com.spoledge.audao.test.client.gwtemul.GWTEmulPage"/>
+	<source path="audao/test/client/gwtemul"/>
+
+</module>
+

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+
+	<config>
+		<dto gwt-compatible="true"/>
+	</config>
+
+	<tables>
+
+		<table name="gwt_dto" abstract="true" force-dto="true">
+			<columns>
+				<column name="prop_a">
+					<type max-length="500">String</type>
+				</column>
+				<column name="prop_b">
+					<type max-length="500">String</type>
+				</column>
+			</columns>
+		</table>
+
+
+		<table name="gwt_basic">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+					</enum>
+				</column>
+
+				<column name="string_type">
+					<type class="String">Serializable</type>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+				</column>
+
+				<column name="blob_type">
+					<type max-length="500">byte[]</type>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+				</column>
+
+				<column name="object_type">
+					<type class="String" max-length="500">Serializable</type>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<table name="gwt_google">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="category_type">
+					<type class="gae:Category">Serializable</type>
+				</column>
+
+				<column name="email_type">
+					<type class="gae:Email">Serializable</type>
+				</column>
+
+				<column name="geopt_type">
+					<type class="gae:GeoPt">Serializable</type>
+				</column>
+
+				<column name="imhandle_type">
+					<type class="gae:IMHandle">Serializable</type>
+				</column>
+
+				<column name="key_type">
+					<type class="gae:Key">Serializable</type>
+				</column>
+
+				<column name="link_type">
+					<type class="gae:Link">Serializable</type>
+				</column>
+
+				<column name="phone_number_type">
+					<type class="gae:PhoneNumber">Serializable</type>
+				</column>
+
+				<column name="postal_address_type">
+					<type class="gae:PostalAddress">Serializable</type>
+				</column>
+
+				<column name="rating_type">
+					<type class="gae:Rating">Serializable</type>
+				</column>
+
+				<column name="user_type">
+					<type class="gae:User">Serializable</type>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<table name="gwt_list_google">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="category_type">
+					<type class="gae:Category">List</type>
+				</column>
+
+				<column name="email_type">
+					<type class="gae:Email">List</type>
+				</column>
+
+				<column name="geopt_type">
+					<type class="gae:GeoPt">List</type>
+				</column>
+
+				<column name="imhandle_type">
+					<type class="gae:IMHandle">List</type>
+				</column>
+
+				<column name="key_type">
+					<type class="gae:Key">List</type>
+				</column>
+
+				<column name="link_type">
+					<type class="gae:Link">List</type>
+				</column>
+
+				<column name="phone_number_type">
+					<type class="gae:PhoneNumber">List</type>
+				</column>
+
+				<column name="postal_address_type">
+					<type class="gae:PostalAddress">List</type>
+				</column>
+
+				<column name="rating_type">
+					<type class="gae:Rating">List</type>
+				</column>
+
+				<column name="user_type">
+					<type class="gae:User">List</type>
+				</column>
+
+				<column name="anon_list">
+					<type>List</type>
+				</column>
+
+				<column name="native_list">
+					<type class="java.util.List">Serializable</type>
+				</column>
+
+
+			</columns>
+		</table>
+
+
+	</tables>
+</database>
