@@ -714,10 +714,42 @@
 
 <div class="section">
 <a name="autovalues"></a>
-<h2>Automatic Values</h2>
+<h2>Default and Automatic Values</h2>
 
 <p>
-	AuDAO allows to generate values automatically in runtime.
+	AuDAO allows you to define "static" default values for the insert operation.
+	If the DTO does not contain the given field filled, then the specified default value
+	is used. The default value is specified as a Java expression in the XML configuration
+	file, so it means, that you can set the default value to a constant or even call a method.
+</p>
+
+<p>
+	<b>XML Syntax:</b> <tt>&lt;default-value&gt;<i>java expression</i>&lt;/default-value&gt;</tt>
+</p>
+
+<p>
+	<b>Example:</b>
+	<pre class="prettyprint xml">
+  &lt;columns&gt;
+
+    &lt;column name="name"&gt;
+      &lt;type max-length="32"&gt;String&lt;/type&gt;
+      &lt;not-null/&gt;
+      &lt;default-value&gt;"n/a"&lt;/default-value&gt;
+    &lt;/column&gt;
+
+    &lt;column name="version"&gt;
+      &lt;type&gt;int&lt;/type&gt;
+      &lt;not-null/&gt;
+      &lt;default-value&gt;com.foo.Constants.VERSION&lt;/default-value&gt;
+    &lt;/column&gt;
+    ...
+
+  &lt;/columns&gt; </pre>
+</p>
+
+<p>
+	AuDAO also allows to generate values automatically at runtime.
 	It supports numeric and Date/Timestamp types and operations insert and update.
 </p>
 

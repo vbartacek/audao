@@ -260,7 +260,9 @@
 				</ant:packageset>
 				<ant:packageset>
 					<xsl:attribute name="dir">../parser/src/java</xsl:attribute>
+					<!--
 					<xsl:attribute name="includes">com/spoledge/audao/parser/gql</xsl:attribute>
+					-->
 				</ant:packageset>
 				<ant:doctitle>
 					<xsl:text disable-output-escaping="yes">&lt;![CDATA[&lt;h1&gt;AuDAO Base Classes&lt;/h1&gt;]]&gt;</xsl:text>
@@ -273,7 +275,7 @@
 					<xsl:attribute name="packages">com.spoledge.audao.db*</xsl:attribute>
 				</ant:group>
 				<ant:group>
-					<xsl:attribute name="title">AuDAO - GQL Parser</xsl:attribute>
+					<xsl:attribute name="title">AuDAO - GQL and GQLExt Parser</xsl:attribute>
 					<xsl:attribute name="packages">com.spoledge.audao.parser*</xsl:attribute>
 				</ant:group>
 			</ant:javadoc>

@@ -233,6 +233,7 @@
 				<include name="grammar/GqlLexer.g"/>
 				<include name="grammar/GqlDynamic.g"/>
 				<include name="grammar/GqlExt*.g"/>
+				<include name="jsp/**"/>
 			</fileset>
 		</zip>
 
