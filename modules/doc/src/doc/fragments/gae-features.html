@@ -729,13 +729,14 @@
 
 <p>
 	The "extended" means that the statements are not limited to "SELECT" queries only,
-	but you can use also other SQL commands like "INSERT", "DELETE" and UPDATE.
+	but you can use also other SQL commands like "INSERT", "DELETE" and UPDATE
+	and also use so called soft conditions, expressions and nested queries.
 </p>
 
 <p class="note">
 	We do not recommend to use this library in the real application as the way to access
 	GAE's datastore. Instead of that we think that this library can be useful for administrators
-	or can be used by some admin tasks to preprocess / migrate / download / ... data.
+	or can be used by some admin tasks to preprocess, migrate or download data.
 </p>
 
 <p>
@@ -763,8 +764,7 @@
       for (Entity ent : pq.executeQuery( val )) {
           ...
       }
-  }
-	</pre>
+  } </pre>
 </p>
 
 <p>
@@ -775,8 +775,37 @@
   PreparedGql pq = gqld.prepare(
       "UPDATE MyEntity SET unindexed('prop') WHERE prop=:1 SOFT substr(prop2,1,1)=:2" );
 
-  int count = pq.executeUpdate( "value1", "A");
-	</pre>
+  int count = pq.executeUpdate( "value1", "A"); </pre>
+</p>
+
+
+<p>
+	You can also use a simple tool - 'gqlext.jsp' within your appengine application.
+	<ol>
+		<li>put gqlext.jsp to your's web application directory (the main war directory)</li>
+		<li>put commons-logging-1.1.1.jar to your's web application WEB-INF/lib directory</li>
+		<li>put antlr-runtime-3.2.jar to your's web application WEB-INF/lib directory</li>
+		<li>put audao-runtime-gqlext-*.jar to your's web application WEB-INF/lib directory</li>
+	</ol>
+
+	To limit acccess to the GQL console, you should add this section to your WEB-INF/web.xml config:
+	<pre class="prettyprint xml">
+  &lt;security-constraint&gt;
+    &lt;web-resource-collection&gt;
+      &lt;web-resource-name&gt;Admin Area&lt;/web-resource-name&gt;
+      &lt;url-pattern&gt;/gqlext.jsp&lt;/url-pattern&gt;
+    &lt;/web-resource-collection&gt;
+    &lt;auth-constraint&gt;
+      &lt;role-name&gt;admin&lt;/role-name&gt;
+    &lt;/auth-constraint&gt;
+  &lt;/security-constraint&gt;</pre>
+
+	Point your web-browser to the 'gqlext.jsp' page.
+</p>
+
+<p class="note">
+	Unlike the standard GQL consle, the extended GQL console allows you to change data
+	in the datastore. Be carefull !!!
 </p>
 
 
@@ -935,13 +964,80 @@
 </div>
 
 
+
+<div class="subsection">
+<a name="gqlext_soft_cond"></a>
+<h3>Soft Conditions</h3>
+
+<p>
+	Soft conditions are conditions evaluated in the library on the client
+	(as opposite to the normal conditions which are evaluated in the appengine
+	on the server).
+</p>
+
+<p>
+	You should use soft conditions carefully and with conjunction with the normal ones.
+</p>
+
+<p>
+	<b>Examples:</b>
+	<pre class="prettyprint java">
+  SELECT * FROM MyKind WHERE indexed_property=:1 SOFT unindexed_property=:2 </pre>
+</p>
+
+</div>
+
+
+
+<div class="subsection">
+<a name="gqlext_nested_queries"></a>
+<h3>Nested Queries</h3>
+
+<p>
+	Nested queries can be used in:
+	<ul>
+		<li>in SELECT query instead of the FROM kind</li>
+		<li>condition IN</li>
+		<li>soft condition IN</li>
+	</ul>
+</p>
+
+<p>
+  In conditions the nested query must return only one column/field.
+</p>
+
+<p>
+	<b>Examples:</b>
+	<pre class="prettyprint java">
+  SELECT * FROM (SELECT * from MyKind WHERE prop=:1) WHERE SOFT prop2=:2
+  DELETE FROM MyKind WHERE id IN (SELECT id FROM MyKindType WHERE name=:1)</pre>
+</p>
+
+</div>
+
+
+
 <div class="subsection">
 <a name="gqlext_functions"></a>
 <h3>Functions</h3>
 
+
+<div class="subsubsection">
+<a name="gqlext_functions_gql"></a>
+<h3>Standard GQL Functions</h3>
+
 <p>
-	Functions can be used in expressions and therefore in the soft conditions.
+	These functions can be used in both kinds of conditions (standard + soft)
+	and also in expressions.
 </p>
+
+<p>
+	The full list of these functions
+	is at 
+	<a href="http://code.google.com/appengine/docs/python/datastore/gqlreference.html">http://code.google.com/appengine/docs/python/datastore/gqlreference.html</a>.
+</p>
+
+</div>
 
 
 <div class="subsubsection">
@@ -949,102 +1045,130 @@
 <h3>Mathematic Functions</h3>
 
 <p>
+	These functions can be used in expressions and therefore in the soft conditions.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncABS]">ABS</a>
 	<tt>y = ABS( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncACOS]">ACOS</a>
 	<tt>y = ACOS( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncASIN]">ASIN</a>
 	<tt>y = ASIN( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncATAN2]">ATAN2</a>
 	<tt>z = ATAN2( y, x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncATAN]">ATAN</a>
 	<tt>y = ATAN( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncCEIL]">CEIL</a>
 	<tt>y = CEIL( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncCOSH]">COSH</a>
 	<tt>y = COSH( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncCOS]">COS</a>
 	<tt>y = COS( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncDIV]">DIV</a>
 	<tt>z = DIV( x, y )</tt><br/>
 	The standard div operator '/' uses this function.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncEXP]">EXP</a>
 	<tt>y = EXP( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncFLOOR]">FLOOR</a>
 	<tt>y = FLOOR( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncLN]">LN</a>
 	<tt>y = LN( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncMINUS]">MINUS</a>
 	<tt>z = MINUS( x, y )</tt><br/>
 	The standard minus operator '-' uses this function.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncMOD]">MOD</a>
 	<tt>z = MOD( x, y )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncMUL]">MUL</a>
 	<tt>z = MUL( x, y )</tt><br/>
 	The standard mul operator '*' uses this function.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncPLUS]">PLUS</a>
 	<tt>z = PLUS( x, y )</tt><br/>
 	The standard plus operator '+' uses this function.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncPOWER]">POWER</a>
 	<tt>z = POWER( x, y )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncRAND]">RAND</a>
 	<tt>y = RAND()</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSIGN]">SIGN</a>
 	<tt>y = SIGN( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSINH]">SINH</a>
 	<tt>y = SINH( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSIN]">SIN</a>
 	<tt>y = SIN( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSQRT]">SQRT</a>
 	<tt>y = SQRT( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncTANH]">TANH</a>
 	<tt>y = TANH( x )</tt><br/>
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncTAN]">TAN</a>
 	<tt>y = TAN( x )</tt><br/>
 </p>
 
@@ -1056,38 +1180,49 @@
 <h3>String Functions</h3>
 
 <p>
+	These functions can be used in expressions and therefore in the soft conditions.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncINSTR]">INSTR</a>
 	<tt>index = INSTR( text, substring[, position[, occurence ]])</tt><br/>
 	Same as Oracle's INSTR function.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSUBSTR]">SUBSTR</a>
 	<tt>s = SUBSTR( text, position[, length ])</tt><br/>
 	Same as Oracle's SUBSTR function.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncLENGTH]">LENGTH</a>
 	<tt>x = LENGTH( text )</tt><br/>
 	Returns the length of the text in characters.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncLOWER]">LOWER</a>
 	<tt>s = LOWER( text )</tt><br/>
 	Returns the text in lowercase.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncMUL]">MUL</a>
 	<tt>s = MUL( text, x )</tt><br/>
 	Concatenates text many times as is the value of x.
 	Same as Perl's 'x' operator.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncPLUS]">PLUS</a>
 	<tt>s = PLUS( text, whatever )</tt><br/>
 	Concatenates text and any other value.
 	The standard plus operator '+' uses this function.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncUPPER]">UPPER</a>
 	<tt>s = UPPER( text )</tt><br/>
 	Returns the text in uppercase.
 </p>
@@ -1100,6 +1235,11 @@
 <h3>Date Functions</h3>
 
 <p>
+	These functions can be used in expressions and therefore in the soft conditions.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncMINUS]">MINUS</a>
 	<tt>d = MINUS( date, x )</tt><br/>
 	Subtracts x days from the date.
 	Same as Oracle's functionality.
@@ -1107,6 +1247,7 @@
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncPLUS]">PLUS</a>
 	<tt>d = PLUS( date, x )</tt><br/>
 	Adds x days to the date.
 	Same as Oracle's functionality.
@@ -1114,6 +1255,7 @@
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSYSDATE]">SYSDATE</a>
 	<tt>d = SYSDATE()</tt><br/>
 	Returns the current date and time.
 </p>
@@ -1126,43 +1268,147 @@
 <h3>Other Functions</h3>
 
 <p>
+	These functions can be used in expressions and therefore in the soft conditions.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncDECODE]">DECODE</a>
 	<tt>o = DECODE( val, search1, value1[, search2, value2 ...[, default]])</tt><br/>
 	Same as Oracle's functionality.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncKEY_ID]">KEY_ID</a>
 	<tt>x = KEY_ID( key )</tt><br/>
 	Extracts id (long) from a key.
 </p>
 
 <p>
 	<tt>s = KEY_NAME key )</tt><br/>
+	<a href="[api:parser/gql/impl/soft/func::Funcname ]">name </a>
 	Extracts name (String) from a key.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncKEY_PARENT]">KEY_PARENT</a>
 	<tt>key = KEY_PARENT( key )</tt><br/>
 	Returns the parent key.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncKEY_VALUE]">KEY_VALUE</a>
 	<tt>o = KEY_VALUE( key )</tt><br/>
 	Extracts id (long) or name (String) from a key.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncLIST]">LIST</a>
 	<tt>l = LIST( [item1[, item2...] )</tt><br/>
 	Creates a list - stored as multi-value property.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncNVL]">NVL</a>
 	<tt>o = NVL( val, val2 )</tt><br/>
 	Same as Oracle's functionality.
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncNVL2]">NVL2</a>
 	<tt>o = NVL2( val, val1, val2 )</tt><br/>
 	Same as Oracle's functionality.
+</p>
+
+
+</div>
+
+
+
+<div class="subsubsection">
+<a name="gqlext_functions_pseudo"></a>
+<h3>Pseudo Functions</h3>
+
+<p>
+	<tt>EMPTY( string )</tt><br/>
+	Forces the property with name string and null value to be empty (missing).
+	This function can be used only in <i>aliases</i>.
+</p>
+
+<p>
+	<tt>KIND( string )</tt><br/>
+	Escapes the kind name.
+	This function can be used only in the <i>kind</i> section.
+</p>
+
+<p>
+	<tt>PROP( string )</tt><br/>
+	Escapes the property name.
+	This function can be used almost everywhere (expressions, conditions, column names).
+</p>
+
+<p>
+	<tt>UNINDEXED( string )</tt><br/>
+	Forces the property with name string to be unindexed.
+	This function can be used only in <i>aliases</i>.
+</p>
+
+</div>
+
+
+<div class="subsubsection">
+<a name="gqlext_functions_user"></a>
+<h3>User Defined Functions</h3>
+
+<p>
+	All standard functions are defined in the package <tt>com.spoledge.audao.parser.gql.impl.soft.func</tt>.
+	The parser dynamically looks up the function by its name. Only several functions are defined
+	directly in the parser - the standard GQL functions (KEY(), DATE(), ...) and pseudo-functions.
+</p>
+
+<p>
+	To add a new user-defined function, you must create an implementation
+	of the <a href="[api:parser/gql/impl/soft::]">SoftFunction</a> and register it
+	in the <a href="[api:parser/gql/impl/soft::]">SoftFunctionFactory</a>:
+	<pre class="prettyprint java">
+  import java.util.List;
+  import com.spoledge.audao.parser.gql.impl.soft.SoftFunction;
+  import com.spoledge.audao.parser.gql.impl.soft.SoftFunctionFactory;
+  ...
+  SoftFunctionFactory.getDefaultFactory().defineSoftFunction(
+      "MY_FUNC", new SoftFunction() {
+          public Object getFunctionValue( List&lt;Object&gt; args ) {
+              // concatenates all parameters:
+              StringBuilder sb = new StringBuilder();
+              for (Object o : args)
+                  sb.append( o );
+              }
+              return sb.toString();
+          }
+      }); </pre>
+</p>
+
+<p class="note">
+	You can also redefine any existing function (like ABS) by your own implementation.
+</p>
+
+<p>
+	We recommend to extend existing parent functions like 
+	<a href="[api:parser/gql/impl/soft/func::]">Func</a>,
+	<a href="[api:parser/gql/impl/soft/func::]">Func0</a>,
+	<a href="[api:parser/gql/impl/soft/func::]">Func1</a>,
+	<a href="[api:parser/gql/impl/soft/func::]">Func2</a>,
+	<a href="[api:parser/gql/impl/soft/func::]">MathFunc1</a>,
+	<a href="[api:parser/gql/impl/soft/func::]">StringFunc1</a>.
+</p>
+
+
+<p>
+	Another approach is to define own <a href="[api:parser/gql/impl/soft::]">SoftFunctionFactory</a>,
+	which is responsible for creating/mapping of functions:
+	<pre class="prettyprint java">
+  import com.spoledge.audao.parser.gql.impl.soft.SoftFunctionFactory;
+  ...
+  SoftFunctionFactory.setDefaultFactory( new MyFunctionFactory()); </pre>
 </p>
 
 

@@ -84,6 +84,9 @@
 				<xsl:value-of select="$pkg"/>
 				<xsl:text>/</xsl:text>
 				<xsl:value-of select="$class"/>
+				<xsl:if test="string-length($class) = 0">
+					<xsl:value-of select="."/>
+				</xsl:if>
 			</xsl:when>
 			<xsl:when test="contains($name,':')">
 				<xsl:variable name="type" select="substring-before($name, ':')"/>
