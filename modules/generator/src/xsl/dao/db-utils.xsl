@@ -136,45 +136,34 @@
 
 
 	<xsl:template name="is-pk-auto">
-		<xsl:value-of select="count(db:columns/db:column[db:auto and db:pk])"/>
+		<xsl:param name="ctx" select="."/>
+		<xsl:value-of select="count($ctx/db:columns/db:column[db:auto and db:pk])"/>
 	</xsl:template>
 
 	<xsl:template name="pk-type">
-		<xsl:value-of select="db:columns/db:column[db:pk][1]/db:type"/>
+		<xsl:param name="ctx" select="."/>
+		<xsl:value-of select="$ctx/db:columns/db:column[db:pk][1]/db:type"/>
 	</xsl:template>
 
 	<xsl:template name="pk-type-ucfirst">
+		<xsl:param name="ctx" select="."/>
 		<xsl:call-template name="uc-first">
-			<xsl:with-param name="name" select="db:columns/db:column[db:pk]/db:type"/>
-		</xsl:call-template>
-	</xsl:template>
-
-	<xsl:template name="pk-name-ucfirst">
-		<xsl:call-template name="uc-first">
-			<xsl:with-param name="name">
-				<xsl:call-template name="pk-name"/>
-			</xsl:with-param>
+			<xsl:with-param name="name" select="$ctx/db:columns/db:column[db:pk]/db:type"/>
 		</xsl:call-template>
 	</xsl:template>
 
 	<xsl:template name="pk-name">
+		<xsl:param name="ctx" select="."/>
 		<xsl:call-template name="camel-name">
-			<xsl:with-param name="name" select="db:columns/db:column[db:pk][1]/@name"/>
+			<xsl:with-param name="name" select="$ctx/db:columns/db:column[db:pk][1]/@name"/>
 			<xsl:with-param name="capital" select="0"/>
 		</xsl:call-template>
 	</xsl:template>
 
-	<xsl:template name="pk-Name-ucfirst">
-		<xsl:call-template name="uc-first">
-			<xsl:with-param name="name">
-				<xsl:call-template name="pk-Name"/>
-			</xsl:with-param>
-		</xsl:call-template>
-	</xsl:template>
-
 	<xsl:template name="pk-Name">
+		<xsl:param name="ctx" select="."/>
 		<xsl:call-template name="camel-name">
-			<xsl:with-param name="name" select="db:columns/db:column[db:pk][1]/@name"/>
+			<xsl:with-param name="name" select="$ctx/db:columns/db:column[db:pk][1]/@name"/>
 			<xsl:with-param name="capital" select="1"/>
 		</xsl:call-template>
 	</xsl:template>

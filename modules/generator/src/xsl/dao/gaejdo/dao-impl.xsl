@@ -259,9 +259,9 @@ import com.spoledge.audao.db.dao.gae.GaeJdoAbstractDaoImpl;
 		<xsl:if test="$ispkauto=1">
 			<xsl:text>
             dto.set</xsl:text>
-			<xsl:call-template name="pk-Name-ucfirst"/>
+			<xsl:call-template name="pk-Name"/>
 			<xsl:text>( impl.get</xsl:text>
-			<xsl:call-template name="pk-Name-ucfirst"/>
+			<xsl:call-template name="pk-Name"/>
 			<xsl:text>().get</xsl:text>
 			<xsl:choose>
 				<xsl:when test="db:columns/db:column[db:pk]/db:type='long'">
@@ -274,7 +274,7 @@ import com.spoledge.audao.db.dao.gae.GaeJdoAbstractDaoImpl;
 			<xsl:text>());
 
             return dto.get</xsl:text>
-			<xsl:call-template name="pk-Name-ucfirst"/>
+			<xsl:call-template name="pk-Name"/>
 			<xsl:text>();
 </xsl:text>
 		</xsl:if>

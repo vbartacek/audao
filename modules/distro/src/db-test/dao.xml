@@ -589,6 +589,56 @@
 			</methods>
 		</table>
 
+
+		<!-- ===================================================================================
+		     ================================== Methods Tests ==================================
+			   =================================================================================== -->
+
+		<table name="dao_method_insert_all_auto">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="value">
+					<type max-length="32">String</type>
+					<not-null/>
+				</column>
+			</columns>
+			<methods>
+				<find>
+					<all/>
+					<order-by>
+						<column name="id"/>
+					</order-by>
+				</find>
+				<insert-all/>
+			</methods>
+		</table>
+
+		<table name="dao_method_insert_all_noauto">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<pk/>
+				</column>
+				<column name="value">
+					<type max-length="32">String</type>
+					<not-null/>
+				</column>
+			</columns>
+			<methods>
+				<find>
+					<all/>
+					<order-by>
+						<column name="id"/>
+					</order-by>
+				</find>
+				<insert-all/>
+			</methods>
+		</table>
+
 	</tables>
 </database>
 

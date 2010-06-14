@@ -567,6 +567,17 @@ import com.spoledge.audao.db.dao.AbstractDaoImpl;
 		<xsl:message>The 'mbody-insert' template should be overridden by subclass</xsl:message>
 	</xsl:template>
 
+	<xsl:template name="mbody-insert-all">
+		<xsl:call-template name="open-mbody"/>
+		<xsl:text>        for ( </xsl:text>
+		<xsl:call-template name="dto-name"/>
+		<xsl:text> dto : dtos ) {
+            insert( dto );
+        }
+    }
+</xsl:text>
+	</xsl:template>
+
 	<xsl:template name="catch-sqlexception">
 		<xsl:text>        }
         catch (SQLException e) {

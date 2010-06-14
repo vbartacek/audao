@@ -37,6 +37,10 @@
 
 
 	<xsl:template name="imports-java">
+		<xsl:if test="db:methods/db:insert-all">
+import java.util.LinkedList;
+import java.util.List;
+		</xsl:if>
 		<xsl:if test="db:columns/db:column[(db:type = 'byte[]' or db:type = 'Serializable') and not(db:type/@max-length &lt; 501)]">
 			<xsl:text>
 import com.google.appengine.api.datastore.Blob;</xsl:text>
@@ -124,8 +128,15 @@ import com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl;
 	</xsl:template>
 
 
-
 	<xsl:template name="method-fetch">
+		<xsl:call-template name="method-fetch-impl"/>
+		<xsl:if test="db:methods/db:insert-all">
+			<xsl:call-template name="method-to-entity"/>
+		</xsl:if>
+	</xsl:template>
+
+
+	<xsl:template name="method-fetch-impl">
 		<xsl:text>
     protected </xsl:text>
 		<xsl:call-template name="dto-name"/>
@@ -243,6 +254,19 @@ import com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl;
 		<xsl:call-template name="close-mbody"/>
 	</xsl:template>
 
+
+	<xsl:template name="method-to-entity">
+		<xsl:text>
+    protected Entity prepareForInsert( </xsl:text>
+		<xsl:call-template name="dto-name"/>
+		<xsl:text> dto ) throws DaoException {
+</xsl:text>
+		<xsl:call-template name="insert-fill-entity"/>
+		<xsl:text>
+        return _ent;
+    }
+</xsl:text>
+	</xsl:template>
 
 	<xsl:template name="fetch-keys">
 		<xsl:param name="ctx" select="$keycol"/>
@@ -554,12 +578,7 @@ import com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl;
 	</xsl:template>
 
 
-	<xsl:template name="mbody-insert">
-		<xsl:call-template name="open-mbody"/>
-		<xsl:variable name="ispkauto">
-			<xsl:call-template name="is-pk-auto"/>
-		</xsl:variable>
-
+	<xsl:template name="insert-fill-entity">
 		<xsl:if test="$keycol">
 			<xsl:call-template name="insert-key-check-null">
 				<xsl:with-param name="ctx" select="$keycol"/>
@@ -623,13 +642,29 @@ import com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl;
 			<xsl:call-template name="set-column-insert-auto"/>
 		</xsl:for-each>
 		<xsl:text>        }
+</xsl:text>
+	</xsl:template>
 
+
+	<xsl:template name="mbody-insert">
+		<xsl:call-template name="open-mbody"/>
+		<xsl:choose>
+			<xsl:when test="db:methods/db:insert-all">
+				<xsl:text>        Entity _ent = prepareForInsert( dto );
+</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:call-template name="insert-fill-entity"/>
+			</xsl:otherwise>
+		</xsl:choose>
+			
+		<xsl:text>
         entityPut( _ent, dto, "insert" );
 </xsl:text>
 		<xsl:if test="$ispkauto=1">
 			<xsl:text>
         dto.set</xsl:text>
-			<xsl:call-template name="pk-Name-ucfirst"/>
+			<xsl:call-template name="pk-Name"/>
 			<xsl:text>( _ent.getKey()</xsl:text>
 			<xsl:call-template name="key-to-native">
 				<xsl:with-param name="ctx" select="db:columns/db:column[db:pk]"/>
@@ -649,8 +684,65 @@ import com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl;
 		<xsl:if test="$ispkauto=1">
 			<xsl:text>
         return dto.get</xsl:text>
-			<xsl:call-template name="pk-Name-ucfirst"/>
+			<xsl:call-template name="pk-Name"/>
 			<xsl:text>();
+</xsl:text>
+		</xsl:if>
+		<xsl:call-template name="close-mbody"/>
+	</xsl:template>
+
+
+	<xsl:template name="mbody-insert-all">
+		<xsl:call-template name="open-mbody"/>
+		<xsl:text>        LinkedList&lt;Entity&gt; _ents = new LinkedList&lt;Entity&gt;();
+        for ( </xsl:text>
+		<xsl:call-template name="dto-name"/>
+		<xsl:text> dto : dtos ) {
+            _ents.add( prepareForInsert( dto ));
+        }
+
+        </xsl:text>
+		<xsl:if test="$defcache or $ispkauto=1">
+			<xsl:text>List&lt;Key&gt; _keys = </xsl:text>
+		</xsl:if>
+		<xsl:text>entityPut( _ents, dtos, "insert" );
+</xsl:text>
+
+		<xsl:if test="$defcache or $ispkauto=1">
+			<xsl:text>
+        java.util.Iterator&lt;</xsl:text>
+			<xsl:call-template name="dto-name"/>
+			<xsl:text>&gt; _dtoiter = dtos.iterator();
+
+        for ( Key _key : _keys ) {
+            </xsl:text>
+			<xsl:call-template name="dto-name"/>
+			<xsl:text> dto = _dtoiter.next();
+</xsl:text>
+			<xsl:if test="$ispkauto=1">
+				<xsl:text>            dto.set</xsl:text>
+				<xsl:call-template name="pk-Name">
+					<xsl:with-param name="ctx" select="$daoctx"/>
+				</xsl:call-template>
+				<xsl:text>( _key</xsl:text>
+				<xsl:call-template name="key-to-native">
+					<xsl:with-param name="ctx" select="$daoctx/db:columns/db:column[db:pk]"/>
+				</xsl:call-template>
+				<xsl:text>);
+</xsl:text>
+			</xsl:if>
+
+			<xsl:if test="$defcache">
+				<xsl:text>
+        _defaultCache.put( </xsl:text>
+				<xsl:call-template name="dtocache-keyval-dto">
+					<xsl:with-param name="dto" select="'dto'"/>
+				</xsl:call-template>
+				<xsl:text>, copyOf( dto ));
+</xsl:text>
+			</xsl:if>
+
+			<xsl:text>        }
 </xsl:text>
 		</xsl:if>
 		<xsl:call-template name="close-mbody"/>
