@@ -42,6 +42,12 @@
 		</xsl:call-template>
 	</xsl:variable>
 
+	<xsl:variable name="ispkauto">
+		<xsl:call-template name="is-pk-auto">
+			<xsl:with-param name="ctx" select="$daoctx"/>
+		</xsl:call-template>
+	</xsl:variable>
+
 
 	<xsl:template match="db:database">
 		<xsl:apply-templates select="$daoctx"/>
@@ -162,6 +168,10 @@ public interface </xsl:text>
 		<xsl:for-each select="db:move">
 			<xsl:call-template name="msign-mover"/>
 			<xsl:call-template name="mbody-mover"/>
+		</xsl:for-each>
+		<xsl:for-each select="db:insert-all">
+			<xsl:call-template name="msign-insert-all"/>
+			<xsl:call-template name="mbody-insert-all"/>
 		</xsl:for-each>
 	</xsl:template>
 
@@ -399,6 +409,9 @@ import java.sql.Timestamp;
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:choose>
+					<xsl:when test="local-name()='insert-all'">
+						<xsl:text>Inserts several</xsl:text>
+					</xsl:when>
 					<xsl:when test="local-name()='move'">
 						<xsl:text>Moves</xsl:text>
 					</xsl:when>
@@ -422,7 +435,7 @@ import java.sql.Timestamp;
 					<xsl:text> a</xsl:text>
 				</xsl:if>
 				<xsl:text> record</xsl:text>
-				<xsl:if test="($idx != 0 or not(db:unique)) and not(db:pk)">
+				<xsl:if test="($idx != 0 or not(db:unique)) and not(db:pk) or local-name='insert-all'">
 					<xsl:text>s</xsl:text>
 				</xsl:if>
 				<xsl:choose>
@@ -439,6 +452,9 @@ import java.sql.Timestamp;
 		<xsl:if test="local-name()='move'">
 			<xsl:text> to table </xsl:text>
 			<xsl:value-of select="@target"/>
+		</xsl:if>
+		<xsl:if test="local-name()='insert-all'">
+			<xsl:text> to the table at once</xsl:text>
 		</xsl:if>
 		<xsl:if test="db:order-by">
 			<xsl:text> ordered by </xsl:text>
@@ -675,10 +691,17 @@ import java.sql.Timestamp;
 	</xsl:template>
 
 
+	<xsl:template name="msign-insert-all">
+		<xsl:call-template name="comment-method"/>
+		<xsl:text>    public void insertAll</xsl:text>
+		<xsl:call-template name="method-name"/>
+		<xsl:text>( Iterable&lt;</xsl:text>
+		<xsl:call-template name="dto-name"/>
+		<xsl:text>&gt; dtos ) throws DaoException</xsl:text>
+	</xsl:template>
+
+
 	<xsl:template name="msign-insert">
-		<xsl:variable name="ispkauto">
-			<xsl:call-template name="is-pk-auto"/>
-		</xsl:variable>
 		<xsl:text>
     /**
      * Inserts a new record.
@@ -809,6 +832,10 @@ import java.sql.Timestamp;
 	</xsl:template>
 
 	<xsl:template name="mbody-mover">
+		<xsl:call-template name="mbody-abstract"/>
+	</xsl:template>
+
+	<xsl:template name="mbody-insert-all">
 		<xsl:call-template name="mbody-abstract"/>
 	</xsl:template>
 
@@ -951,6 +978,8 @@ import java.sql.Timestamp;
 			</xsl:when>
 			<xsl:when test="db:pk">
 				<xsl:text>ByPrimaryKey</xsl:text>
+			</xsl:when>
+			<xsl:when test="local-name()='insert-all'">
 			</xsl:when>
 			<xsl:when test="db:index">
 				<xsl:variable name="name" select="db:index/@name"/>

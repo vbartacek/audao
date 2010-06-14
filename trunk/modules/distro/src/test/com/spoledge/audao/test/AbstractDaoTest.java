@@ -15,6 +15,9 @@
  */
 package com.spoledge.audao.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -368,6 +371,32 @@ public class AbstractDaoTest extends AbstractTest {
 
         assertTrue( "dao boolean", dto2.getDefBooleanType());
         assertEquals( "dao string", "STRING", dto2.getDefStringType());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Tests - Method InsertAll
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Test 
+    public void testInsertAllAuto() throws DaoException {
+        DaoMethodInsertAllAutoDao dao = DaoFactory.createDaoMethodInsertAllAutoDao();
+        ArrayList<DaoMethodInsertAllAuto> dtos = new ArrayList<DaoMethodInsertAllAuto>();
+        for (int i=0; i < 5; i++) {
+            DaoMethodInsertAllAuto dto = new DaoMethodInsertAllAuto();
+            dto.setValue("test" + i );
+            dtos.add( dto );
+        }
+
+        dao.insertAll( dtos );
+
+        DaoMethodInsertAllAuto[] dbDtos = dao.findAll();
+
+        assertEquals( "size", dtos.size(), dbDtos.length );
+
+        for (int i=0; i < dtos.size(); i++) {
+            assertEquals( dbDtos[i].getId(), dtos.get(i).getId());
+            assertEquals( dtos.get(i).getValue(), dbDtos[i].getValue());
+        }
     }
 
 }

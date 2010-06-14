@@ -397,6 +397,41 @@ public abstract class GaeAbstractDaoImpl<T> extends RootDaoImpl {
 
 
     /**
+     * Writes several entities to datastore.
+     * @param ents the entities to be written
+     * @param dtos the dtos used only for logging
+     * @param operation the operation (insert/update) used only for logging
+     */
+    protected List<Key> entityPut( Iterable<Entity> ents, Iterable<?> dtos, String operation )
+            throws DaoException {
+
+        debugSql( operation, dtos );
+
+        List<Key> ret = null;
+
+        try {
+            ret = ds.put( ents );
+        }
+        catch (ConcurrentModificationException e) {
+            errorSql( e, operation, dtos );
+
+            throw new DaoException("Concurrent transaction detected on entities");
+        }
+        catch (Exception e) {
+            errorSql( e, operation, dtos );
+
+            handleException( e );
+
+            return null;
+        }
+
+        // no entity cache handling - should manually clear it if necessary.
+
+        return ret;
+    }
+
+
+    /**
      * Removes entity from datastore.
      * @return true if the entity was really deleted
      */

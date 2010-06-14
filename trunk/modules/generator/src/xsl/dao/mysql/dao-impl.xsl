@@ -105,7 +105,7 @@
 		<xsl:if test="$ispkauto=1">
 			<xsl:text>
             return dto.get</xsl:text>
-			<xsl:call-template name="pk-Name-ucfirst"/>
+			<xsl:call-template name="pk-Name"/>
 			<xsl:text>();
 </xsl:text>
 		</xsl:if>

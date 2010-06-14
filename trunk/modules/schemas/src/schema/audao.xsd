@@ -1018,6 +1018,18 @@
 	</xs:complexType>
 
 
+	<xs:complexType name="InsertAllType">
+		<xs:attribute name="name" type="NameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The name of the insert-all - the java name is "insertAll" + ucfirst(@name).
+					The attribute is optional and the default name i "insertAll".
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
 	<xs:complexType name="RowType">
 		<xs:sequence>
 			<xs:element name="c" type="xs:string" maxOccurs="unbounded"/>
@@ -1348,6 +1360,7 @@
 							<xs:element name="delete" type="DeleteType"/>
 							<xs:element name="truncate" type="TruncateType"/>
 							<xs:element name="move" type="MoveType"/>
+							<xs:element name="insert-all" type="InsertAllType"/>
 						</xs:choice>
 					</xs:sequence>
 				</xs:complexType>
