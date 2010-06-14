@@ -223,6 +223,18 @@ public class GqlExtDynamicTest extends AbstractSelectDynamicTest {
     }
 
     @Test 
+    public void testExtFuncGEOPT_LAT() { 
+        Entity ent = first( test( 1, "SELECT GEOPT_LAT(geopt(1.234,2.345)) AS val FROM dual"));
+        testProp( ent, "val", new Double(1.234f) );
+    }
+
+    @Test 
+    public void testExtFuncGEOPT_LNG() { 
+        Entity ent = first( test( 1, "SELECT GEOPT_LNG(geopt(1.234,2.345)) AS val FROM dual"));
+        testProp( ent, "val", new Double(2.345f) );
+    }
+
+    @Test 
     public void testExtFuncINSTR() { 
         Entity ent = first( test( 1, "SELECT INSTR('abrakadabra', 'br') AS val, INSTR('abrakadabra', 'br', 2) AS val2, INSTR('abrakadabra', 'br', 2, 2) as val3 FROM dual"));
         testProp( ent, "val", 2L);
@@ -447,6 +459,20 @@ public class GqlExtDynamicTest extends AbstractSelectDynamicTest {
         Entity ent = first( test( 1, "SELECT TANH(0) AS val, TANH(3.1415/4) AS val2 FROM dual"));
         testProp( ent, "val", Math.tanh(0) );
         testProp( ent, "val2", Math.tanh(3.1415/4) );
+    }
+
+    @Test 
+    public void testExtFuncTO_CHAR_date() { 
+        Entity ent = first( test( 1, "SELECT TO_CHAR(:1) AS val, TO_CHAR(:1,'yyyy-MM-dd') AS val2 FROM dual", datetime("2010-06-13 16:52:08")));
+        testProp( ent, "val", "2010-06-13 16:52:08");
+        testProp( ent, "val2", "2010-06-13" );
+    }
+
+    @Test 
+    public void testExtFuncTO_CHAR_number() { 
+        Entity ent = first( test( 1, "SELECT TO_CHAR(:1) AS val, TO_CHAR(:1,'00.00') AS val2 FROM dual", 3.14159265));
+        testProp( ent, "val", "3.1416");
+        testProp( ent, "val2", "03.14" );
     }
 
     @Test 
