@@ -134,7 +134,7 @@ Building
 --------
 
 1) Copy or link:
-    - MySQL/Oracle JAR files to lib/jdbc
+    - MySQL/Oracle JAR files to lib/jdbc/mysql/ and/or lib/jdbc/oracle respectively
     - Apache commons-logging-1.1.1.jar to lib/commons
     - Apache XMLBeans xbean.jar and jsr173_1.0_api.jar to lib/xmlbeans
     - JUnit junit*.jar to lib/junit
