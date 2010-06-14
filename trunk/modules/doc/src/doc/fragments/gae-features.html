@@ -773,7 +773,7 @@
 	<pre class="prettyprint java">
   GqlExtDynamic gqld = new GqlExtDynamic( DatastoreServiceFactory.getDatastoreService());
   PreparedGql pq = gqld.prepare(
-      "UPDATE MyEntity SET unindexed('prop') WHERE prop=:1 SOFT substr(prop2,1,1)=:2" );
+      "UPDATE MyEntity SET unindexed('prop')=prop WHERE prop=:1 SOFT substr(prop2,1,1)=:2" );
 
   int count = pq.executeUpdate( "value1", "A"); </pre>
 </p>
