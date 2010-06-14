@@ -1222,6 +1222,18 @@
 </p>
 
 <p>
+	<a href="[api:parser/gql/impl/soft/func::FuncTO_CHAR]">TO_CHAR</a>
+	<tt>s = TO_CHAR( date[, fmt ])</tt><br/>
+	Converts objects to string.
+	Optional 'fmt' string - the format used for dates ans numbers
+	- see java.text.SimpleDateFormat and java.text.DecimalFormat .
+	The default date format string is 'yyyy-MM-dd HH:mm:ss',
+	the default number format string is '0.####'.
+	If the converted object is not date nor number, then the toString()
+	method is called.
+</p>
+
+<p>
 	<a href="[api:parser/gql/impl/soft/func::FuncUPPER]">UPPER</a>
 	<tt>s = UPPER( text )</tt><br/>
 	Returns the text in uppercase.
@@ -1275,6 +1287,18 @@
 	<a href="[api:parser/gql/impl/soft/func::FuncDECODE]">DECODE</a>
 	<tt>o = DECODE( val, search1, value1[, search2, value2 ...[, default]])</tt><br/>
 	Same as Oracle's functionality.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncGEOPT_LAT]">GEOPT_LAT</a>
+	<tt>lat = GEOPT_LAT( geopt )</tt><br/>
+	Extracts latitude (double) from a geo point.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncGEOPT_LNG]">GEOPT_LNG</a>
+	<tt>lng = GEOPT_LNG( geopt )</tt><br/>
+	Extracts longitude (double) from a geo point.
 </p>
 
 <p>
