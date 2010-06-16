@@ -83,8 +83,9 @@ public class GaeCacheTest extends AbstractCacheTest {
         MemcacheService ms = MemcacheServiceFactory.getMemcacheService();
         assertNull( "memcached none", ms.get( dto1.getId()) );
 
-        ms.setNamespace( MemcacheDtoCacheImpl.DEFAULT_NAMESPACE_PREFIX + "CacheDefault" );
-        assertEquals( "memcached dto", dto1, ms.get( dto1.getId()));
+        MemcacheService ms2 = MemcacheServiceFactory.getMemcacheService( MemcacheDtoCacheImpl.DEFAULT_NAMESPACE_PREFIX + "CacheDefault" );
+
+        assertEquals( "memcached dto", dto1, ms2.get( dto1.getId()));
     }
 
 
