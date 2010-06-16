@@ -30,7 +30,7 @@ public class MemcacheDtoCacheImpl<K,V> implements DtoCache<K,V> {
     /**
      * The default MemcacheService namespace prefix.
      */
-    public static final String DEFAULT_NAMESPACE_PREFIX = "AuDAO:DtoCache:";
+    public static final String DEFAULT_NAMESPACE_PREFIX = "AuDAO.DtoCache.";
 
 
     /**
@@ -75,8 +75,7 @@ public class MemcacheDtoCacheImpl<K,V> implements DtoCache<K,V> {
      * Creates named memcache instance.
      */
     public MemcacheDtoCacheImpl( String namespacePrefix, String namespaceSuffix ) {
-        memcacheService = MemcacheServiceFactory.getMemcacheService();
-        memcacheService.setNamespace( namespacePrefix + namespaceSuffix );
+        memcacheService = MemcacheServiceFactory.getMemcacheService( namespacePrefix + namespaceSuffix );
     }
 
 

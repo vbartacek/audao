@@ -108,8 +108,6 @@
 		<exclude name="**/*Abstract*Test.class"/>
 		<exclude name="**/*Abstract*Tests.class"/>
 		<exclude name="**/gae/**"/>
-		<exclude name="**/gae/gql/**"/>
-		<exclude name="**/gae/gqlext/**"/>
 		<exclude name="**/gwt/**"/>
 	</fileset>
 
