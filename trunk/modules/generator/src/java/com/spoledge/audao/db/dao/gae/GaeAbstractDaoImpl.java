@@ -166,6 +166,16 @@ public abstract class GaeAbstractDaoImpl<T> extends RootDaoImpl {
     }
 
 
+    protected T[] findManyArray( Query query, String cond, int offset, int count, Object... params ) {
+        return toArray( findManyImpl( query, cond, offset, count, params ));
+    }
+
+
+    protected ArrayList<T> findManyList( Query query, String cond, int offset, int count, Object... params ) {
+        return findManyImpl( query, cond, offset, count, params );
+    }
+
+
     /**
      * Finds more than one record by filled query.
      * @param query the query ready for execution
@@ -173,9 +183,9 @@ public abstract class GaeAbstractDaoImpl<T> extends RootDaoImpl {
      * @param offset the offset of the result set starting at 0
      * @param count the max number of returned records; -1 or Integer.MAX_VALUE mean no limit
      * @param params the parameters used only for logging
-     * @return the result array (even empty)
+     * @return the result list (even empty)
      */
-    protected T[] findMany( Query query, String cond, int offset, int count, Object... params ) {
+    protected ArrayList<T> findManyImpl( Query query, String cond, int offset, int count, Object[] params ) {
         String sql = "SELECT * FROM " + getTableName() + " WHERE " + cond;
 
         debugSql( sql, params );
@@ -183,7 +193,7 @@ public abstract class GaeAbstractDaoImpl<T> extends RootDaoImpl {
         PreparedQuery pq = prepare( query, false );
 
         try {
-            return fetchArray( pq.asIterator( getFetchOptions( offset, count )));
+            return fetchList( pq.asIterator( getFetchOptions( offset, count )));
         }
         catch (Exception e) {
             errorSql( e, sql, params );
@@ -299,13 +309,21 @@ public abstract class GaeAbstractDaoImpl<T> extends RootDaoImpl {
      * Fetches data from generic entities into typesafe DTOs.
      */
     protected T[] fetchArray( Iterator<Entity> iterator ) {
+        return toArray( fetchList( iterator ));
+    }
+
+
+    /**
+     * Fetches data from generic entities into typesafe DTOs.
+     */
+    protected ArrayList<T> fetchList( Iterator<Entity> iterator ) {
         ArrayList<T> list = new ArrayList<T>();
 
         while (iterator.hasNext()) {
             list.add( fetch( null, iterator.next()));
         }
 
-        return toArray( list );
+        return list;
     }
 
 

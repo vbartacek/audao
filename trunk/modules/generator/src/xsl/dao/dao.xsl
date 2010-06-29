@@ -42,6 +42,15 @@
 		</xsl:call-template>
 	</xsl:variable>
 
+	<xsl:variable name="dao_findmany">
+		<xsl:call-template name="db-conf-attr">
+			<xsl:with-param name="ctx" select="$daoctx"/>
+			<xsl:with-param name="type" select="'dao'"/>
+			<xsl:with-param name="attr" select="'find-many-result'"/>
+			<xsl:with-param name="def" select="'array'"/>
+		</xsl:call-template>
+	</xsl:variable>
+
 	<xsl:variable name="ispkauto">
 		<xsl:call-template name="is-pk-auto">
 			<xsl:with-param name="ctx" select="$daoctx"/>
@@ -66,7 +75,7 @@ import java.io.Serializable;
 </xsl:text>
 		</xsl:if>
 		<xsl:call-template name="imports-java-dates"/>
-		<xsl:if test="db:columns/db:column[db:type = 'List'] or db:methods//db:params/*[@list='true']">
+		<xsl:if test="$dao_findmany='list' or db:columns/db:column[db:type = 'List'] or db:methods//db:params/*[@list='true']">
 			<xsl:text>
 import java.util.List;
 </xsl:text>
@@ -351,13 +360,11 @@ import java.sql.Timestamp;
 	<xsl:template name="msign-finder">
 		<xsl:call-template name="comment-method"/>
 		<xsl:text>    public </xsl:text>
-		<xsl:call-template name="dto-name"/>
-		<xsl:variable name="isunique">
-			<xsl:call-template name="is-unique-condition"/>
-		</xsl:variable>
-		<xsl:if test="not($isunique=1)">
-			<xsl:text>[]</xsl:text>
-		</xsl:if>
+		<xsl:call-template name="find-return-type">
+			<xsl:with-param name="isunique">
+				<xsl:call-template name="is-unique-condition"/>
+			</xsl:with-param>
+		</xsl:call-template>
 		<xsl:text> find</xsl:text>
 		<xsl:call-template name="method-name"/>
 		<xsl:text>(</xsl:text>
@@ -375,10 +382,13 @@ import java.sql.Timestamp;
 			<xsl:with-param name="idx" select="$idx"/>
 		</xsl:call-template>
     <xsl:text>    public </xsl:text>
-		<xsl:call-template name="dto-name"/>
-		<xsl:if test="$idx != 0 or not(db:unique)">
-			<xsl:text>[]</xsl:text>
-		</xsl:if>
+		<xsl:call-template name="find-return-type">
+			<xsl:with-param name="isunique">
+				<xsl:if test="$idx = 0 and db:unique">
+					<xsl:value-of select="1"/>
+				</xsl:if>
+			</xsl:with-param>
+		</xsl:call-template>
 		<xsl:text> findBy</xsl:text>
 
 		<xsl:call-template name="name-by-index">
@@ -856,6 +866,26 @@ import java.sql.Timestamp;
 		<xsl:text>;
 </xsl:text>
 	</xsl:template>
+
+
+	<xsl:template name="find-return-type">
+		<xsl:param name="isunique"/>
+		<xsl:choose>
+			<xsl:when test="$isunique=1">
+				<xsl:call-template name="dto-name"/>
+			</xsl:when>
+			<xsl:when test="$dao_findmany='list'">
+				<xsl:text>List&lt;</xsl:text>
+				<xsl:call-template name="dto-name"/>
+				<xsl:text>&gt;</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:call-template name="dto-name"/>
+				<xsl:text>[]</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
 
 	<xsl:template name="pk-params">
 		<xsl:param name="ctx" select="."/>

@@ -15,6 +15,8 @@
  */
 package com.spoledge.audao.db.dao.gae;
 
+import java.util.ArrayList;
+
 import javax.jdo.JDOException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -83,7 +85,8 @@ public abstract class GaeJdoAbstractDaoImpl<T> extends RootDaoImpl {
     }
 
 
-    protected T[] findMany( String cond, String order, int offset, int count, Object... params) {
+
+    protected T[] findManyArray( String cond, String order, int offset, int count, Object... params) {
         Query q = null;
         String sql = cond;
         int rangeToExcl;
@@ -102,6 +105,37 @@ public abstract class GaeJdoAbstractDaoImpl<T> extends RootDaoImpl {
             if (order != null && order.length() > 0) q.setOrdering( order );
 
             return fetchArray( q, params );
+        }
+        catch (JDOException e) {
+            errorSql( e, sql, params );
+
+            throw new DBException( e );
+        }
+        finally {
+            if (q != null) q.closeAll();
+        }
+    }
+
+
+    protected ArrayList<T> findManyList( String cond, String order, int offset, int count, Object... params) {
+        Query q = null;
+        String sql = cond;
+        int rangeToExcl;
+
+        if (count < 0 || (count == Integer.MAX_VALUE && offset > 0)) {
+            rangeToExcl = Integer.MAX_VALUE;
+        }
+        else rangeToExcl = offset + count;
+
+        try {
+            debugSql( sql, params );
+
+            q = getQueryCond( cond );
+            q.setRange( offset, rangeToExcl );
+
+            if (order != null && order.length() > 0) q.setOrdering( order );
+
+            return fetchList( q, params );
         }
         catch (JDOException e) {
             errorSql( e, sql, params );
@@ -194,7 +228,9 @@ public abstract class GaeJdoAbstractDaoImpl<T> extends RootDaoImpl {
     protected abstract Query getQuery();
 
     protected abstract T fetch( Query q, Object... params );
+
     protected abstract T[] fetchArray( Query q, Object... params );
+    protected abstract ArrayList<T> fetchList( Query q, Object... params );
 
 
     protected void handleException( JDOException e ) throws DaoException {

@@ -60,6 +60,52 @@
 			</columns>
 		</table>
 
+		<table name="tweak_dao_list">
+			<config>
+				<dao find-many-result="list"/>
+			</config>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="value">
+					<type>int</type>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_tweak_dao_list_1">
+					<unique/>
+					<columns>
+						<column name="name"/>
+						<column name="value"/>
+					</columns>
+				</index>
+			</indexes>
+			<methods>
+				<find>
+					<index name="inx_tweak_dao_list_1"/>
+				</find>
+				<find>
+					<index name="inx_tweak_dao_list_1" level="2"/>
+				</find>
+				<find name="byCondition">
+					<condition>
+						<query dbtype="gae">name=:1</query>
+						<query>name=?</query>
+						<params>
+							<column name="name"/>
+						</params>
+					</condition>
+				</find>
+			</methods>
+		</table>
+
 	</tables>
 </database>
 

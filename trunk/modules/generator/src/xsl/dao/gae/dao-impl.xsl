@@ -543,6 +543,9 @@ import com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl;
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>Many</xsl:text>
+				<xsl:if test="local-name() = 'find'">
+					<xsl:value-of select="$dao_Findmany"/>
+				</xsl:if>
 			</xsl:otherwise>
 		</xsl:choose>
 

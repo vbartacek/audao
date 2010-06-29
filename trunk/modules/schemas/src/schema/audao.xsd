@@ -122,6 +122,14 @@
 	</xs:simpleType>
 
 
+	<xs:simpleType name="FindManyResultType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="list"/>
+			<xs:enumeration value="array"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
 	<xs:complexType name="ColumnTypeType">
 		<xs:simpleContent>
 			<xs:extension base="ColumnTypeListType">
@@ -1136,6 +1144,13 @@
 				<xs:documentation>
 					Enables generating of the "getOrderExpr" method in every DTO class.
 					This also forces generating of the "Column" enumeration in every DTO class.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="find-many-result" type="FindManyResultType" default="array" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Switches between the types of the finders (non-unique) - either arrays or lists.
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
