@@ -66,6 +66,7 @@ public class PreparedGql {
     private QueryType queryType;
     private CommonTree tree;
     private TokenStream tokenStream;
+    private String[] columnNames;
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -95,6 +96,15 @@ public class PreparedGql {
 
 
     /**
+     * Returns the known column names or null.
+     * This method can be called after the executeQuery(..) method only.
+     */
+    public String[] getColumnNames() {
+        return columnNames;
+    }
+
+
+    /**
      * Executes GQL query.
      *
      * @param params the parameters to the GQL (referenced by :1, :2, ...)
@@ -104,7 +114,10 @@ public class PreparedGql {
         if (queryType.isUpdate())
             throw new IllegalStateException("Mismatched query type - use executeUpdate() instead");
 
-        return execute( params ).getEntityIterable();
+        GqlExtTree treeParser = execute( params );
+        columnNames = treeParser.getColumnNames();
+
+        return treeParser.getEntityIterable();
     }
 
 

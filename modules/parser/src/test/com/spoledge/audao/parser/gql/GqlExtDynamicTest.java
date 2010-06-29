@@ -536,6 +536,27 @@ public class GqlExtDynamicTest extends AbstractSelectDynamicTest {
         test( 2, "SELECT * FROM Employee WHERE SOFT employeeNumber IN (SELECT value/5 'val' FROM Preference WHERE name='limit')");
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Tests - column names
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    public void testColumnNames() {
+        testColumnNames( "SELECT * FROM Ble", null );
+        testColumnNames( "SELECT __key__ FROM Ble", Arrays.asList("__key__"));
+        testColumnNames( "SELECT alfa FROM Ble", Arrays.asList("alfa"));
+        testColumnNames( "SELECT alfa,beta FROM Ble", Arrays.asList("alfa", "beta"));
+
+        // __key__ is not in the list:
+        testColumnNames( "SELECT alfa,beta,__key__ FROM Ble", Arrays.asList("alfa", "beta"));
+        testColumnNames( "SELECT __key__,alfa,beta FROM Ble", Arrays.asList("alfa", "beta"));
+
+        testColumnNames( "SELECT alfa,beta,* FROM Ble", null );
+        testColumnNames( "SELECT *,alfa,beta FROM Ble", null );
+
+        testColumnNames( "SELECT * FROM (SELECT alfa,beta FROM Ble)", Arrays.asList("alfa", "beta"));
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////
     // Tests - insert
@@ -691,4 +712,20 @@ public class GqlExtDynamicTest extends AbstractSelectDynamicTest {
         assertEquals( "property " + propName, expectedVal, ent.getProperty( propName ));
         assertEquals( "property " + propName + " unindexed", isUnindexed, ent.isUnindexedProperty( propName ));
     }
+
+    private void testColumnNames( String gql, List<String> expected ) {
+        PreparedGql pgql = gqld.prepare( gql );
+        pgql.executeQuery();
+        String[] columns = pgql.getColumnNames();
+
+        if (expected == null) { assertEquals( "null", expected, columns ); return; }
+
+        assertNotNull( "not-null", columns );
+        assertEquals( "size", expected.size(), columns.length );
+
+        for (int i=0; i < columns.length; i++) {
+            assertEquals( "column " + (i+1), expected.get(i), columns[i]);
+        }
+    }
+
 }
