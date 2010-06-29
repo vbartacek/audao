@@ -30,6 +30,7 @@ scope Query {
     Integer limit;
     Integer offset;
     Iterable<Entity> nestedEntityIterable;
+    String[] nestedColumnNames;
 }
 
 
@@ -104,6 +105,7 @@ import static com.spoledge.audao.parser.gql.impl.soft.SoftConstants.__KEY__;
     private Object[] args;
     private int recordCounter;
     private Iterable<Entity> topEntityIterable;
+    private String[] topColumnNames;
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -123,6 +125,16 @@ import static com.spoledge.audao.parser.gql.impl.soft.SoftConstants.__KEY__;
      */
     public Iterable<Entity> getEntityIterable() {
         return topEntityIterable;
+    }
+
+
+    /**
+     * Returns the known columns names.
+     * Only valid for SELECT QueryType.
+     * @return the column names or null if not known
+     */
+    public String[] getColumnNames() {
+        return topColumnNames;
     }
 
 
@@ -208,15 +220,20 @@ gqlext[DatastoreService ds, Object[\] args] returns[Query value]
         this.ds = ds;
         this.args = args;
         topEntityIterable = null;
+        topColumnNames = null;
         recordCounter = 0;
     }
-    : gql_select { topEntityIterable = $gql_select.value; } | gql_insert | gql_update | gql_delete;
+    : gql_select {
+        topEntityIterable = $gql_select.value;
+        topColumnNames = $gql_select.columnNames;
+    }
+    | gql_insert | gql_update | gql_delete;
     finally {
         if (getNumberOfSyntaxErrors() != 0) throw firstError;
     }
 
 
-gql_select returns [Iterable<Entity> value]
+gql_select returns [Iterable<Entity> value, String[\] columnNames]
     scope Query;
     :
     ^(SELECT kindorquery get_properties where? orderby? limit? offset?) {
@@ -246,6 +263,20 @@ gql_select returns [Iterable<Entity> value]
                                 args );
             }
         };
+
+        if (isAllColumns) {
+            $columnNames = $Query::nestedColumnNames;
+        }
+        else if ($Query::isKeyOnly) {
+            $columnNames = new String[]{ __KEY__ };
+        }
+        else if (softColumns != null) {
+            $columnNames = new String[ softColumns.size() ];
+            int i=0;
+            for (SoftColumn sc : softColumns) {
+                $columnNames[i++] = sc.getColumnName();
+            }
+        }
     };
 
 
@@ -396,6 +427,7 @@ kindorquery:
     }
     | gql_select {
         $Query::nestedEntityIterable = $gql_select.value;
+        $Query::nestedColumnNames = $gql_select.columnNames;
     };
 
 
