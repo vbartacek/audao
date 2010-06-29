@@ -99,7 +99,17 @@ public abstract class AbstractDaoImpl<T> extends RootDaoImpl {
     }
 
 
-    protected T[] findMany( String cond, int offset, int count, Object... params) {
+    protected T[] findManyArray( String cond, int offset, int count, Object... params) {
+        return toArray( findManyImpl( cond, offset, count, params ));
+    }
+
+
+    protected ArrayList<T> findManyList( String cond, int offset, int count, Object... params) {
+        return findManyImpl( cond, offset, count, params );
+    }
+
+
+    protected ArrayList<T> findManyImpl( String cond, int offset, int count, Object[] params) {
         Statement stmt = null;
         ResultSet rs = null;
         String sql = null;
@@ -129,7 +139,7 @@ public abstract class AbstractDaoImpl<T> extends RootDaoImpl {
                 rs = stmt.executeQuery( sql );
             }
 
-            return toArray( fetchArray( rs, offset, count ));
+            return fetchList( rs, offset, count );
         }
         catch (SQLException e) {
             errorSql( e, sql, params );
@@ -276,7 +286,12 @@ public abstract class AbstractDaoImpl<T> extends RootDaoImpl {
     protected abstract T[] toArray( ArrayList<T> list );
 
 
-    protected ArrayList<T> fetchArray( ResultSet rs, int offset, int count ) throws SQLException {
+    protected T[] fetchArray( ResultSet rs, int offset, int count ) throws SQLException {
+        return toArray( fetchList( rs, offset, count ));
+    }
+
+
+    protected ArrayList<T> fetchList( ResultSet rs, int offset, int count ) throws SQLException {
         // next must be called at least once:
         while (offset-- >= 0) {
             if (!rs.next()) {

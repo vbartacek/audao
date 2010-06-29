@@ -129,6 +129,7 @@ import com.spoledge.audao.db.dao.gae.GaeJdoAbstractDaoImpl;
 		<xsl:call-template name="method-query"/>
 		<xsl:call-template name="method-fetch-one"/>
 		<xsl:call-template name="method-fetch-array"/>
+		<xsl:call-template name="method-fetch-list"/>
 	</xsl:template>
 
 
@@ -181,6 +182,34 @@ import com.spoledge.audao.db.dao.gae.GaeJdoAbstractDaoImpl;
 		<xsl:call-template name="dtoimpl-name"/>
 		<xsl:text>) o;
             ret[ index++ ] = impl._getDto();
+        }
+
+        return ret;
+    }
+</xsl:text>
+	</xsl:template>
+
+
+	<xsl:template name="method-fetch-list">
+		<xsl:text>
+    protected ArrayList&lt;</xsl:text>
+		<xsl:call-template name="dto-name"/>
+		<xsl:text>&gt; fetchList( Query q, Object... params ) {
+        List&lt;?&gt; list = (List&lt;?&gt;) execute( q, params );
+
+        ArrayList&lt;</xsl:text>
+		<xsl:call-template name="dto-name"/>
+		<xsl:text>&gt; ret = new ArrayList&lt;</xsl:text>
+		<xsl:call-template name="dto-name"/>
+		<xsl:text>&gt;( list.size() );
+
+        for ( Object o : list ) {
+            </xsl:text>
+		<xsl:call-template name="dtoimpl-name"/>
+		<xsl:text> impl = (</xsl:text>
+		<xsl:call-template name="dtoimpl-name"/>
+		<xsl:text>) o;
+            ret.add( impl._getDto());
         }
 
         return ret;

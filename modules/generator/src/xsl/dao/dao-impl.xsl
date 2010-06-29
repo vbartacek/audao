@@ -48,6 +48,12 @@
 	</xsl:variable>
 	<xsl:variable name="defcache" select="exsl:node-set($defcache0)/db:default-cache"/>
 
+	<xsl:variable name="dao_Findmany">
+		<xsl:call-template name="uc-first">
+			<xsl:with-param name="name" select="$dao_findmany"/>
+		</xsl:call-template>
+	</xsl:variable>
+
 
 	<xsl:template match="db:table|db:view">
 		<xsl:call-template name="file-header"/>
@@ -69,7 +75,7 @@ import java.util.ArrayList;
 			<xsl:text>import java.util.HashMap;
 </xsl:text>
 		</xsl:if>
-		<xsl:if test="db:columns/db:column[db:type = 'List'] or db:methods//db:params/*[@list='true']">
+		<xsl:if test="$dao_findmany='list' or db:columns/db:column[db:type = 'List'] or db:methods//db:params/*[@list='true']">
 			<xsl:text>
 import java.util.List;
 </xsl:text>
@@ -1272,6 +1278,7 @@ import com.spoledge.audao.db.dao.AbstractDaoImpl;
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>Many</xsl:text>
+				<xsl:value-of select="$dao_Findmany"/>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text>( </xsl:text>
