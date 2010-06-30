@@ -292,6 +292,20 @@ public class GqlExtDynamicTest extends AbstractSelectDynamicTest {
     }
 
     @Test 
+    public void testExtFuncLIST_JOIN() { 
+        Entity ent = first( test( 1, "SELECT LIST_JOIN('|',LIST(1,2,3)) AS val"
+                                        + ", LIST_JOIN('|',LIST(1)) AS val2"
+                                        + ", LIST_JOIN('|',LIST()) AS val3"
+                                        + ", LIST_JOIN('|',null) AS val4"
+                                        + ", LIST_JOIN(null,LIST(1,2)) AS val5 FROM dual"));
+        testProp( ent, "val", "1|2|3" );
+        testProp( ent, "val2", "1" );
+        testProp( ent, "val3", "" );
+        testProp( ent, "val4", null );
+        testProp( ent, "val5", "12" );
+    }
+
+    @Test 
     public void testExtFuncLN() { 
         Entity ent = first( test( 1, "SELECT LN(1) AS val, LN(10) AS val2 FROM dual"));
         testProp( ent, "val", Math.log(1) );
