@@ -295,6 +295,35 @@ public class Entity extends AbstractDto {
 
 
 <div class="subsection">
+<a name="dao_find_method_return_type"></a>
+<h3>Find method return type - array or list</h3>
+
+<p>
+	The find methods return arrays by default.
+	You can change it to lists (java.util.List) by the attribute
+	<tt>find-many-result</tt>.
+</p>
+
+<p>
+	The following definition:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dao find-many-result="list"/&gt;
+  &lt;/config&gt; </pre>
+
+	will generate the following Java DAO method for finding all records:
+	<pre class="prettyprint java">
+    public List&lt;MyEntity&gt; findAll(); </pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ConfigDaoType]">XSD - config/dao</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
 <a name="dao_method_get_order_expr"></a>
 <h3>Method getOrderExpr</h3>
 
