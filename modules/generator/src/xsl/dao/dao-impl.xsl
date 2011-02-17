@@ -71,7 +71,7 @@ import java.io.Serializable;
 		<xsl:text>
 import java.util.ArrayList;
 </xsl:text>
-		<xsl:if test="db:columns/db:column/db:enum/db:value[@id]">
+		<xsl:if test="db:columns/db:column/db:enum[db:value[@db] or db:value[@id] and ../db:type != 'String']">
 			<xsl:text>import java.util.HashMap;
 </xsl:text>
 		</xsl:if>
@@ -366,7 +366,7 @@ import com.spoledge.audao.db.dao.AbstractDaoImpl;
 		<xsl:choose>
 			<xsl:when test="(db:not-null or db:pk) and ($isprimitive != 1 or db:enum)">
 				<xsl:call-template name="check-Null"/>
-				<xsl:if test="db:type = 'String'">
+				<xsl:if test="db:type = 'String' and not(db:enum)">
 					<xsl:text>        </xsl:text>
 					<xsl:call-template name="check-Length">
 						<xsl:with-param name="getter">
@@ -377,7 +377,7 @@ import com.spoledge.audao.db.dao.AbstractDaoImpl;
 				<xsl:text>
 </xsl:text>
 			</xsl:when>
-			<xsl:when test="db:type = 'String'">
+			<xsl:when test="db:type = 'String' and not(db:enum)">
 				<xsl:text>        if ( </xsl:text>
 				<xsl:call-template name="column-name"/>
 				<xsl:text> != null ) {
@@ -546,7 +546,7 @@ import com.spoledge.audao.db.dao.AbstractDaoImpl;
 
 	<xsl:template name="update-append-common">
 		<xsl:param name="indent" select="'            '"/>
-		<xsl:if test="db:type = 'String'">
+		<xsl:if test="db:type = 'String' and not(db:enum)">
 			<xsl:value-of select="$indent"/>
 			<xsl:call-template name="check-Length"/>
 		</xsl:if>
@@ -626,7 +626,18 @@ import com.spoledge.audao.db.dao.AbstractDaoImpl;
 		<xsl:text>();
 </xsl:text>
 		<xsl:for-each select="db:columns/db:column">
-			<xsl:text>        dto.set</xsl:text>
+			<xsl:text>        </xsl:text>
+			<xsl:if test="db:enum and db:type='String'">
+				<xsl:text>{
+            String _tmp = </xsl:text>
+				<xsl:text>rs.get</xsl:text>
+				<xsl:call-template name="column-Type"/>
+				<xsl:text>( </xsl:text>
+				<xsl:value-of select="position()"/>
+				<xsl:text> );
+            if (_tmp != null) </xsl:text>
+			</xsl:if>
+			<xsl:text>dto.set</xsl:text>
 			<xsl:call-template name="column-Name"/>
 			<xsl:text>( </xsl:text>
 			<xsl:choose>
@@ -641,6 +652,11 @@ import com.spoledge.audao.db.dao.AbstractDaoImpl;
 					<xsl:text> ), </xsl:text>
 					<xsl:call-template name="column-ObjectType-raw"/>
 					<xsl:text>.class )</xsl:text>
+				</xsl:when>
+				<xsl:when test="db:enum and db:type='String'">
+					<xsl:call-template name="enum-get-by-id">
+						<xsl:with-param name="id" select="'_tmp'"/>
+					</xsl:call-template>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:call-template name="enum-get-by-id">
@@ -659,6 +675,10 @@ import com.spoledge.audao.db.dao.AbstractDaoImpl;
 			</xsl:choose>
 					<xsl:text>);
 </xsl:text>
+			<xsl:if test="db:enum and db:type='String'">
+				<xsl:text>        }
+</xsl:text>
+			</xsl:if>
 			<xsl:variable name="isprimitive">
 				<xsl:call-template name="is-primitive"/>
 			</xsl:variable>
@@ -864,7 +884,7 @@ import com.spoledge.audao.db.dao.AbstractDaoImpl;
 		</xsl:if>
 		<xsl:if test="db:pk or db:not-null or $isprimitive=0 or db:default-value">
 
-			<xsl:if test="db:type='String'">
+			<xsl:if test="db:type='String' and not(db:enum)">
 				<xsl:if test="not(db:default-value) and not(db:not-null)">
 					<xsl:text>
             if ( </xsl:text>
@@ -1556,8 +1576,25 @@ import com.spoledge.audao.db.dao.AbstractDaoImpl;
 		</xsl:variable>
 		<xsl:choose>
 			<!-- TODO byte ??-->
-			<xsl:when test="db:enum/db:value[@id]">
+			<xsl:when test="db:enum and db:type = 'String' and not(db:not-null)">
+				<xsl:value-of select="$getter"/>
+				<xsl:text> != null ? </xsl:text>
+				<xsl:value-of select="$getter"/>
+				<xsl:choose>
+					<xsl:when test="db:enum/db:value[@db]">
+						<xsl:text>.getId()</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>.name()</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text> : null</xsl:text>
+			</xsl:when>
+			<xsl:when test="db:enum/db:value[@id or @db]">
 				<xsl:value-of select="concat($getter,'.getId()')"/>
+			</xsl:when>
+			<xsl:when test="db:enum and db:type = 'String'">
+				<xsl:value-of select="concat($getter,'.name()')"/>
 			</xsl:when>
 			<xsl:when test="db:enum">
 				<xsl:if test="db:type = 'short'">

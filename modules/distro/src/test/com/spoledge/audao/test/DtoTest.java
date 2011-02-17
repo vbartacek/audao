@@ -187,6 +187,48 @@ public class DtoTest extends AbstractTest {
     }
 
     @Test 
+    public void testEqualsEnumTypeString() {
+        Dto a = new Dto();
+        a.setEnumTypeString( Dto.EnumTypeString.TYPE_A );
+
+        Dto a2 = new Dto();
+        a2.setEnumTypeString( Dto.EnumTypeString.TYPE_A );
+
+        Dto b = new Dto();
+        b.setEnumTypeString( Dto.EnumTypeString.TYPE_B );
+
+        Dto b2 = new Dto();
+        b2.setEnumTypeString( Dto.EnumTypeString.TYPE_B );
+
+        assertEquals( "a == a2", a, a2 );
+        assertEquals( "b == b2", b, b2 );
+        assertFalse( "a != b", a.equals( b ));
+        assertFalse( "a2 != b2", a2.equals( b2 ));
+        assertFalse( "a != empty", a2.equals( new Dto()));
+    }
+
+    @Test 
+    public void testEqualsEnumTypeStringDb() {
+        Dto a = new Dto();
+        a.setEnumTypeStringDb( Dto.EnumTypeStringDb.TYPE_A );
+
+        Dto a2 = new Dto();
+        a2.setEnumTypeStringDb( Dto.EnumTypeStringDb.TYPE_A );
+
+        Dto b = new Dto();
+        b.setEnumTypeStringDb( Dto.EnumTypeStringDb.TYPE_B );
+
+        Dto b2 = new Dto();
+        b2.setEnumTypeStringDb( Dto.EnumTypeStringDb.TYPE_B );
+
+        assertEquals( "a == a2", a, a2 );
+        assertEquals( "b == b2", b, b2 );
+        assertFalse( "a != b", a.equals( b ));
+        assertFalse( "a2 != b2", a2.equals( b2 ));
+        assertFalse( "a != empty", a2.equals( new Dto()));
+    }
+
+    @Test 
     public void testEqualsString() {
         Dto a = new Dto();
         a.setStringType( "0" );
@@ -325,6 +367,8 @@ public class DtoTest extends AbstractTest {
         a.setDoubleType( 0d );
         a.setEnumTypePlain( Dto.EnumTypePlain.TYPE_A );
         a.setEnumTypeCustom( Dto.EnumTypeCustom.TYPE_A );
+        a.setEnumTypeString( Dto.EnumTypeString.TYPE_A );
+        a.setEnumTypeStringDb( Dto.EnumTypeStringDb.TYPE_A );
         a.setStringType( "0" );
         a.setDateType( sqlDate( "2010-03-18" ));
         a.setTimestampType( sqlTimestamp( "2010-03-18 15:53:04" ));
@@ -340,6 +384,8 @@ public class DtoTest extends AbstractTest {
         a2.setDoubleType( 0d );
         a2.setEnumTypePlain( Dto.EnumTypePlain.TYPE_A );
         a2.setEnumTypeCustom( Dto.EnumTypeCustom.TYPE_A );
+        a2.setEnumTypeString( Dto.EnumTypeString.TYPE_A );
+        a2.setEnumTypeStringDb( Dto.EnumTypeStringDb.TYPE_A );
         a2.setStringType( "0" );
         a2.setDateType( sqlDate( "2010-03-18" ));
         a2.setTimestampType( sqlTimestamp( "2010-03-18 15:53:04" ));
@@ -358,6 +404,8 @@ public class DtoTest extends AbstractTest {
         b.setDoubleType( 1.1 );
         b.setEnumTypePlain( Dto.EnumTypePlain.TYPE_B );
         b.setEnumTypeCustom( Dto.EnumTypeCustom.TYPE_B );
+        b.setEnumTypeString( Dto.EnumTypeString.TYPE_B );
+        b.setEnumTypeStringDb( Dto.EnumTypeStringDb.TYPE_B );
         b.setStringType( "1" );
         b.setDateType( sqlDate( "2010-03-19" ));
         b.setTimestampType( sqlTimestamp( "2010-03-18 15:53:14" ));
@@ -373,6 +421,8 @@ public class DtoTest extends AbstractTest {
         b2.setDoubleType( 1.1 );
         b2.setEnumTypePlain( Dto.EnumTypePlain.TYPE_B );
         b2.setEnumTypeCustom( Dto.EnumTypeCustom.TYPE_B );
+        b2.setEnumTypeString( Dto.EnumTypeString.TYPE_B );
+        b2.setEnumTypeStringDb( Dto.EnumTypeStringDb.TYPE_B );
         b2.setStringType( "1" );
         b2.setDateType( sqlDate( "2010-03-19" ));
         b2.setTimestampType( sqlTimestamp( "2010-03-18 15:53:14" ));
@@ -401,6 +451,8 @@ public class DtoTest extends AbstractTest {
         a.setDoubleType( 0d );
         a.setEnumTypePlain( DtoIdent.EnumTypePlain.TYPE_A );
         a.setEnumTypeCustom( DtoIdent.EnumTypeCustom.TYPE_A );
+        a.setEnumTypeString( DtoIdent.EnumTypeString.TYPE_A );
+        a.setEnumTypeStringDb( DtoIdent.EnumTypeStringDb.TYPE_A );
         a.setStringType( "0" );
         a.setDateType( sqlDate( "2010-03-18" ));
         a.setTimestampType( sqlTimestamp( "2010-03-18 15:53:04" ));
@@ -416,6 +468,8 @@ public class DtoTest extends AbstractTest {
         a2.setDoubleType( 0d );
         a2.setEnumTypePlain( DtoIdent.EnumTypePlain.TYPE_A );
         a2.setEnumTypeCustom( DtoIdent.EnumTypeCustom.TYPE_A );
+        a2.setEnumTypeString( DtoIdent.EnumTypeString.TYPE_A );
+        a2.setEnumTypeStringDb( DtoIdent.EnumTypeStringDb.TYPE_A );
         a2.setStringType( "0" );
         a2.setDateType( sqlDate( "2010-03-18" ));
         a2.setTimestampType( sqlTimestamp( "2010-03-18 15:53:04" ));
@@ -434,6 +488,8 @@ public class DtoTest extends AbstractTest {
         b.setDoubleType( 1.1 );
         b.setEnumTypePlain( DtoIdent.EnumTypePlain.TYPE_B );
         b.setEnumTypeCustom( DtoIdent.EnumTypeCustom.TYPE_B );
+        b.setEnumTypeString( DtoIdent.EnumTypeString.TYPE_B );
+        b.setEnumTypeStringDb( DtoIdent.EnumTypeStringDb.TYPE_B );
         b.setStringType( "1" );
         b.setDateType( sqlDate( "2010-03-19" ));
         b.setTimestampType( sqlTimestamp( "2010-03-18 15:53:14" ));
@@ -449,6 +505,8 @@ public class DtoTest extends AbstractTest {
         b2.setDoubleType( 1.1 );
         b2.setEnumTypePlain( DtoIdent.EnumTypePlain.TYPE_B );
         b2.setEnumTypeCustom( DtoIdent.EnumTypeCustom.TYPE_B );
+        b2.setEnumTypeString( DtoIdent.EnumTypeString.TYPE_B );
+        b2.setEnumTypeStringDb( DtoIdent.EnumTypeStringDb.TYPE_B );
         b2.setStringType( "1" );
         b2.setDateType( sqlDate( "2010-03-19" ));
         b2.setTimestampType( sqlTimestamp( "2010-03-18 15:53:14" ));

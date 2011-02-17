@@ -239,8 +239,11 @@
 	<xsl:template name="column-val-enum-suffix">
 		<xsl:param name="ctx" select="."/>
 		<xsl:choose>
-			<xsl:when test="$ctx/db:enum/db:value[@id]">
+			<xsl:when test="$ctx/db:enum/db:value[@id or @db]">
 				<xsl:text>.getId()</xsl:text>
+			</xsl:when>
+			<xsl:when test="$ctx/db:type = 'String'">
+				<xsl:text>.name()</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>.ordinal() + 1</xsl:text>

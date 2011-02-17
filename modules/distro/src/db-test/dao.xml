@@ -187,6 +187,8 @@
 						<value>TYPE_A</value>
 						<value>TYPE_B</value>
 						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
 					</enum>
 				</column>
 
@@ -196,6 +198,30 @@
 						<value id="1">TYPE_A</value>
 						<value id="2">TYPE_B</value>
 						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
 					</enum>
 				</column>
 
@@ -268,6 +294,18 @@
 					</columns>
 				</index>
 
+				<index name="inx_finnull_enumstr">
+					<columns>
+						<column name="enum_type_string"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_enumstrd">
+					<columns>
+						<column name="enum_type_string_db"/>
+					</columns>
+				</index>
+
 				<index name="inx_finnull_string">
 					<columns>
 						<column name="string_type"/>
@@ -334,6 +372,14 @@
 
 				<find>
 					<index name="inx_finnull_enumcust"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_enumstr"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_enumstrd"/>
 				</find>
 
 				<find>
@@ -405,6 +451,8 @@
 						<value>TYPE_A</value>
 						<value>TYPE_B</value>
 						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
 					</enum>
 					<not-null/>
 				</column>
@@ -415,6 +463,32 @@
 						<value id="1">TYPE_A</value>
 						<value id="2">TYPE_B</value>
 						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+					<not-null/>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
 					</enum>
 					<not-null/>
 				</column>
@@ -494,6 +568,18 @@
 					</columns>
 				</index>
 
+				<index name="inx_finnnull_enumstr">
+					<columns>
+						<column name="enum_type_string"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_enumstrd">
+					<columns>
+						<column name="enum_type_string_db"/>
+					</columns>
+				</index>
+
 				<index name="inx_finnnull_string">
 					<columns>
 						<column name="string_type"/>
@@ -563,6 +649,14 @@
 				</find>
 
 				<find>
+					<index name="inx_finnnull_enumstr"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_enumstrd"/>
+				</find>
+
+				<find>
 					<index name="inx_finnnull_string"/>
 				</find>
 
@@ -588,6 +682,525 @@
 
 			</methods>
 		</table>
+
+
+		<!-- ===================================================================================
+		     ================================== Update Tests ===================================
+			   =================================================================================== -->
+
+		<table name="dao_update_null">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+					<edit/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<edit/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<edit/>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+					<edit/>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+					<edit/>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+					<edit/>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+					<edit/>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+					<edit/>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+					<edit/>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+					<edit/>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+					<edit/>
+				</column>
+
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<table name="dao_update_column_null">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+					<edit/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<edit/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<edit/>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+					<edit/>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+					<edit/>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+					<edit/>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+					<edit/>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+					<edit/>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+					<edit/>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+					<edit/>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+					<edit/>
+				</column>
+
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<!-- ================================  Update - Not Null =========================== -->
+
+		<table name="dao_update_not_null">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<table name="dao_update_column_not_null">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
 
 
 		<!-- ===================================================================================

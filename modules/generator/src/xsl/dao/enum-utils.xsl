@@ -40,15 +40,26 @@
 			<xsl:text> {
 </xsl:text>
 			<xsl:variable name="hasid" select="count(db:enum/db:value[@id])"/>
+			<xsl:variable name="hasdb" select="count(db:enum/db:value[@db])"/>
 			<xsl:for-each select="db:enum/db:value">
 				<xsl:text>        </xsl:text>
 				<xsl:value-of select="."/>
-				<xsl:if test="$hasid">
+				<xsl:if test="$hasid or $hasdb">
 					<xsl:text>( </xsl:text>
 					<xsl:if test="../../db:type = 'short'">
 						<xsl:text>(short) </xsl:text>
 					</xsl:if>
 					<xsl:choose>
+						<xsl:when test="@db and ../../db:type = 'String'">
+							<xsl:text>"</xsl:text>
+							<xsl:value-of select="@db"/>
+							<xsl:text>"</xsl:text>
+						</xsl:when>
+						<xsl:when test="../../db:type = 'String'">
+							<xsl:text>"</xsl:text>
+							<xsl:value-of select="."/>
+							<xsl:text>"</xsl:text>
+						</xsl:when>
 						<xsl:when test="@id">
 							<xsl:value-of select="@id"/>
 						</xsl:when>
@@ -63,7 +74,7 @@
 </xsl:text>
 				</xsl:if>
 			</xsl:for-each>
-			<xsl:if test="$hasid">
+			<xsl:if test="$hasid or $hasdb">
 				<xsl:text>;
 
         private </xsl:text>
@@ -96,7 +107,7 @@
 		<xsl:param name="processed" select="'|'"/>
 		<xsl:param name="pos" select="1"/>
 
-		<xsl:for-each select="$ctx/db:columns/db:column[db:enum][$pos]">
+		<xsl:for-each select="$ctx/db:columns/db:column[db:enum and (db:type != 'String' or db:enum/db:value/@db)][$pos]">
 			<xsl:variable name="key">
 				<xsl:choose>
 					<xsl:when test="db:enum/@orig-table">
@@ -114,7 +125,7 @@
 			<xsl:if test="not(contains($processed, concat('|', concat( $key, '|'))))">
 				<xsl:text>    private static final </xsl:text>
 				<xsl:choose>
-					<xsl:when test="db:enum/db:value[@id]">
+					<xsl:when test="db:enum/db:value[@id or @db]">
 						<xsl:call-template name="enum-mapping-hash"/>
 					</xsl:when>
 					<xsl:otherwise>
@@ -194,11 +205,17 @@
 	<xsl:template name="enum-get-by-id">
 		<xsl:param name="id"/>
 		<xsl:choose>
-			<xsl:when test="db:enum/db:value[@id]">
+			<xsl:when test="db:enum/db:value[@id or @db]">
 				<xsl:call-template name="enum-hasharr-var"/>
 				<xsl:text>.get( </xsl:text>
 				<xsl:value-of select="$id"/>
 				<xsl:text>)</xsl:text>
+			</xsl:when>
+			<xsl:when test="db:enum and db:type = 'String'">
+				<xsl:call-template name="column-EnumType"/>
+				<xsl:text>.valueOf( </xsl:text>
+				<xsl:value-of select="$id"/>
+				<xsl:text> )</xsl:text>
 			</xsl:when>
 			<xsl:when test="db:enum">
 				<xsl:call-template name="enum-hasharr-var"/>
@@ -217,19 +234,30 @@
 		<xsl:param name="val"/>
 		<xsl:param name="notnull"/>
 		<xsl:choose>
-			<xsl:when test="$notnull=1 and db:enum/db:value[@id]">
+			<xsl:when test="$notnull=1 and db:enum/db:value[@id or @db]">
 				<xsl:value-of select="$val"/>
 				<xsl:text>.getId()</xsl:text>
 			</xsl:when>
-			<xsl:when test="db:enum/db:value[@id]">
+			<xsl:when test="db:enum/db:value[@id or @db]">
 				<xsl:value-of select="$val"/>
 				<xsl:text> != null ? </xsl:text>
 				<xsl:value-of select="$val"/>
 				<xsl:text>.getId() : null</xsl:text>
 			</xsl:when>
+			<xsl:when test="$notnull=1 and db:enum and db:type='String'">
+				<xsl:value-of select="$val"/>
+				<xsl:text>.name()</xsl:text>
+			</xsl:when>
 			<xsl:when test="$notnull=1 and db:enum">
 				<xsl:value-of select="$val"/>
 				<xsl:text>.ordinal() + 1</xsl:text>
+			</xsl:when>
+			<xsl:when test="db:enum and db:type='String'">
+				<xsl:value-of select="$val"/>
+				<xsl:text> != null ? </xsl:text>
+				<xsl:value-of select="$val"/>
+				<xsl:text>.name()</xsl:text>
+				<xsl:text> : null</xsl:text>
 			</xsl:when>
 			<xsl:when test="db:enum">
 				<xsl:value-of select="$val"/>

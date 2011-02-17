@@ -162,7 +162,7 @@
             if ( </xsl:text>
 		<xsl:value-of select="$getter"/>
 		<xsl:text> == null</xsl:text>
-		<xsl:if test="db:type = 'String'">
+		<xsl:if test="db:type = 'String' and not(db:enum)">
 			<xsl:text> || </xsl:text>
 			<xsl:value-of select="$getter"/>
 			<xsl:text>.length() == 0</xsl:text>

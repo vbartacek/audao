@@ -56,6 +56,8 @@
 						<value>TYPE_A</value>
 						<value>TYPE_B</value>
 						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
 					</enum>
 				</column>
 
@@ -65,6 +67,30 @@
 						<value id="1">TYPE_A</value>
 						<value id="2">TYPE_B</value>
 						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
 					</enum>
 				</column>
 
