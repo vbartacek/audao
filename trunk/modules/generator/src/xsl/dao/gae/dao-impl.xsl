@@ -185,7 +185,9 @@ import com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl;
 					<xsl:text>" ) != null ? </xsl:text>
 					<xsl:call-template name="enum-get-by-id">
 						<xsl:with-param name="id">
-							<xsl:text>getInteger( ent, "</xsl:text>
+							<xsl:text>get</xsl:text>
+							<xsl:call-template name="column-ObjectType-raw"/>
+							<xsl:text>( ent, "</xsl:text>
 							<xsl:call-template name="java-name"/>
 							<xsl:text>" )</xsl:text>
 						</xsl:with-param>
@@ -860,7 +862,7 @@ import com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl;
 
 	<xsl:template name="update-append-common">
 		<xsl:param name="indent" select="'            '"/>
-		<xsl:if test="db:type = 'String'">
+		<xsl:if test="db:type = 'String' and not(db:enum)">
 			<xsl:value-of select="$indent"/>
 			<xsl:call-template name="check-Length"/>
 		</xsl:if>
@@ -1675,7 +1677,7 @@ import com.spoledge.audao.db.dao.gae.GaeAbstractDaoImpl;
 		<xsl:choose>
 			<xsl:when test="$col and $col/db:enum">
 				<xsl:text>Enum</xsl:text>
-				<xsl:if test="$col/db:enum/db:value/@id">
+				<xsl:if test="$col/db:enum/db:value[@id or @db]">
 					<xsl:text>Id</xsl:text>
 				</xsl:if>
 				<xsl:text>/</xsl:text>

@@ -117,6 +117,9 @@ import java.util.HashMap;
         else if (targ.startsWith( "EnumId" )) {
             return "( " + arg + " != null ? " + arg + ".getId() : null )";
         }
+        else if (targ.equals( "Enum/String" )) {
+            return "( " + arg + " != null ? " + arg + ".name() : null )";
+        }
         else if (targ.startsWith( "Enum" )) {
             return "( " + arg + " != null ? " + arg + ".ordinal() + 1 : null )";
         }
@@ -140,6 +143,9 @@ import java.util.HashMap;
         }
         else if (targ.startsWith( "EnumId" )) {
             return "_list" + arg;
+        }
+        else if (targ.equals( "Enum/String" )) {
+            return "names( " + arg + " )";
         }
         else if (targ.startsWith( "Enum" )) {
             return "ordinals( " + arg + " )";

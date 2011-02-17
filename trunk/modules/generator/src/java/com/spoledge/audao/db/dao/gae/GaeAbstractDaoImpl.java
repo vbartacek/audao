@@ -963,6 +963,19 @@ public abstract class GaeAbstractDaoImpl<T> extends RootDaoImpl {
     }
 
 
+    protected List<String> names( List<? extends Enum> list ) {
+        if ( list == null ) return null;
+
+        ArrayList<String> ret = new ArrayList<String>( list.size());
+
+        for ( Enum o : list ) {
+            ret.add( o.name());
+        }
+
+        return ret;
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////
     // Utilities
     ////////////////////////////////////////////////////////////////////////////

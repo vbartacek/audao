@@ -17,6 +17,7 @@ package com.spoledge.audao.test.gae;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.ShortBlob;
 import com.google.appengine.api.datastore.Text;
@@ -154,6 +156,42 @@ public class GaeTest extends AbstractTest {
 
     }
 
+
+//    @Test 
+    public void testAPIQueryPrefetch() throws Exception {
+        // pq.iterator() consumes time
+        // pq.iterable() returns immediatelly
+
+        int N = 10000;
+        for (int i=0; i < N; i++) {
+            Entity ent = new Entity("Test");
+            ent.setProperty( "order", i);
+
+            gae.ds.put( ent );
+        }
+
+        long ts1 = System.currentTimeMillis();
+        PreparedQuery pq = gae.ds.prepare(new Query("Test").addFilter("order", Query.FilterOperator.GREATER_THAN, 0));
+        long ts2 = System.currentTimeMillis();
+        Iterator<Entity> iterator = pq.asIterator(FetchOptions.Builder.withPrefetchSize(1));
+
+        long ts3 = System.currentTimeMillis();
+        Iterator<Entity> iterator2 = pq.asIterator(FetchOptions.Builder.withPrefetchSize( N ));
+
+        long ts4 = System.currentTimeMillis();
+        iterator.next();
+
+        long ts5 = System.currentTimeMillis();
+        iterator2.next();
+
+        long ts6 = System.currentTimeMillis();
+
+        log.info("prefetch(1): " + (ts3-ts2) + " ms");
+        log.info("prefetch("+N+"): " + (ts4-ts3) + " ms");
+        log.info("prefetch(1): iterator.next() " + (ts5-ts4) + " ms");
+        log.info("prefetch("+N+"): iterator2.next() " + (ts6-ts5) + " ms");
+
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // Tests
@@ -642,6 +680,8 @@ public class GaeTest extends AbstractTest {
         dto.setDoubleType( 4.1 );
         dto.setEnumTypePlain( GaeGqlSimple.EnumTypePlain.TYPE_A );
         dto.setEnumTypeCustom( GaeGqlSimple.EnumTypeCustom.TYPE_B );
+        dto.setEnumTypeString( GaeGqlSimple.EnumTypeString.TYPE_C );
+        dto.setEnumTypeStringDb( GaeGqlSimple.EnumTypeStringDb.TYPE_D );
         dto.setStringType( "test" );
         dto.setDateType( date1 );
         dto.setTimestampType( ts1 );
@@ -659,6 +699,8 @@ public class GaeTest extends AbstractTest {
         dto.setDoubleType( 40.1 );
         dto.setEnumTypePlain( GaeGqlSimple.EnumTypePlain.TYPE_B );
         dto.setEnumTypeCustom( GaeGqlSimple.EnumTypeCustom.TYPE_C );
+        dto.setEnumTypeString( GaeGqlSimple.EnumTypeString.TYPE_D );
+        dto.setEnumTypeStringDb( GaeGqlSimple.EnumTypeStringDb.TYPE_E );
         dto.setStringType( "test2" );
         dto.setDateType( date2 );
         dto.setTimestampType( ts2 );
@@ -687,8 +729,18 @@ public class GaeTest extends AbstractTest {
 
         assertEquals( "enum custom A, B", 1, dao.findByEnumCustomOrEnumCustom(
             GaeGqlSimple.EnumTypeCustom.TYPE_A, GaeGqlSimple.EnumTypeCustom.TYPE_B ).length); 
-        assertEquals( "enum plain B, C", 2, dao.findByEnumCustomOrEnumCustom(
+        assertEquals( "enum custom B, C", 2, dao.findByEnumCustomOrEnumCustom(
             GaeGqlSimple.EnumTypeCustom.TYPE_B, GaeGqlSimple.EnumTypeCustom.TYPE_C ).length); 
+
+        assertEquals( "enum string B, C", 1, dao.findByEnumStringOrEnumString(
+            GaeGqlSimple.EnumTypeString.TYPE_B, GaeGqlSimple.EnumTypeString.TYPE_C ).length); 
+        assertEquals( "enum string C, D", 2, dao.findByEnumStringOrEnumString(
+            GaeGqlSimple.EnumTypeString.TYPE_C, GaeGqlSimple.EnumTypeString.TYPE_D ).length); 
+
+        assertEquals( "enum stringdb C, D", 1, dao.findByEnumStringDbOrEnumStringDb(
+            GaeGqlSimple.EnumTypeStringDb.TYPE_C, GaeGqlSimple.EnumTypeStringDb.TYPE_D ).length); 
+        assertEquals( "enum stringdb D, E", 2, dao.findByEnumStringDbOrEnumStringDb(
+            GaeGqlSimple.EnumTypeStringDb.TYPE_D, GaeGqlSimple.EnumTypeStringDb.TYPE_E ).length); 
 
         assertEquals( "string 'test', 'test3'", 1, dao.findByStringOrString( "test", "test3" ).length); 
         assertEquals( "string 'test', 'test2'", 2, dao.findByStringOrString( "test", "test2" ).length); 
@@ -770,6 +822,8 @@ public class GaeTest extends AbstractTest {
         dto.setDoubleType( 4.1 );
         dto.setEnumTypePlain( GaeGqlSimple.EnumTypePlain.TYPE_A );
         dto.setEnumTypeCustom( GaeGqlSimple.EnumTypeCustom.TYPE_B );
+        dto.setEnumTypeString( GaeGqlSimple.EnumTypeString.TYPE_C );
+        dto.setEnumTypeStringDb( GaeGqlSimple.EnumTypeStringDb.TYPE_D );
         dto.setStringType( "test" );
         dto.setDateType( date1 );
         dto.setTimestampType( ts1 );
@@ -787,6 +841,8 @@ public class GaeTest extends AbstractTest {
         dto.setDoubleType( 40.1 );
         dto.setEnumTypePlain( GaeGqlSimple.EnumTypePlain.TYPE_B );
         dto.setEnumTypeCustom( GaeGqlSimple.EnumTypeCustom.TYPE_C );
+        dto.setEnumTypeString( GaeGqlSimple.EnumTypeString.TYPE_D );
+        dto.setEnumTypeStringDb( GaeGqlSimple.EnumTypeStringDb.TYPE_E );
         dto.setStringType( "test2" );
         dto.setDateType( date2 );
         dto.setTimestampType( ts2 );

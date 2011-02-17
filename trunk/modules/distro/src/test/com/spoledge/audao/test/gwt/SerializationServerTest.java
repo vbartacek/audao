@@ -92,6 +92,8 @@ public class SerializationServerTest extends AbstractTest {
         dto.setDoubleType( 4.1d );
         dto.setEnumTypePlain( GaeGqlSimple.EnumTypePlain.TYPE_A );
         dto.setEnumTypeCustom( GaeGqlSimple.EnumTypeCustom.TYPE_B );
+        dto.setEnumTypeString( GaeGqlSimple.EnumTypeString.TYPE_B );
+        dto.setEnumTypeStringDb( GaeGqlSimple.EnumTypeStringDb.TYPE_B );
         dto.setStringType( "Hello" );
         dto.setDateType( sqlDate( "2010-03-18" ));
         dto.setTimestampType( sqlTimestamp( "2010-03-18 17:25:45" ));
