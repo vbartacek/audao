@@ -106,9 +106,11 @@ public class GaeTest extends AbstractTest {
         log.debug("ENTITY - after: " + ent);
 
         log.debug("count(emptyList==null)="+
-        gae.ds.prepare(new Query("Test").addFilter("emptyList", Query.FilterOperator.EQUAL, null)).countEntities());
+        gae.ds.prepare(new Query("Test").addFilter("emptyList", Query.FilterOperator.EQUAL, null))
+            .countEntities( FetchOptions.Builder.withLimit( 1000 )));
         log.debug("count(hasNullList==null)="+
-        gae.ds.prepare(new Query("Test").addFilter("hasNullList", Query.FilterOperator.EQUAL, null)).countEntities());
+        gae.ds.prepare(new Query("Test").addFilter("hasNullList", Query.FilterOperator.EQUAL, null))
+            .countEntities( FetchOptions.Builder.withLimit( 1000 )));
 
     }
 
@@ -142,10 +144,12 @@ public class GaeTest extends AbstractTest {
         gae.ds.put( ent );
 
         log.debug("count(prop IN ('A')=" +
-            gae.ds.prepare(new Query("Test").addFilter("prop",Query.FilterOperator.IN, Arrays.asList("A"))).countEntities());
+            gae.ds.prepare(new Query("Test").addFilter("prop",Query.FilterOperator.IN, Arrays.asList("A")))
+                .countEntities( FetchOptions.Builder.withLimit( 1000 )));
 
         log.debug("count(prop IN ('A','B')=" +
-            gae.ds.prepare(new Query("Test").addFilter("prop",Query.FilterOperator.IN, Arrays.asList("A","B"))).countEntities());
+            gae.ds.prepare(new Query("Test").addFilter("prop",Query.FilterOperator.IN, Arrays.asList("A","B")))
+                .countEntities( FetchOptions.Builder.withLimit( 1000 )));
 
         // This will fail
         // log.debug("count(prop IN null=" +
@@ -2304,6 +2308,27 @@ public class GaeTest extends AbstractTest {
         dao.updateNullEmptyUnindexedType( id, vals != null ? vals[ 5 ] : null);
     }
 
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Tests - Gae Count Entities
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Test 
+    public void testGaeCountEntity01() throws DaoException {
+        // PreparedQuery.countEntities() returns max 1000 rows
+        // PreparedQuery.countEntities(FetchOptions) should be used instead
+
+        GaeCountEntityDao dao = DaoFactory.createGaeCountEntityDao();
+        GaeCountEntity dto = new GaeCountEntity();
+
+        int max = 1001;
+        for (int i=0; i < max; i++) {
+            dto.setVal( i );
+            dao.insert( dto );
+        }
+
+        assertEquals( max, dao.countAll());
+    }
 
 
     ////////////////////////////////////////////////////////////////////////////

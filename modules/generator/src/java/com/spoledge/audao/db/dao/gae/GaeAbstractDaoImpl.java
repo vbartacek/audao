@@ -220,7 +220,7 @@ public abstract class GaeAbstractDaoImpl<T> extends RootDaoImpl {
         PreparedQuery pq = prepare( query, true );
 
         try {
-            return pq.countEntities();
+            return pq.countEntities( withLimit( Integer.MAX_VALUE ));
         }
         catch (Exception e) {
             errorSql( e, sql, params );
