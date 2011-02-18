@@ -3308,6 +3308,25 @@
 		</table>
 
 
+		<table name="gae_count_entity">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="val">
+					<type>int</type>
+				</column>
+			</columns>
+			<methods>
+				<count>
+					<all/>
+				</count>
+			</methods>
+		</table>
+
 
 	</tables>
 </database>
