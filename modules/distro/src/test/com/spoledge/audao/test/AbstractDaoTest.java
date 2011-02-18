@@ -344,6 +344,320 @@ public class AbstractDaoTest extends AbstractTest {
 
 
     ////////////////////////////////////////////////////////////////////////////
+    // Tests - Index Finders - Result List - Null
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Test 
+    public void testListFinderIndexNull01() throws DaoException {
+        DaoLFinderIndexNullDao dao = DaoFactory.createDaoLFinderIndexNullDao();
+
+        DaoLFinderIndexNull dto = new DaoLFinderIndexNull();
+        dao.insert( dto );
+
+        java.sql.Date date1 = sqlDate( "2010-02-22" );
+        java.sql.Date date2 = sqlDate( "2010-02-23" );
+        java.sql.Date date3 = sqlDate( "2010-02-24" );
+
+        java.sql.Timestamp ts1 = sqlTimestamp( "2010-02-22 12:53:01" );
+        java.sql.Timestamp ts2 = sqlTimestamp( "2010-02-22 12:53:02" );
+        java.sql.Timestamp ts3 = sqlTimestamp( "2010-02-23 12:53:01" );
+
+        byte[] sblob1 = new byte[10];
+        byte[] sblob2 = new byte[20];
+        byte[] sblob3 = new byte[30];
+
+        DaoDto gdto1 = new DaoDto();
+        DaoDto gdto2 = new DaoDto();
+        DaoDto gdto3 = new DaoDto();
+
+        gdto1.setPropA( "test1" );
+        gdto2.setPropA( "test2" );
+        gdto3.setPropA( "test3" );
+
+        dto = new DaoLFinderIndexNull();
+        dto.setBooleanType( true );
+        dto.setShortType( 1 );
+        dto.setIntType( 2 );
+        dto.setLongType( 3L );
+        dto.setDoubleType( 4.1 );
+        dto.setEnumTypePlain( DaoLFinderIndexNull.EnumTypePlain.TYPE_A );
+        dto.setEnumTypeCustom( DaoLFinderIndexNull.EnumTypeCustom.TYPE_B );
+        dto.setEnumTypeString( DaoLFinderIndexNull.EnumTypeString.TYPE_C );
+        dto.setEnumTypeStringDb( DaoLFinderIndexNull.EnumTypeStringDb.TYPE_D );
+        dto.setStringType( "test" );
+        dto.setDateType( date1 );
+        dto.setTimestampType( ts1 );
+        dto.setSblobType( sblob1 );
+        dto.setSerializableType( "ser1" );
+        dto.setDtoType( gdto1 );
+
+        dao.insert( dto );
+
+        dto = new DaoLFinderIndexNull();
+        dto.setBooleanType( false );
+        dto.setShortType( 10 );
+        dto.setIntType( 20 );
+        dto.setLongType( 30L );
+        dto.setDoubleType( 40.1 );
+        dto.setEnumTypePlain( DaoLFinderIndexNull.EnumTypePlain.TYPE_B );
+        dto.setEnumTypeCustom( DaoLFinderIndexNull.EnumTypeCustom.TYPE_C );
+        dto.setEnumTypeString( DaoLFinderIndexNull.EnumTypeString.TYPE_D );
+        dto.setEnumTypeStringDb( DaoLFinderIndexNull.EnumTypeStringDb.TYPE_E );
+        dto.setStringType( "test2" );
+        dto.setDateType( date2 );
+        dto.setTimestampType( ts2 );
+        dto.setSblobType( sblob2 );
+        dto.setSerializableType( "ser2" );
+        dto.setDtoType( gdto2 );
+
+        dao.insert( dto );
+
+        assertEquals( "boolean true", 1, dao.findByBooleanType( true ).size()); 
+        assertEquals( "boolean false", 1, dao.findByBooleanType( false ).size()); 
+        assertEquals( "short 1", 1, dao.findByShortType( (short)1).size()); 
+        assertEquals( "short 10", 1, dao.findByShortType( (short)10 ).size()); 
+        assertEquals( "short 3", 0, dao.findByShortType( (short)3).size()); 
+        assertEquals( "int 2", 1, dao.findByIntType( 2 ).size()); 
+        assertEquals( "int 20", 1, dao.findByIntType( 20 ).size()); 
+        assertEquals( "int 3", 0, dao.findByIntType( 3 ).size()); 
+        assertEquals( "long 3", 1, dao.findByLongType( 3L ).size()); 
+        assertEquals( "long 30", 1, dao.findByLongType( 30L ).size()); 
+        assertEquals( "long 2", 0, dao.findByLongType( 2L ).size()); 
+        assertEquals( "double 4.1", 1, dao.findByDoubleType( 4.1 ).size()); 
+        assertEquals( "double 40.1", 1, dao.findByDoubleType( 40.1 ).size()); 
+        assertEquals( "double 40.2", 0, dao.findByDoubleType( 40.0 ).size()); 
+
+        assertEquals( "enum plain A", 1, dao.findByEnumTypePlain(
+            DaoLFinderIndexNull.EnumTypePlain.TYPE_A ).size()); 
+        assertEquals( "enum plain B", 1, dao.findByEnumTypePlain(
+            DaoLFinderIndexNull.EnumTypePlain.TYPE_B ).size()); 
+        assertEquals( "enum plain C", 0, dao.findByEnumTypePlain(
+            DaoLFinderIndexNull.EnumTypePlain.TYPE_C ).size()); 
+
+        assertEquals( "enum custom B", 1, dao.findByEnumTypeCustom(
+            DaoLFinderIndexNull.EnumTypeCustom.TYPE_B ).size()); 
+        assertEquals( "enum custom C", 1, dao.findByEnumTypeCustom(
+            DaoLFinderIndexNull.EnumTypeCustom.TYPE_C ).size()); 
+        assertEquals( "enum custom A", 0, dao.findByEnumTypeCustom(
+            DaoLFinderIndexNull.EnumTypeCustom.TYPE_A ).size()); 
+
+        assertEquals( "enum string C", 1, dao.findByEnumTypeString(
+            DaoLFinderIndexNull.EnumTypeString.TYPE_C ).size()); 
+        assertEquals( "enum string D", 1, dao.findByEnumTypeString(
+            DaoLFinderIndexNull.EnumTypeString.TYPE_D ).size()); 
+        assertEquals( "enum string E", 0, dao.findByEnumTypeString(
+            DaoLFinderIndexNull.EnumTypeString.TYPE_E ).size()); 
+
+        assertEquals( "enum string D", 1, dao.findByEnumTypeStringDb(
+            DaoLFinderIndexNull.EnumTypeStringDb.TYPE_D ).size()); 
+        assertEquals( "enum string E", 1, dao.findByEnumTypeStringDb(
+            DaoLFinderIndexNull.EnumTypeStringDb.TYPE_E ).size()); 
+        assertEquals( "enum string C", 0, dao.findByEnumTypeStringDb(
+            DaoLFinderIndexNull.EnumTypeStringDb.TYPE_C ).size()); 
+
+        assertEquals( "string 'test'", 1, dao.findByStringType( "test" ).size()); 
+        assertEquals( "string 'test2'", 1, dao.findByStringType( "test2" ).size()); 
+        assertEquals( "string 'test3'", 0, dao.findByStringType( "test3" ).size()); 
+
+        assertEquals( "date 1", 1, dao.findByDateType( date1 ).size()); 
+        assertEquals( "date 2", 1, dao.findByDateType( date2 ).size()); 
+        assertEquals( "date 3", 0, dao.findByDateType( date3 ).size()); 
+        assertEquals( "timestamp 1", 1, dao.findByTimestampType( ts1 ).size()); 
+        assertEquals( "timestamp 2", 1, dao.findByTimestampType( ts2 ).size()); 
+        assertEquals( "timestamp 3", 0, dao.findByTimestampType( ts3 ).size()); 
+
+        assertEquals( "sblob 1", 1, dao.findBySblobType( sblob1 ).size()); 
+        assertEquals( "sblob 2", 1, dao.findBySblobType( sblob2 ).size()); 
+        assertEquals( "sblob 3", 0, dao.findBySblobType( sblob3 ).size()); 
+
+        assertEquals( "serializable 1", 1, dao.findBySerializableType( "ser1" ).size()); 
+        assertEquals( "serializable 2", 1, dao.findBySerializableType( "ser2" ).size()); 
+        assertEquals( "serializable 3", 0, dao.findBySerializableType( "ser3" ).size()); 
+
+        assertEquals( "dto 1", 1, dao.findByDtoType( gdto1 ).size()); 
+        assertEquals( "dto 2", 1, dao.findByDtoType( gdto2 ).size()); 
+        assertEquals( "dto 3", 0, dao.findByDtoType( gdto3 ).size()); 
+    }
+
+
+    @Test 
+    public void testListFinderIndexNull02() throws DaoException {
+        DaoLFinderIndexNullDao dao = DaoFactory.createDaoLFinderIndexNullDao();
+
+        assertEquals( "boolean null before", 0, dao.findByBooleanType( null ).size()); 
+        assertEquals( "short null before", 0, dao.findByShortType( null ).size()); 
+        assertEquals( "int null before", 0, dao.findByIntType( null ).size()); 
+        assertEquals( "long null before", 0, dao.findByLongType( null ).size()); 
+        assertEquals( "double null before", 0, dao.findByDoubleType( null ).size()); 
+        assertEquals( "enum plain null before", 0, dao.findByEnumTypePlain( null ).size()); 
+        assertEquals( "enum custom null before", 0, dao.findByEnumTypeCustom( null ).size()); 
+        assertEquals( "enum string null before", 0, dao.findByEnumTypeString( null ).size()); 
+        assertEquals( "enum stringdb null before", 0, dao.findByEnumTypeStringDb( null ).size()); 
+        assertEquals( "string null before", 0, dao.findByStringType( null ).size()); 
+        assertEquals( "date null before", 0, dao.findByDateType( null ).size()); 
+        assertEquals( "timestamp null before", 0, dao.findByTimestampType( null ).size()); 
+        assertEquals( "sblob null before", 0, dao.findBySblobType( null ).size()); 
+        assertEquals( "serializable null before", 0, dao.findBySerializableType( null ).size()); 
+        assertEquals( "dto null before", 0, dao.findByDtoType( null ).size()); 
+
+        DaoLFinderIndexNull dto = new DaoLFinderIndexNull();
+        dao.insert( dto );
+
+        assertEquals( "boolean null", 1, dao.findByBooleanType( null ).size()); 
+        assertEquals( "short null", 1, dao.findByShortType( null ).size()); 
+        assertEquals( "int null", 1, dao.findByIntType( null ).size()); 
+        assertEquals( "long null", 1, dao.findByLongType( null ).size()); 
+        assertEquals( "double null", 1, dao.findByDoubleType( null ).size()); 
+        assertEquals( "enum plain null", 1, dao.findByEnumTypePlain( null ).size()); 
+        assertEquals( "enum custom null", 1, dao.findByEnumTypeCustom( null ).size()); 
+        assertEquals( "enum string null", 1, dao.findByEnumTypeString( null ).size()); 
+        assertEquals( "enum stringdb null", 1, dao.findByEnumTypeStringDb( null ).size()); 
+        assertEquals( "string null", 1, dao.findByStringType( null ).size()); 
+        assertEquals( "date null", 1, dao.findByDateType( null ).size()); 
+        assertEquals( "timestamp null", 1, dao.findByTimestampType( null ).size()); 
+        assertEquals( "sblob null", 1, dao.findBySblobType( null ).size()); 
+        assertEquals( "serializable null", 1, dao.findBySerializableType( null ).size()); 
+        assertEquals( "dto null", 1, dao.findByDtoType( null ).size()); 
+
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Tests - Index Finders - Result List - Not Null
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Test 
+    public void testListFinderIndexNotNull() throws DaoException {
+        DaoLFinderIndexNotNullDao dao = DaoFactory.createDaoLFinderIndexNotNullDao();
+
+        java.sql.Date date1 = sqlDate( "2010-02-22" );
+        java.sql.Date date2 = sqlDate( "2010-02-23" );
+        java.sql.Date date3 = sqlDate( "2010-02-24" );
+
+        java.sql.Timestamp ts1 = sqlTimestamp( "2010-02-22 12:53:01" );
+        java.sql.Timestamp ts2 = sqlTimestamp( "2010-02-22 12:53:02" );
+        java.sql.Timestamp ts3 = sqlTimestamp( "2010-02-23 12:53:01" );
+
+        byte[] sblob1 = new byte[10];
+        byte[] sblob2 = new byte[20];
+        byte[] sblob3 = new byte[30];
+
+        DaoDto gdto1 = new DaoDto();
+        DaoDto gdto2 = new DaoDto();
+        DaoDto gdto3 = new DaoDto();
+
+        gdto1.setPropA( "test1" );
+        gdto2.setPropA( "test2" );
+        gdto3.setPropA( "test3" );
+
+        DaoLFinderIndexNotNull dto = new DaoLFinderIndexNotNull();
+        dto.setBooleanType( true );
+        dto.setShortType( 1 );
+        dto.setIntType( 2 );
+        dto.setLongType( 3L );
+        dto.setDoubleType( 4.1 );
+        dto.setEnumTypePlain( DaoLFinderIndexNotNull.EnumTypePlain.TYPE_A );
+        dto.setEnumTypeCustom( DaoLFinderIndexNotNull.EnumTypeCustom.TYPE_B );
+        dto.setEnumTypeString( DaoLFinderIndexNotNull.EnumTypeString.TYPE_C );
+        dto.setEnumTypeStringDb( DaoLFinderIndexNotNull.EnumTypeStringDb.TYPE_D );
+        dto.setStringType( "test" );
+        dto.setDateType( date1 );
+        dto.setTimestampType( ts1 );
+        dto.setSblobType( sblob1 );
+        dto.setSerializableType( "ser1" );
+        dto.setDtoType( gdto1 );
+
+        dao.insert( dto );
+
+        dto = new DaoLFinderIndexNotNull();
+        dto.setBooleanType( false );
+        dto.setShortType( 10 );
+        dto.setIntType( 20 );
+        dto.setLongType( 30L );
+        dto.setDoubleType( 40.1 );
+        dto.setEnumTypePlain( DaoLFinderIndexNotNull.EnumTypePlain.TYPE_B );
+        dto.setEnumTypeCustom( DaoLFinderIndexNotNull.EnumTypeCustom.TYPE_C );
+        dto.setEnumTypeString( DaoLFinderIndexNotNull.EnumTypeString.TYPE_D );
+        dto.setEnumTypeStringDb( DaoLFinderIndexNotNull.EnumTypeStringDb.TYPE_E );
+        dto.setStringType( "test2" );
+        dto.setDateType( date2 );
+        dto.setTimestampType( ts2 );
+        dto.setSblobType( sblob2 );
+        dto.setSerializableType( "ser2" );
+        dto.setDtoType( gdto2 );
+
+        dao.insert( dto );
+
+        assertEquals( "boolean true", 1, dao.findByBooleanType( true ).size()); 
+        assertEquals( "boolean false", 1, dao.findByBooleanType( false ).size()); 
+        assertEquals( "short 1", 1, dao.findByShortType( (short)1).size()); 
+        assertEquals( "short 10", 1, dao.findByShortType( (short)10 ).size()); 
+        assertEquals( "short 3", 0, dao.findByShortType( (short)3).size()); 
+        assertEquals( "int 2", 1, dao.findByIntType( 2 ).size()); 
+        assertEquals( "int 20", 1, dao.findByIntType( 20 ).size()); 
+        assertEquals( "int 3", 0, dao.findByIntType( 3 ).size()); 
+        assertEquals( "long 3", 1, dao.findByLongType( 3 ).size()); 
+        assertEquals( "long 30", 1, dao.findByLongType( 30 ).size()); 
+        assertEquals( "long 2", 0, dao.findByLongType( 2 ).size()); 
+        assertEquals( "double 4.1", 1, dao.findByDoubleType( 4.1 ).size()); 
+        assertEquals( "double 40.1", 1, dao.findByDoubleType( 40.1 ).size()); 
+        assertEquals( "double 40.2", 0, dao.findByDoubleType( 40.0 ).size()); 
+
+        assertEquals( "enum plain A", 1, dao.findByEnumTypePlain(
+            DaoLFinderIndexNotNull.EnumTypePlain.TYPE_A ).size()); 
+        assertEquals( "enum plain B", 1, dao.findByEnumTypePlain(
+            DaoLFinderIndexNotNull.EnumTypePlain.TYPE_B ).size()); 
+        assertEquals( "enum plain C", 0, dao.findByEnumTypePlain(
+            DaoLFinderIndexNotNull.EnumTypePlain.TYPE_C ).size()); 
+
+        assertEquals( "enum custom B", 1, dao.findByEnumTypeCustom(
+            DaoLFinderIndexNotNull.EnumTypeCustom.TYPE_B ).size()); 
+        assertEquals( "enum custom C", 1, dao.findByEnumTypeCustom(
+            DaoLFinderIndexNotNull.EnumTypeCustom.TYPE_C ).size()); 
+        assertEquals( "enum custom A", 0, dao.findByEnumTypeCustom(
+            DaoLFinderIndexNotNull.EnumTypeCustom.TYPE_A ).size()); 
+
+        assertEquals( "enum string C", 1, dao.findByEnumTypeString(
+            DaoLFinderIndexNotNull.EnumTypeString.TYPE_C ).size()); 
+        assertEquals( "enum string D", 1, dao.findByEnumTypeString(
+            DaoLFinderIndexNotNull.EnumTypeString.TYPE_D ).size()); 
+        assertEquals( "enum string E", 0, dao.findByEnumTypeString(
+            DaoLFinderIndexNotNull.EnumTypeString.TYPE_E ).size()); 
+
+        assertEquals( "enum stringdb D", 1, dao.findByEnumTypeStringDb(
+            DaoLFinderIndexNotNull.EnumTypeStringDb.TYPE_D ).size()); 
+        assertEquals( "enum stringdb E", 1, dao.findByEnumTypeStringDb(
+            DaoLFinderIndexNotNull.EnumTypeStringDb.TYPE_E ).size()); 
+        assertEquals( "enum stringdb A", 0, dao.findByEnumTypeStringDb(
+            DaoLFinderIndexNotNull.EnumTypeStringDb.TYPE_A ).size()); 
+
+        assertEquals( "string 'test'", 1, dao.findByStringType( "test" ).size()); 
+        assertEquals( "string 'test2'", 1, dao.findByStringType( "test2" ).size()); 
+        assertEquals( "string 'test3'", 0, dao.findByStringType( "test3" ).size()); 
+
+        assertEquals( "date 1", 1, dao.findByDateType( date1 ).size()); 
+        assertEquals( "date 2", 1, dao.findByDateType( date2 ).size()); 
+        assertEquals( "date 3", 0, dao.findByDateType( date3 ).size()); 
+        assertEquals( "timestamp 1", 1, dao.findByTimestampType( ts1 ).size()); 
+        assertEquals( "timestamp 2", 1, dao.findByTimestampType( ts2 ).size()); 
+        assertEquals( "timestamp 3", 0, dao.findByTimestampType( ts3 ).size()); 
+
+        assertEquals( "sblob 1", 1, dao.findBySblobType( sblob1 ).size()); 
+        assertEquals( "sblob 2", 1, dao.findBySblobType( sblob2 ).size()); 
+        assertEquals( "sblob 3", 0, dao.findBySblobType( sblob3 ).size()); 
+
+        assertEquals( "serializable 1", 1, dao.findBySerializableType( "ser1" ).size()); 
+        assertEquals( "serializable 2", 1, dao.findBySerializableType( "ser2" ).size()); 
+        assertEquals( "serializable 3", 0, dao.findBySerializableType( "ser3" ).size()); 
+
+        assertEquals( "dto 1", 1, dao.findByDtoType( gdto1 ).size()); 
+        assertEquals( "dto 2", 1, dao.findByDtoType( gdto2 ).size()); 
+        assertEquals( "dto 3", 0, dao.findByDtoType( gdto3 ).size()); 
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////////////////
     // Tests - Update - Null
     ////////////////////////////////////////////////////////////////////////////
 
