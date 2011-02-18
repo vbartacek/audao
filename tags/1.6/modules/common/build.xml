@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<project name="common" basedir="." default="dist">
+
+	<!-- IMPORT THE COMMON PROPERTIES AND TARGETS -->
+	<import file="../../build-commons.xml"/>
+
+	<!-- SECTION PROPERTIES -->
+
+	<!-- SECTION FILESET AND CLASSPATH -->
+
+	<path id="compile.path">
+		<fileset refid="lib.global.fileset"/>
+	</path>
+
+	<!-- SECTION TARGETS -->
+
+	<target name="dist" description="Creates a JAR distribution">
+		<antcall target="compile"/>
+		<antcall target="make-jar"/>
+	</target>
+
+</project>

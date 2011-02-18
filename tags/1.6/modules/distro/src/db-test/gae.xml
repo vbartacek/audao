@@ -1,0 +1,3332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+
+	<config>
+		<dto equality="full"/>
+	</config>
+
+	<tables>
+
+		<table name="gae_general_test">
+			<auto-find/>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+
+				<column name="description">
+					<type max-length="1000">String</type>
+					<edit/>
+				</column>
+
+				<column name="is_active">
+					<type>boolean</type>
+					<transient/>
+					<not-null/>
+				</column>
+
+				<column name="is_custom">
+					<type>boolean</type>
+					<transient io="false"/>
+					<edit/>
+				</column>
+
+				<column name="flags">
+					<type>short</type>
+					<transient io="true" gwt="true"/>
+					<not-null/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<enum>
+						<value>DEFAULT</value>
+						<value>NORMAL</value>
+						<value>EXTRA</value>
+					</enum>
+				</column>
+
+				<column name="short_type_custom">
+					<type>short</type>
+					<enum>
+						<value id="1">DEFAULT</value>
+						<value id="2">NORMAL</value>
+						<value id="3">EXTRA</value>
+					</enum>
+					<not-null/>
+				</column>
+
+				<column name="number">
+					<type>int</type>
+					<transient gwt="false"/>
+				</column>
+
+				<column name="number_not_null">
+					<type>int</type>
+					<not-null/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<enum>
+						<value>DEFAULT</value>
+						<value>NORMAL</value>
+						<value>EXTRA</value>
+					</enum>
+				</column>
+
+				<column name="int_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">DEFAULT</value>
+						<value id="2">NORMAL</value>
+						<value id="3">EXTRA</value>
+					</enum>
+				</column>
+
+				<column name="created">
+					<type>Timestamp</type>
+					<auto/>
+					<not-null/>
+				</column>
+
+				<column name="last_date">
+					<type>Date</type>
+				</column>
+
+			</columns>
+
+			<indexes>
+
+				<index name="inx_name">
+					<unique/>
+					<columns>
+						<column name="name"/>
+					</columns>
+				</index>
+
+				<index name="inx_number_type">
+					<columns>
+						<column name="int_type_custom"/>
+						<column name="number"/>
+					</columns>
+				</index>
+
+				<index name="inx_number_not_null">
+					<columns>
+						<column name="number_not_null"/>
+					</columns>
+				</index>
+
+			</indexes>
+
+			<methods>
+				<find name="byPK">
+					<pk/>
+				</find>
+
+				<find>
+					<all/>
+				</find>
+
+				<find>
+					<dynamic/>
+				</find>
+
+				<find name="dynamicDesc">
+					<dynamic/>
+					<order-by>
+						<column name="number" desc="true"/>
+					</order-by>
+				</find>
+
+				<find name="byCondition" limit="10">
+					<condition>
+						<query><![CDATA[number > :1 AND created > :2 AND int_type_custom = :3 ORDER BY id]]></query>
+						<params>
+							<column name="number"/>
+							<column name="created"/>
+							<column name="int_type_custom"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byMyIndex">
+					<index name="inx_number_type"/>
+					<order-by>
+						<column name="number" desc="true"/>
+					</order-by>
+				</find>
+
+				<find name="byMyIndex2">
+					<index name="inx_number_type" level="2"/>
+					<order-by>
+						<column name="number" desc="true"/>
+					</order-by>
+				</find>
+
+				<find name="byMyNumberNotNull">
+					<index name="inx_number_not_null"/>
+				</find>
+
+				<find name="byMyNumberNotNullCond">
+					<condition>
+						<query>numberNotNull = :1</query>
+						<params>
+							<column name="number"/>
+						</params>
+					</condition>
+				</find>
+
+				<count>
+					<all/>
+				</count>
+
+				<count>
+					<dynamic/>
+				</count>
+
+				<count name="byCondition">
+					<condition>
+						<query><![CDATA[number > :1 AND created > :2 AND int_type_custom = :3]]></query>
+						<params>
+							<column name="number"/>
+							<column name="created"/>
+							<column name="int_type_custom"/>
+						</params>
+					</condition>
+				</count>
+
+				<count name="byMyIndex">
+					<index name="inx_number_type"/>
+				</count>
+
+				<count name="byMyIndex2">
+					<index name="inx_number_type" level="2"/>
+				</count>
+
+				<delete>
+					<pk/>
+				</delete>
+
+				<delete>
+					<all/>
+				</delete>
+
+				<delete>
+					<dynamic/>
+				</delete>
+
+				<delete name="byCondition">
+					<condition>
+						<query><![CDATA[number > :1 AND created > :2 AND int_type_custom = :3]]></query>
+						<params>
+							<column name="number"/>
+							<column name="created"/>
+							<column name="int_type_custom"/>
+						</params>
+					</condition>
+				</delete>
+
+				<delete name="byName">
+					<unique/>
+					<index name="inx_name"/>
+				</delete>
+
+				<delete name="byMyIndex">
+					<index name="inx_number_type"/>
+				</delete>
+
+				<delete name="byMyIndex2">
+					<index name="inx_number_type" level="2"/>
+				</delete>
+
+			</methods>
+		</table>
+
+
+		<table name="gae_string_key_test">
+			<columns>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<pk/>
+				</column>
+
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<not-null/>
+				</column>
+
+				<column name="description">
+					<type max-length="1000">String</type>
+				</column>
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<table name="gae_update_test">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="description">
+					<type max-length="1000">String</type>
+					<edit/>
+				</column>
+
+				<column name="is_active">
+					<type>boolean</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="is_custom">
+					<type>boolean</type>
+					<edit/>
+				</column>
+
+				<column name="flags">
+					<type>short</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<enum>
+						<value>DEFAULT</value>
+						<value>NORMAL</value>
+						<value>EXTRA</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="short_type_custom">
+					<type>short</type>
+					<enum>
+						<value id="1">DEFAULT</value>
+						<value id="2">NORMAL</value>
+						<value id="3">EXTRA</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="number">
+					<type>int</type>
+					<edit/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<enum>
+						<value>DEFAULT</value>
+						<value>NORMAL</value>
+						<value>EXTRA</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="int_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">DEFAULT</value>
+						<value id="2">NORMAL</value>
+						<value id="3">EXTRA</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_string">
+					<type max-length="7">String</type>
+					<enum>
+						<value>DEFAULT</value>
+						<value>NORMAL</value>
+						<value>EXTRA</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="D">DEFAULT</value>
+						<value db="N">NORMAL</value>
+						<value db="E">EXTRA</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="created">
+					<type>Timestamp</type>
+					<auto/>
+					<not-null/>
+				</column>
+
+				<column name="modified">
+					<type>Timestamp</type>
+					<auto on="update"/>
+					<not-null/>
+				</column>
+
+				<column name="last_empty_date">
+					<type>Date</type>
+					<edit/>
+				</column>
+
+				<column name="last_date">
+					<type>Date</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<table name="gae_update_column_test">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="description">
+					<type max-length="1000">String</type>
+					<edit/>
+				</column>
+
+				<column name="is_active">
+					<type>boolean</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="is_custom">
+					<type>boolean</type>
+					<edit/>
+				</column>
+
+				<column name="flags">
+					<type>short</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<enum>
+						<value>DEFAULT</value>
+						<value>NORMAL</value>
+						<value>EXTRA</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="short_type_custom">
+					<type>short</type>
+					<enum>
+						<value id="1">DEFAULT</value>
+						<value id="2">NORMAL</value>
+						<value id="3">EXTRA</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="number">
+					<type>int</type>
+					<edit/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<enum>
+						<value>DEFAULT</value>
+						<value>NORMAL</value>
+						<value>EXTRA</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="int_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">DEFAULT</value>
+						<value id="2">NORMAL</value>
+						<value id="3">EXTRA</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_string">
+					<type max-length="7">String</type>
+					<enum>
+						<value>DEFAULT</value>
+						<value>NORMAL</value>
+						<value>EXTRA</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="D">DEFAULT</value>
+						<value db="N">NORMAL</value>
+						<value db="E">EXTRA</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="created">
+					<type>Timestamp</type>
+					<auto/>
+					<not-null/>
+				</column>
+
+				<column name="modified">
+					<type>Timestamp</type>
+					<auto on="update"/>
+					<not-null/>
+				</column>
+
+				<column name="last_empty_date">
+					<type>Date</type>
+					<edit/>
+				</column>
+
+				<column name="last_date">
+					<type>Date</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<!-- ===================================================================================
+		     ================================= Parent Key Tests ================================
+			   =================================================================================== -->
+
+		<table name="gae_key_user">
+			<columns>
+				<column name="user_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+			</columns>
+		</table>
+
+		<table name="gae_key_product">
+			<columns>
+				<column name="product_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="user_id">
+					<ref table="gae_key_user" gae-parent="true"/>
+				</column>
+
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+
+			</columns>
+			<indexes>
+				<index name="inx_key_prod_user_id">
+					<columns>
+						<column name="user_id"/>
+					</columns>
+				</index>
+			</indexes>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+				<find name="byAncestor">
+					<condition>
+						<query>ANCESTOR IS KEY('GaeKeyUserTest', :1) AND name = :2</query>
+						<params>
+							<column name="user_id"/>
+							<column name="name"/>
+						</params>
+					</condition>
+				</find>
+				<find>
+					<index name="inx_key_prod_user_id"/>
+				</find>
+			</methods>
+		</table>
+
+		<table name="gae_key_service">
+			<columns>
+				<column name="service_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="product_id">
+					<ref table="gae_key_product" gae-parent="true"/>
+				</column>
+
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+				<find name="byAncestor">
+					<condition>
+						<query>ANCESTOR IS KEY('GaeKeyUserTest', :1, 'GaeKeyProductTest', :2) AND name = :3</query>
+						<params>
+							<param name="user_id" type="long"/>
+							<column name="product_id"/>
+							<column name="name"/>
+						</params>
+					</condition>
+				</find>
+			</methods>
+		</table>
+
+		<table name="gae_key_attr">
+			<columns>
+				<column name="attr_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="service_id">
+					<ref table="gae_key_service" gae-parent="true"/>
+				</column>
+
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<table name="gae_key_attr_name">
+			<columns>
+				<column name="attr_name">
+					<type max-length="32">String</type>
+					<pk/>
+				</column>
+
+				<column name="user_id">
+					<ref table="gae_key_user" gae-parent="true"/>
+				</column>
+
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<!-- ===================================================================================
+		     ==================================== Misc Tests ===================================
+			   =================================================================================== -->
+
+
+		<table name="gae_list_test">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="anon_list">
+					<type max-length="500">List</type>
+					<edit/>
+				</column>
+				<column name="list">
+					<type class="String">List</type>
+					<edit/>
+				</column>
+				<column name="list_of_numbers">
+					<type class="Number" max-length="500">List</type>
+					<edit/>
+				</column>
+				<column name="list_of_dtos">
+					<type class="table:gae_dto" max-length="500">List</type>
+					<edit/>
+				</column>
+				<column name="native_list">
+					<type class="java.util.List">Serializable</type>
+					<edit/>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_list_list">
+					<columns>
+						<column name="list"/>
+					</columns>
+				</index>
+				<index name="inx_list_alist">
+					<columns>
+						<column name="anon_list"/>
+					</columns>
+				</index>
+				<index name="inx_list_nlist">
+					<columns>
+						<column name="list_of_numbers"/>
+					</columns>
+				</index>
+				<index name="inx_list_dtolist">
+					<columns>
+						<column name="list_of_dtos"/>
+					</columns>
+				</index>
+				<index name="inx_list_natlist">
+					<columns>
+						<column name="native_list"/>
+					</columns>
+				</index>
+			</indexes>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+
+				<find>
+					<index name="inx_list_alist"/>
+				</find>
+
+				<find>
+					<index name="inx_list_alist" list="true"/>
+				</find>
+
+				<find name="byAnonListCond">
+					<condition>
+						<query>anonList = :1</query>
+						<params>
+							<column name="anon_list"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byAnonListCond">
+					<condition>
+						<query>anonList = :1</query>
+						<params>
+							<column name="anon_list" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byAnonListInCond">
+					<condition>
+						<query>anonList IN :1</query>
+						<params>
+							<column name="anon_list" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find>
+					<index name="inx_list_list"/>
+				</find>
+
+				<find>
+					<index name="inx_list_list" list="true"/>
+				</find>
+
+				<find name="byListCond">
+					<condition>
+						<query>list = :1</query>
+						<params>
+							<column name="list"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byListCond">
+					<condition>
+						<query>list = :1</query>
+						<params>
+							<column name="list" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byListInCond">
+					<condition>
+						<query>list IN :1</query>
+						<params>
+							<column name="list" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find>
+					<index name="inx_list_nlist"/>
+				</find>
+
+				<find>
+					<index name="inx_list_nlist" list="true"/>
+				</find>
+
+				<find name="byListOfNumbersCond">
+					<condition>
+						<query>listOfNumbers = :1</query>
+						<params>
+							<column name="list_of_numbers"/>
+						</params>
+					</condition>
+				</find>
+
+				<find>
+					<index name="inx_list_dtolist"/>
+				</find>
+
+				<find>
+					<index name="inx_list_dtolist" list="true"/>
+				</find>
+
+				<find name="byListOfDtosCond">
+					<condition>
+						<query>listOfDtos = :1</query>
+						<params>
+							<column name="list_of_dtos"/>
+						</params>
+					</condition>
+				</find>
+
+				<find>
+					<index name="inx_list_natlist"/>
+				</find>
+
+				<find name="byNativeListCond">
+					<condition>
+						<query>nativeList = :1</query>
+						<params>
+							<column name="native_list"/>
+						</params>
+					</condition>
+				</find>
+
+			</methods>
+		</table>
+
+
+		<table name="gae_dto" abstract="true" force-dto="true">
+			<columns>
+				<column name="prop_a">
+					<type max-length="500">String</type>
+				</column>
+				<column name="prop_b">
+					<type max-length="500">String</type>
+				</column>
+			</columns>
+		</table>
+
+
+		<table name="gae_core_object_test">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="type">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+					</enum>
+				</column>
+
+				<column name="type2">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="name">
+					<type class="String">Serializable</type>
+				</column>
+				<column name="short_blob_name">
+					<type class="String" max-length="500">Serializable</type>
+				</column>
+				<column name="blob_name">
+					<type class="String" max-length="501">Serializable</type>
+				</column>
+
+				<column name="first_date">
+					<type>Date</type>
+				</column>
+
+				<column name="parent">
+					<type class="gae:Key">Serializable</type>
+				</column>
+
+				<column name="location">
+					<type class="gae:GeoPt">Serializable</type>
+					<not-null/>
+				</column>
+				<column name="location_alt">
+					<type class="gae:GeoPt">Serializable</type>
+				</column>
+
+				<column name="users">
+					<type class="gae:User">List</type>
+				</column>
+				<column name="keys">
+					<type class="gae:Key">List</type>
+				</column>
+				<column name="names">
+					<type class="String">List</type>
+				</column>
+				<column name="short_blob_names">
+					<type class="String" max-length="500">List</type>
+				</column>
+				<column name="blob_names">
+					<type class="String" max-length="501">List</type>
+				</column>
+
+			</columns>
+			<indexes>
+				<index name="inx_coreobj_type">
+					<columns>
+						<column name="type"/>
+					</columns>
+				</index>
+				<index name="inx_coreobj_name">
+					<columns>
+						<column name="name"/>
+					</columns>
+				</index>
+				<index name="inx_coreobj_loc">
+					<columns>
+						<column name="location"/>
+					</columns>
+				</index>
+				<index name="inx_coreobj_localt">
+					<columns>
+						<column name="location_alt"/>
+					</columns>
+				</index>
+				<index name="inx_coreobj_users">
+					<columns>
+						<column name="users"/>
+					</columns>
+				</index>
+				<index name="inx_coreobj_keys">
+					<columns>
+						<column name="keys"/>
+					</columns>
+				</index>
+			</indexes>
+			<methods>
+
+				<find>
+					<index name="inx_coreobj_type"/>
+				</find>
+
+				<find>
+					<index name="inx_coreobj_name"/>
+				</find>
+
+				<find>
+					<index name="inx_coreobj_loc"/>
+				</find>
+
+				<find>
+					<index name="inx_coreobj_localt"/>
+				</find>
+				<find>
+					<index name="inx_coreobj_users"/>
+				</find>
+				<find>
+					<index name="inx_coreobj_keys"/>
+				</find>
+			</methods>
+		</table>
+
+
+		<!-- ===================================================================================
+		     ==================================== DTO Tests ====================================
+			   =================================================================================== -->
+
+		<table name="gae_dto_google" abstract="true" force-dto="true">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="string_type">
+					<type class="String">Serializable</type>
+				</column>
+
+				<column name="string_sblob_type">
+					<type class="String" max-length="500">Serializable</type>
+				</column>
+
+				<column name="category_type">
+					<type class="gae:Category">Serializable</type>
+				</column>
+
+				<column name="email_type">
+					<type class="gae:Email">Serializable</type>
+				</column>
+
+				<column name="geopt_type">
+					<type class="gae:GeoPt">Serializable</type>
+				</column>
+
+				<column name="im_handle_type">
+					<type class="gae:IMHandle">Serializable</type>
+				</column>
+
+				<column name="key_type">
+					<type class="gae:Key">Serializable</type>
+				</column>
+
+				<column name="link_type">
+					<type class="gae:Link">Serializable</type>
+				</column>
+
+				<column name="phone_number_type">
+					<type class="gae:PhoneNumber">Serializable</type>
+				</column>
+
+				<column name="postal_address_type">
+					<type class="gae:PostalAddress">Serializable</type>
+				</column>
+
+				<column name="rating_type">
+					<type class="gae:Rating">Serializable</type>
+				</column>
+
+				<column name="user_type">
+					<type class="gae:User">Serializable</type>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<table name="gae_dto_list" abstract="true" force-dto="true">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type class="Boolean">List</type>
+				</column>
+
+				<column name="short_type">
+					<type class="Short">List</type>
+				</column>
+
+				<column name="int_type">
+					<type class="Integer">List</type>
+				</column>
+
+				<column name="long_type">
+					<type class="Long">List</type>
+				</column>
+
+				<column name="double_type">
+					<type class="Double">List</type>
+				</column>
+
+				<column name="string_type">
+					<type class="String">List</type>
+				</column>
+
+				<column name="string_sblob_type">
+					<type class="String" max-length="500">List</type>
+				</column>
+
+				<column name="category_type">
+					<type class="gae:Category">List</type>
+				</column>
+
+				<column name="email_type">
+					<type class="gae:Email">List</type>
+				</column>
+
+				<column name="geopt_type">
+					<type class="gae:GeoPt">List</type>
+				</column>
+
+				<column name="im_handle_type">
+					<type class="gae:IMHandle">List</type>
+				</column>
+
+				<column name="key_type">
+					<type class="gae:Key">List</type>
+				</column>
+
+				<column name="link_type">
+					<type class="gae:Link">List</type>
+				</column>
+
+				<column name="phone_number_type">
+					<type class="gae:PhoneNumber">List</type>
+				</column>
+
+				<column name="postal_address_type">
+					<type class="gae:PostalAddress">List</type>
+				</column>
+
+				<column name="rating_type">
+					<type class="gae:Rating">List</type>
+				</column>
+
+				<column name="user_type">
+					<type class="gae:User">List</type>
+				</column>
+
+				<column name="native_list">
+					<type class="java.util.List">Serializable</type>
+				</column>
+
+				<column name="anon_list">
+					<type max-length="500">List</type>
+				</column>
+
+			</columns>
+		</table>
+
+
+
+		<!-- ===================================================================================
+		     ================================ Index Finder Tests ===============================
+			   =================================================================================== -->
+
+		<table name="gae_finder_index_null_list">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="string_type">
+					<type class="String">List</type>
+				</column>
+
+				<column name="udate_type">
+					<type class="java.util.Date">List</type>
+				</column>
+
+				<column name="string_sblob_type">
+					<type class="String" max-length="500">List</type>
+				</column>
+
+				<column name="sblob_type">
+					<type class="Number" max-length="500">List</type>
+				</column>
+
+				<column name="dto_type">
+					<type class="table:gae_dto" max-length="500">List</type>
+				</column>
+
+				<column name="key_type">
+					<type class="gae:Key">List</type>
+				</column>
+
+				<column name="geopt_type">
+					<type class="gae:GeoPt">List</type>
+				</column>
+
+				<column name="user_type">
+					<type class="gae:User">List</type>
+				</column>
+
+				<column name="native_list">
+					<type class="java.util.List">Serializable</type>
+				</column>
+
+				<column name="anon_list">
+					<type max-length="500">List</type>
+				</column>
+
+			</columns>
+
+			<indexes>
+
+				<index name="inx_finnull_string">
+					<columns>
+						<column name="string_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_udate">
+					<columns>
+						<column name="udate_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_string_sblob">
+					<columns>
+						<column name="string_sblob_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_sblob">
+					<columns>
+						<column name="sblob_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_dto">
+					<columns>
+						<column name="dto_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_key">
+					<columns>
+						<column name="key_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_geopt">
+					<columns>
+						<column name="geopt_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_user">
+					<columns>
+						<column name="user_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_native">
+					<columns>
+						<column name="native_list"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_anon">
+					<columns>
+						<column name="anon_list"/>
+					</columns>
+				</index>
+
+			</indexes>
+
+			<methods>
+
+				<find>
+					<index name="inx_finnull_string"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_udate"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_string_sblob"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_sblob"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_dto"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_key"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_geopt"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_user"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_native"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_anon"/>
+				</find>
+
+
+				<find>
+					<index name="inx_finnull_string" list="true"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_udate" list="true"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_string_sblob" list="true"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_sblob" list="true"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_dto" list="true"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_key" list="true"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_geopt" list="true"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_user" list="true"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_native" list="true"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_anon" list="true"/>
+				</find>
+
+			</methods>
+		</table>
+
+
+		<!-- ===================================================================================
+		     ===================================== GQL Tests ===================================
+			   =================================================================================== -->
+
+		<table name="gae_gql_simple">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="3">TYPE_D</value>
+						<value id="3">TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:gae_dto">Serializable</type>
+				</column>
+
+			</columns>
+			<methods>
+
+				<find name="escapedProperty"> <!-- compile time error in SVN#199 -->
+					<condition>
+						<query>'booleanType' = true</query>
+					</condition>
+				</find>
+
+
+				<find name="fixedBooleanTrue">
+					<condition>
+						<query>booleanType = true</query>
+					</condition>
+				</find>
+
+				<find name="fixedBooleanFalse">
+					<condition>
+						<query>booleanType = false</query>
+					</condition>
+				</find>
+
+				<find name="fixedBooleanNull">
+					<condition>
+						<query>booleanType = null</query>
+					</condition>
+				</find>
+
+				<find name="fixedShort">
+					<condition>
+						<query>shortType = 1</query>
+					</condition>
+				</find>
+
+				<find name="fixedInt">
+					<condition>
+						<query>intType = 2</query>
+					</condition>
+				</find>
+
+				<find name="fixedLong">
+					<condition>
+						<query>longType = 3</query>
+					</condition>
+				</find>
+
+				<find name="fixedDouble1">
+					<condition>
+						<query>doubleType = 4</query>
+					</condition>
+				</find>
+
+				<find name="fixedDouble2">
+					<condition>
+						<query>doubleType = 4.0</query>
+					</condition>
+				</find>
+
+				<find name="fixedDouble3">
+					<condition>
+						<query>doubleType = 4.1</query>
+					</condition>
+				</find>
+
+				<find name="fixedString">
+					<condition>
+						<query>stringType = 'test'</query>
+					</condition>
+				</find>
+
+				<find name="fixedDate">
+					<condition>
+						<query>dateType = DATE(2010, 2, 22)</query>
+					</condition>
+				</find>
+
+				<find name="fixedTimestamp">
+					<condition>
+						<query>timestampType = DATETIME(2010, 2, 22, 12, 53, 1)</query>
+					</condition>
+				</find>
+
+
+				<find name="byBooleanOrBoolean">
+					<condition>
+						<query>booleanType IN (:1, :2)</query>
+						<params>
+							<column name="boolean_type" java="arg1"/>
+							<column name="boolean_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byShortOrShort">
+					<condition>
+						<query>shortType IN (:1, :2)</query>
+						<params>
+							<column name="short_type" java="arg1"/>
+							<column name="short_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byIntOrInt">
+					<condition>
+						<query>intType IN (:1, :2)</query>
+						<params>
+							<column name="int_type" java="arg1"/>
+							<column name="int_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byLongOrLong">
+					<condition>
+						<query>longType IN (:1, :2)</query>
+						<params>
+							<column name="long_type" java="arg1"/>
+							<column name="long_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byDoubleOrDouble">
+					<condition>
+						<query>doubleType IN (:1, :2)</query>
+						<params>
+							<column name="double_type" java="arg1"/>
+							<column name="double_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byEnumPlainOrEnumPlain">
+					<condition>
+						<query>enumTypePlain IN (:1, :2)</query>
+						<params>
+							<column name="enum_type_plain" java="arg1"/>
+							<column name="enum_type_plain" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byEnumCustomOrEnumCustom">
+					<condition>
+						<query>enumTypeCustom IN (:1, :2)</query>
+						<params>
+							<column name="enum_type_custom" java="arg1"/>
+							<column name="enum_type_custom" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byEnumStringOrEnumString">
+					<condition>
+						<query>enumTypeString IN (:1, :2)</query>
+						<params>
+							<column name="enum_type_string" java="arg1"/>
+							<column name="enum_type_string" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byEnumStringDbOrEnumStringDb">
+					<condition>
+						<query>enumTypeStringDb IN (:1, :2)</query>
+						<params>
+							<column name="enum_type_string_db" java="arg1"/>
+							<column name="enum_type_string_db" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byStringOrString">
+					<condition>
+						<query>stringType IN (:1, :2)</query>
+						<params>
+							<column name="string_type" java="arg1"/>
+							<column name="string_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byDateOrDate">
+					<condition>
+						<query>dateType IN (:1, :2)</query>
+						<params>
+							<column name="date_type" java="arg1"/>
+							<column name="date_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byTimestampOrTimestamp">
+					<condition>
+						<query>timestampType IN (:1, :2)</query>
+						<params>
+							<column name="timestamp_type" java="arg1"/>
+							<column name="timestamp_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="bySblobOrSblob">
+					<condition>
+						<query>sblobType IN (:1, :2)</query>
+						<params>
+							<column name="sblob_type" java="arg1"/>
+							<column name="sblob_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="bySerializableOrSerializable">
+					<condition>
+						<query>serializableType IN (:1, :2)</query>
+						<params>
+							<column name="serializable_type" java="arg1"/>
+							<column name="serializable_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byDtoOrDto">
+					<condition>
+						<query>dtoType IN (:1, :2)</query>
+						<params>
+							<column name="dto_type" java="arg1"/>
+							<column name="dto_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+
+				<find name="allBoolean">
+					<condition>
+						<query>booleanType IN :1</query>
+						<params>
+							<column name="boolean_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allShort">
+					<condition>
+						<query>shortType IN :1</query>
+						<params>
+							<column name="short_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allInt">
+					<condition>
+						<query>intType IN :1</query>
+						<params>
+							<column name="int_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allLong">
+					<condition>
+						<query>longType IN :1</query>
+						<params>
+							<column name="long_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allDouble">
+					<condition>
+						<query>doubleType IN :1</query>
+						<params>
+							<column name="double_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allEnumPlain">
+					<condition>
+						<query>enumTypePlain IN :1</query>
+						<params>
+							<column name="enum_type_plain" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allEnumCustom">
+					<condition>
+						<query>enumTypeCustom IN :1</query>
+						<params>
+							<column name="enum_type_custom" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allEnumString">
+					<condition>
+						<query>enumTypeString IN :1</query>
+						<params>
+							<column name="enum_type_string" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allEnumStringDb">
+					<condition>
+						<query>enumTypeStringDb IN :1</query>
+						<params>
+							<column name="enum_type_string_db" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allString">
+					<condition>
+						<query>stringType IN :1</query>
+						<params>
+							<column name="string_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allDate">
+					<condition>
+						<query>dateType IN :1</query>
+						<params>
+							<column name="date_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allTimestamp">
+					<condition>
+						<query>timestampType IN :1</query>
+						<params>
+							<column name="timestamp_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allSblob">
+					<condition>
+						<query>sblobType IN :1</query>
+						<params>
+							<column name="sblob_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allSerializable">
+					<condition>
+						<query>serializableType IN :1</query>
+						<params>
+							<column name="serializable_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allDto">
+					<condition>
+						<query>dtoType IN :1</query>
+						<params>
+							<column name="dto_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+			</methods>
+		</table>
+
+
+		<!-- ==================================== GQL - GAE =============================== -->
+
+		<table name="gae_gql_google">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="string_type">
+					<type class="String">Serializable</type>
+				</column>
+
+				<column name="string_sblob_type">
+					<type class="String" max-length="500">Serializable</type>
+				</column>
+
+				<column name="key_type">
+					<type class="gae:Key">Serializable</type>
+				</column>
+
+				<column name="geopt_type">
+					<type class="gae:GeoPt">Serializable</type>
+				</column>
+
+				<column name="user_type">
+					<type class="gae:User">Serializable</type>
+				</column>
+
+			</columns>
+			<methods>
+
+				<find name="byEntKeyId">
+					<condition>
+						<query>__key__ = KEY('GaeGqlGoogle', :1)</query>
+						<params>
+							<param name="id" type="long"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byEntKeyEncoded1">
+					<condition>
+						<query>__key__ = :1</query>
+						<params>
+							<param name="encKey" type="String"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byEntKeyEncoded2">
+					<condition>
+						<query>__key__ = KEY(:1)</query>
+						<params>
+							<param name="encKey" type="String"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byEntKeyFull1">
+					<condition>
+						<query>__key__ = :1</query>
+						<params>
+							<column name="key_type"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byEntKeyFull2">
+					<condition>
+						<query>__key__ = :1</query>
+						<params>
+							<param name="key" type="Serializable" class="gae:Key"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byEntKeyOrEntKey">
+					<condition>
+						<query>__key__ IN (KEY('GaeGqlGoogle', :1), :2)</query>
+						<params>
+							<param name="id" type="long"/>
+							<column name="key_type"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allEntKey1">
+					<condition>
+						<query>__key__ IN :1</query>
+						<params>
+							<column name="key_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allEntKey2">
+					<condition>
+						<query>__key__ IN :1</query>
+						<params>
+							<param name="keyList" type="Serializable" class="gae:Key" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+
+				<find name="fixedString">
+					<condition>
+						<query>stringType = 'test'</query>
+					</condition>
+				</find>
+
+				<find name="fixedKey1">
+					<condition>
+						<query>keyType = KEY('Test', 1)</query>
+					</condition>
+				</find>
+
+				<find name="fixedKey2">
+					<condition>
+						<query>keyType = KEY('Test', 'test')</query>
+					</condition>
+				</find>
+
+				<find name="fixedGeopt">
+					<condition>
+						<query>geoptType = GEOPT(1, 1.1)</query>
+					</condition>
+				</find>
+
+				<find name="fixedUser">
+					<condition>
+						<query>userType = USER('user@foo.com')</query>
+					</condition>
+				</find>
+
+
+				<find name="byKeyOrKey">
+					<condition>
+						<query>keyType IN (KEY(:1), KEY('Test', :2))</query>
+						<params>
+							<param name="encodedKey" type="String"/>
+							<param name="id" type="long"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byGeoptOrGeopt">
+					<condition>
+						<query>geoptType IN (GEOPT(:1, :2), GEOPT(:3, :4))</query>
+						<params>
+							<param name="lat1" type="double"/>
+							<param name="long1" type="double"/>
+							<param name="lat2" type="double"/>
+							<param name="long2" type="double"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byUserOrUser">
+					<condition>
+						<query>userType IN (USER(:1), USER(:2))</query>
+						<params>
+							<param name="email1" type="String"/>
+							<param name="email2" type="String"/>
+						</params>
+					</condition>
+				</find>
+
+
+				<find name="byStringOrString">
+					<condition>
+						<query>stringType IN (:1,:2)</query>
+						<params>
+							<column name="string_type" java="arg1"/>
+							<column name="string_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byStringSblobOrStringSblob">
+					<condition>
+						<query>stringSblobType IN (:1,:2)</query>
+						<params>
+							<column name="string_sblob_type" java="arg1"/>
+							<column name="string_sblob_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byKeyOrKey">
+					<condition>
+						<query>keyType IN (:1,:2)</query>
+						<params>
+							<column name="key_type" java="arg1"/>
+							<column name="key_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byGeoptOrGeopt">
+					<condition>
+						<query>geoptType IN (:1,:2)</query>
+						<params>
+							<column name="geopt_type" java="arg1"/>
+							<column name="geopt_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byUserOrUser">
+					<condition>
+						<query>userType IN (:1,:2)</query>
+						<params>
+							<column name="user_type" java="arg1"/>
+							<column name="user_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+
+				<find name="allString">
+					<condition>
+						<query>stringType IN :1</query>
+						<params>
+							<column name="string_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allStringSblob">
+					<condition>
+						<query>stringSblobType IN :1</query>
+						<params>
+							<column name="string_sblob_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allKey">
+					<condition>
+						<query>keyType IN :1</query>
+						<params>
+							<column name="key_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allGeopt">
+					<condition>
+						<query>geoptType IN :1</query>
+						<params>
+							<column name="geopt_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allUser">
+					<condition>
+						<query>userType IN :1</query>
+						<params>
+							<column name="user_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+			</methods>
+		</table>
+
+
+		<!-- ==================================== GQL - List =============================== -->
+
+		<table name="gae_gql_list">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="string_type">
+					<type class="String">List</type>
+				</column>
+
+				<column name="udate_type">
+					<type class="java.util.Date">List</type>
+				</column>
+
+				<column name="string_sblob_type">
+					<type class="String" max-length="500">List</type>
+				</column>
+
+				<column name="sblob_type">
+					<type class="Number" max-length="500">List</type>
+				</column>
+
+				<column name="dto_type">
+					<type class="table:gae_dto" max-length="500">List</type>
+				</column>
+
+				<column name="key_type">
+					<type class="gae:Key">List</type>
+				</column>
+
+				<column name="geopt_type">
+					<type class="gae:GeoPt">List</type>
+				</column>
+
+				<column name="user_type">
+					<type class="gae:User">List</type>
+				</column>
+
+				<column name="native_list">
+					<type class="java.util.List">Serializable</type>
+				</column>
+
+				<column name="anon_list">
+					<type max-length="500">List</type>
+				</column>
+
+			</columns>
+			<methods>
+
+				<find name="byString">
+					<condition>
+						<query>stringType = :1</query>
+						<params>
+							<column name="string_type"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byUdate">
+					<condition>
+						<query>udateType = :1</query>
+						<params>
+							<column name="udate_type"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byStringSblob">
+					<condition>
+						<query>stringSblobType = :1</query>
+						<params>
+							<column name="string_sblob_type"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="bySblob">
+					<condition>
+						<query>sblobType = :1</query>
+						<params>
+							<column name="sblob_type"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byDto">
+					<condition>
+						<query>dtoType = :1</query>
+						<params>
+							<column name="dto_type"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byKey">
+					<condition>
+						<query>keyType = :1</query>
+						<params>
+							<column name="key_type"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byGeopt">
+					<condition>
+						<query>geoptType = :1</query>
+						<params>
+							<column name="geopt_type"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byUser">
+					<condition>
+						<query>userType = :1</query>
+						<params>
+							<column name="user_type"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byNative">
+					<condition>
+						<query>nativeList = :1</query>
+						<params>
+							<column name="native_list"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byAnon">
+					<condition>
+						<query>anonList = :1</query>
+						<params>
+							<column name="anon_list"/>
+						</params>
+					</condition>
+				</find>
+
+
+				<find name="byString">
+					<condition>
+						<query>stringType = :1</query>
+						<params>
+							<column name="string_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byUdate">
+					<condition>
+						<query>udateType = :1</query>
+						<params>
+							<column name="udate_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byStringSblob">
+					<condition>
+						<query>stringSblobType = :1</query>
+						<params>
+							<column name="string_sblob_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="bySblob">
+					<condition>
+						<query>sblobType = :1</query>
+						<params>
+							<column name="sblob_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byDto">
+					<condition>
+						<query>dtoType = :1</query>
+						<params>
+							<column name="dto_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byKey">
+					<condition>
+						<query>keyType = :1</query>
+						<params>
+							<column name="key_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byGeopt">
+					<condition>
+						<query>geoptType = :1</query>
+						<params>
+							<column name="geopt_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byUser">
+					<condition>
+						<query>userType = :1</query>
+						<params>
+							<column name="user_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byNative">
+					<condition>
+						<query>nativeList = :1</query>
+						<params>
+							<column name="native_list" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byAnon">
+					<condition>
+						<query>anonList = :1</query>
+						<params>
+							<column name="anon_list" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+
+				<find name="byUdateOrUdate">
+					<condition>
+						<query>udateType IN (DATE(:1,:2,:3), DATETIME(:4,:5,:6,:7,:8,:9))</query>
+						<params>
+							<param name="y1" type="int"/>
+							<param name="mon1" type="int"/>
+							<param name="d1" type="int"/>
+							<param name="y2" type="int"/>
+							<param name="mon2" type="int"/>
+							<param name="d2" type="int"/>
+							<param name="h2" type="int"/>
+							<param name="min2" type="int"/>
+							<param name="s2" type="int"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byKeyOrKey">
+					<condition>
+						<query>keyType IN (KEY(:1), KEY('Test', :2))</query>
+						<params>
+							<param name="encodedKey" type="String"/>
+							<param name="id" type="long"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byGeoptOrGeopt">
+					<condition>
+						<query>geoptType IN (GEOPT(:1, :2), GEOPT(:3, :4))</query>
+						<params>
+							<param name="lat1" type="double"/>
+							<param name="long1" type="double"/>
+							<param name="lat2" type="double"/>
+							<param name="long2" type="double"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byUserOrUser">
+					<condition>
+						<query>userType IN (USER(:1), USER(:2))</query>
+						<params>
+							<param name="email1" type="String"/>
+							<param name="email2" type="String"/>
+						</params>
+					</condition>
+				</find>
+
+
+				<find name="byStringOrString">
+					<condition>
+						<query>stringType IN (:1,:2)</query>
+						<params>
+							<column name="string_type" java="arg1"/>
+							<column name="string_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byUdateOrUdate">
+					<condition>
+						<query>udateType IN (:1,:2)</query>
+						<params>
+							<column name="udate_type" java="arg1"/>
+							<column name="udate_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byStringSblobOrStringSblob">
+					<condition>
+						<query>stringSblobType IN (:1,:2)</query>
+						<params>
+							<column name="string_sblob_type" java="arg1"/>
+							<column name="string_sblob_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="bySblobOrSblob">
+					<condition>
+						<query>sblobType IN (:1,:2)</query>
+						<params>
+							<column name="sblob_type" java="arg1"/>
+							<column name="sblob_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byDtoOrDto">
+					<condition>
+						<query>dtoType IN (:1,:2)</query>
+						<params>
+							<column name="dto_type" java="arg1"/>
+							<column name="dto_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byKeyOrKey">
+					<condition>
+						<query>keyType IN (:1,:2)</query>
+						<params>
+							<column name="key_type" java="arg1"/>
+							<column name="key_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byGeoptOrGeopt">
+					<condition>
+						<query>geoptType IN (:1,:2)</query>
+						<params>
+							<column name="geopt_type" java="arg1"/>
+							<column name="geopt_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byUserOrUser">
+					<condition>
+						<query>userType IN (:1,:2)</query>
+						<params>
+							<column name="user_type" java="arg1"/>
+							<column name="user_type" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byNativeOrNative1">
+					<condition>
+						<query>nativeList IN (:1,:2)</query>
+						<params>
+							<param name="arg1" type="Serializable" class="java.util.List"/>
+							<param name="arg2" type="Serializable" class="java.util.List"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byNativeOrNative2">
+					<condition>
+						<query>nativeList IN (:1,:2)</query>
+						<params>
+							<column name="native_list" java="arg1"/>
+							<column name="native_list" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byAnonOrAnon1">
+					<condition>
+						<query>anonList IN (:1,:2)</query>
+						<params>
+							<param name="arg1" type="List"/>
+							<param name="arg2" type="List"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="byAnonOrAnon2">
+					<condition>
+						<query>anonList IN (:1,:2)</query>
+						<params>
+							<column name="anon_list" java="arg1"/>
+							<column name="anon_list" java="arg2"/>
+						</params>
+					</condition>
+				</find>
+
+
+				<find name="allString">
+					<condition>
+						<query>stringType IN :1</query>
+						<params>
+							<column name="string_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allUdate">
+					<condition>
+						<query>udateType IN :1</query>
+						<params>
+							<column name="udate_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allStringSblob">
+					<condition>
+						<query>stringSblobType IN :1</query>
+						<params>
+							<column name="string_sblob_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allSblob">
+					<condition>
+						<query>sblobType IN :1</query>
+						<params>
+							<column name="sblob_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allDto">
+					<condition>
+						<query>dtoType IN :1</query>
+						<params>
+							<column name="dto_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allKey">
+					<condition>
+						<query>keyType IN :1</query>
+						<params>
+							<column name="key_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allGeopt">
+					<condition>
+						<query>geoptType IN :1</query>
+						<params>
+							<column name="geopt_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allUser">
+					<condition>
+						<query>userType IN :1</query>
+						<params>
+							<column name="user_type" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allNative1">
+					<condition>
+						<query>nativeList IN :1</query>
+						<params>
+							<column name="native_list" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allNative2">
+					<condition>
+						<query>nativeList IN :1</query>
+						<params>
+							<param name="arg1" type="Serializable" class="java.util.List" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allAnon1">
+					<condition>
+						<query>anonList IN :1</query>
+						<params>
+							<column name="anon_list" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+				<find name="allAnon2">
+					<condition>
+						<query>anonList IN :1</query>
+						<params>
+							<param name="arg1" type="List" list="true"/>
+						</params>
+					</condition>
+				</find>
+
+
+				<delete>
+					<pk/>
+				</delete>
+
+			</methods>
+		</table>
+
+		<!-- ===================================================================================
+		     =========================== GAE Datastore Property Tests ==========================
+			   =================================================================================== -->
+
+		<table name="gae_prop_string">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+
+				<column name="normal_type">
+					<type max-length="500">String</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<!-- nonsense
+				<column name="empty_type">
+					<ref column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+				-->
+
+				<column name="unindexed_type">
+					<ref column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<!-- nonsense
+				<column name="empty_unindexed_type">
+					<ref column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+				-->
+
+
+				<column name="null_normal_type">
+					<ref column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<table name="gae_prop_string_col">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+
+				<column name="normal_type">
+					<ref table="gae_prop_string" column="normal_type"/>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="unindexed_type">
+					<ref table="gae_prop_string" column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+
+				<column name="null_normal_type">
+					<ref table="gae_prop_string" column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref table="gae_prop_string" column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref table="gae_prop_string" column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref table="gae_prop_string" column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<!-- ==================================== Prop - Integer =============================== -->
+
+		<table name="gae_prop_long">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+
+				<column name="normal_type">
+					<type>long</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="unindexed_type">
+					<ref column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+
+				<column name="null_normal_type">
+					<ref column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<table name="gae_prop_long_col">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+
+				<column name="normal_type">
+					<ref table="gae_prop_long" column="normal_type"/>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="unindexed_type">
+					<ref table="gae_prop_long" column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+
+				<column name="null_normal_type">
+					<ref table="gae_prop_long" column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref table="gae_prop_long" column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref table="gae_prop_long" column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref table="gae_prop_long" column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+
+		<!-- ==================================== Prop - Enum =============================== -->
+
+		<table name="gae_prop_enum">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="normal_type">
+					<type>int</type>
+					<enum>
+						<value>A</value>
+						<value>B</value>
+						<value>C</value>
+						<value>D</value>
+						<value>E</value>
+						<value>F</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="unindexed_type">
+					<ref column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+
+				<column name="null_normal_type">
+					<ref column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<table name="gae_prop_enum_col">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+
+				<column name="normal_type">
+					<ref table="gae_prop_enum" column="normal_type"/>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="unindexed_type">
+					<ref table="gae_prop_enum" column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+
+				<column name="null_normal_type">
+					<ref table="gae_prop_enum" column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref table="gae_prop_enum" column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref table="gae_prop_enum" column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref table="gae_prop_enum" column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<!-- ==================================== Prop - Date =============================== -->
+
+		<table name="gae_prop_date">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+
+				<column name="normal_type">
+					<type>Date</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="unindexed_type">
+					<ref column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+
+				<column name="null_normal_type">
+					<ref column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<table name="gae_prop_date_col">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+
+				<column name="normal_type">
+					<ref table="gae_prop_date" column="normal_type"/>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="unindexed_type">
+					<ref table="gae_prop_date" column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+
+				<column name="null_normal_type">
+					<ref table="gae_prop_date" column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref table="gae_prop_date" column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref table="gae_prop_date" column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref table="gae_prop_date" column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+
+		<!-- ==================================== Prop - Text =============================== -->
+
+		<table name="gae_prop_text">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+
+				<column name="normal_type">
+					<type max-length="1000">String</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="unindexed_type">
+					<ref column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+
+				<column name="null_normal_type">
+					<ref column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<table name="gae_prop_text_col">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+
+				<column name="normal_type">
+					<ref table="gae_prop_text" column="normal_type"/>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="unindexed_type">
+					<ref table="gae_prop_text" column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+
+				<column name="null_normal_type">
+					<ref table="gae_prop_text" column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref table="gae_prop_text" column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref table="gae_prop_text" column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref table="gae_prop_text" column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<!-- ==================================== Prop - Serializable =============================== -->
+
+		<table name="gae_prop_serializable">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+
+				<column name="normal_type">
+					<type max-length="500" class="String">Serializable</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="unindexed_type">
+					<ref column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+
+				<column name="null_normal_type">
+					<ref column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<table name="gae_prop_serializable_col">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+
+				<column name="normal_type">
+					<ref table="gae_prop_serializable" column="normal_type"/>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="unindexed_type">
+					<ref table="gae_prop_serializable" column="normal_type"/>
+					<not-null/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+
+				<column name="null_normal_type">
+					<ref table="gae_prop_serializable" column="normal_type"/>
+					<edit/>
+				</column>
+
+				<column name="null_empty_type">
+					<ref table="gae_prop_serializable" column="normal_type"/>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="null_unindexed_type">
+					<ref table="gae_prop_serializable" column="normal_type"/>
+					<edit/>
+					<gae unindexed="true"/>
+				</column>
+
+				<column name="null_empty_unindexed_type">
+					<ref table="gae_prop_serializable" column="normal_type"/>
+					<edit/>
+					<gae empty="true" unindexed="true"/>
+				</column>
+
+			</columns>
+		</table>
+
+
+		<table name="gae_count_entity">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="val">
+					<type>int</type>
+				</column>
+			</columns>
+			<methods>
+				<count>
+					<all/>
+				</count>
+			</methods>
+		</table>
+
+
+	</tables>
+</database>

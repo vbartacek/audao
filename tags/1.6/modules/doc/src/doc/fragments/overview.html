@@ -1,0 +1,672 @@
+<div class="chapter">
+<a name="overview"></a>
+<h1 class="chapter">Getting Started with AuDAO</h1>
+
+<p class="chapter-abstract">
+	In this chapter we would like to show the basic constructs
+	of the XML AuDAO configuration source file.
+</p>
+
+<div class="section">
+<a name="create"></a>
+<h2>Create the Source XML</h2>
+
+<p>
+	The first step when using AuDAO is to create the source configuration XML
+	which describes the tables/entities and therefore tells AuDAO how to generate
+	the SQLs and Java DAO classes.
+</p>
+
+<p>
+	The description of XML elements is covered by this documentation,
+	or you can consult the <a href="[xsd:DatabaseType]">XSD documentation</a>
+	or directly the <a href="audao.xsd">AuDAO XSD</a>.
+</p>
+
+<div class="subsection">
+<a name="create_example"></a>
+<h3>Basic Example XML</h3>
+
+<p>
+	The following example shows an elementary example -
+	BTW this table is also used by this application to remember registered users
+	(<a href="examples/xml/reg_users.xml">Source XML</a>):
+	<pre class="prettyprint xml">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;database xmlns="http://www.spoledge.com/audao" version="1.0"&gt;
+
+  &lt;config&gt;
+    &lt;factory&gt;
+      &lt;create-params default="false" direct="true"/&gt;
+    &lt;/factory&gt;
+  &lt;/config&gt;
+
+  &lt;tables&gt;
+
+    &lt;table name="registered_users"&gt;
+      &lt;edit-mode&gt;column&lt;/edit-mode&gt;
+      &lt;auto-find/&gt;
+      &lt;columns&gt;
+        &lt;column name="user_id"&gt;
+          &lt;type&gt;long&lt;/type&gt;
+          &lt;auto/&gt;
+          &lt;pk/&gt;
+        &lt;/column&gt;
+        &lt;column name="gae_user_id"&gt;
+          &lt;type max-length="500"&gt;String&lt;/type&gt;
+          &lt;not-null/&gt;
+        &lt;/column&gt;
+        &lt;column name="user_name"&gt;
+          &lt;type max-length="500"&gt;String&lt;/type&gt;
+          &lt;not-null/&gt;
+        &lt;/column&gt;
+        &lt;column name="created_date"&gt;
+          &lt;type&gt;Date&lt;/type&gt;
+          &lt;auto/&gt;
+          &lt;not-null/&gt;
+        &lt;/column&gt;
+        &lt;column name="last_login_date"&gt;
+          &lt;type&gt;Timestamp&lt;/type&gt;
+          &lt;auto/&gt;
+          &lt;not-null/&gt;
+          &lt;edit/&gt;
+        &lt;/column&gt;
+      &lt;/columns&gt;
+      &lt;indexes&gt;
+        &lt;index name="inx_user_gaeid"&gt;
+          &lt;unique/&gt;
+          &lt;columns&gt;
+            &lt;column name="gae_user_id"/&gt;
+          &lt;/columns&gt;
+        &lt;/index&gt;
+      &lt;/indexes&gt;
+    &lt;/table&gt;
+
+  &lt;/tables&gt;
+&lt;/database&gt;</pre>
+</p>
+<p>
+	The table name is <tt>registered_users</tt> which will be automatically transformed to Java names
+	<tt>RegisteredUser</tt> (DTO), <tt>RegisteredUserDao</tt> (abstract DAO) and
+	<tt>RegisteredUserDaoImpl (DAO implementation)</tt>.
+	Developers can force the generator to use a special Java name by setting optional attribute
+	<tt>&lt;table name="registered_users" java="MyRegisteredUser"&gt;</tt>.
+</p>
+<p>
+	The table defines 5 columns. The column names are again transformed to Java names if not
+	explicitly set. For example the first column name <tt>user_id</tt> will be transformed into
+	Java name <tt>userId</tt> and the DTO will have getter and setter:
+	<pre class="prettyprint java">
+public Long getUserId() {...}
+public void setUserId( Long userId ) {...}</pre>
+
+	Note that primitive types are transformed into object types (long to Long)
+	- this allows to get/set null values.
+</p>
+
+</div>
+
+<div class="subsection">
+<a name="create_columns"></a>
+<h3>Definition of Columns</h3>
+
+<p>
+	The definition of table's (or entity's) columns within the tag <tt>&lt;columns&gt;</tt>
+	is the first task when creating the AuDAO XML.
+	It tells AuDAO how the datastore structure looks like and allows to generate basic SQLs
+	and Java DAO.
+</p>
+<p>
+	Let's look closer at the definition of the first column:
+	<pre class="prettyprint xml">
+        &lt;column name="user_id"&gt;
+          &lt;type&gt;long&lt;/type&gt;
+          &lt;auto/&gt;
+          &lt;pk/&gt;
+        &lt;/column&gt;</pre>
+	Except the column's type we also declare that this is the primary key (<tt>&lt;pk/&gt;</tt>)
+	and thus it cannot be null. AuDAO will generate these SQL constraints automatically.
+</p>
+<p>
+	The existence of a primary key and the flag <tt>&lt;auto-find/&gt;</tt> tells AuDAO
+	to automatically generate this method:
+	<pre class="prettyprint java">
+public RegisteredUser findByPrimaryKey( long userId )</pre>
+
+	in the DAO layer.
+</p>
+<p>
+	The <tt>&lt;auto/&gt;</tt> flag indicates, that the field is automatically filled by the
+	DAO implementation when a new record is inserted. And since this table is not read-only
+	(no <tt>&lt;read-only/&gt;</tt> flag is present), then AuDAO will also generate
+	the following method:
+	<pre class="prettyprint java">
+public long insert( RegisteredUser dto ) throws DaoException;</pre>
+</p>
+<p>
+	Let's continue to the second column:
+	<pre class="prettyprint xml">
+        &lt;column name="gae_user_id"&gt;
+          &lt;type max-length="500"&gt;String&lt;/type&gt;
+          &lt;not-null/&gt;
+        &lt;/column&gt;</pre>
+	Since this type is a String, we must declare the maximum length of the string.
+	The DAO layer will check the length of the stored data for this field and will throw
+	an exception with a readable description of the problem and the column name.
+	So you will never get anonymous errors like "ORA-01401: inserted value too large for column".
+</p>
+<p>
+	The DAO implementation for GAE also automatically converts <tt>java.lang.String</tt>
+	and <tt>com.google.appengine.api.datastore.Text</tt> when the <tt>max-length</tt> exceeds
+	number 500.
+</p>
+<p>
+	The <tt>&lt;not-null/&gt;</tt> flag indicates that we cannot store null values to the field.
+	DAO also checks this constraint for you. Even better - for string type you can specify also
+	the minimum characters by the <tt>min-length</tt> attribute.
+</p>
+<p>
+	Now skip one column and go to the last one which is more interested:
+	<pre class="prettyprint xml">
+        &lt;column name="last_login_date"&gt;
+          &lt;type&gt;Timestamp&lt;/type&gt;
+          &lt;auto/&gt;
+          &lt;not-null/&gt;
+          &lt;edit/&gt;
+        &lt;/column&gt;</pre>
+</p>
+<p>
+	This is a Timestamp column - it contains both date and time.
+	As you can see, you can define the <tt>&lt;auto/&gt;</tt> flag also for Date and Timestamp columns.
+	In this example, DAO automatically sets the column's value by the current date/time
+	when a new record is inserted. So you can leave it null before calling the <tt>insert</tt> method.
+</p>
+<p>
+	Let's focus on the <tt>&lt;edit/&gt;</tt> flag now. It indicates, that this column is editable.
+	In conjunction with the table's option <tt>&lt;edit-mode&gt;</tt> - which value is <tt>column</tt>
+	the DAO will generate this method:
+	<pre class="prettyprint java">
+public boolean updateLastLoginDate( long userId, Timestamp lastLoginDate ) throws DaoException;</pre>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="create_indexes"></a>
+<h3>Definition of Indexes</h3>
+
+<p>
+	After you define table's columns, you should define indexes.
+	There are three important reasons why to do it:
+	<ol>
+		<li>AuDAO will generate the indexes in SQL sources</li>
+		<li>AuDAO can automatically generate finder methods using these indexes</li>
+		<li>You can reference these indexes later when specifying conditions for explicit finder
+			methods or other types of methods (count, update, delete...)</li>
+	</ol>
+	This is important, because developers using such DAO methods can rely on existing indexes in
+	datastore, so the underlying queries will not perform a database full-scan.
+</p>
+
+<p>
+	Let's look at our example - we define only one index:
+	<pre class="prettyprint xml">
+        &lt;index name="inx_user_gaeid"&gt;
+          &lt;unique/&gt;
+          &lt;columns&gt;
+            &lt;column name="gae_user_id"/&gt;
+          &lt;/columns&gt;
+        &lt;/index&gt;</pre>
+	Every index has its name - it it used in the SQL definition of the index
+	and it is also used when you need to reference it later in the source XML.
+</p>
+<p>
+	This index is <tt>&lt;unique/&gt;</tt> and indexes only one column <tt>gae_user_id</tt>.
+	So the SQL definition for Oracle will look as follows:
+	<pre class="prettyprint sql">
+CREATE UNIQUE INDEX inx_user_gaeid ON registered_users (
+	gae_user_id
+);</pre>
+</p>
+<p>
+	Finally the definition of this index in conjuction with the table's flag
+	<tt>&lt;auto-find/&gt;</tt> tells AuDAO to automatically generate this finder method:
+	<pre class="prettyprint java">
+public RegisteredUser findByGaeUserId( String gaeUserId );</pre>
+
+	which returns at most one object (the index is unique).
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="create_methods"></a>
+<h3>Definition of Methods</h3>
+
+<p>
+	The optional next step is to define additional expicit methods.
+	You will find that for simple entities you can skip this step - as we in our example.
+</p>
+<p>
+	To show this feature we will add the following XMLlet after the <tt>&lt;indexes&gt;..&lt;/indexes&gt;</tt>
+	section:
+	<pre class="prettyprint xml">
+      &lt;methods&gt;
+
+        &lt;delete&gt;
+          &lt;pk/&gt;
+        &lt;/delete&gt;
+
+        &lt;find name="Expired"&gt;
+          &lt;condition&gt;
+            &lt;query&gt;&lt;![CDATA[last_login_date &gt; ?]]&gt;&lt;/query&gt;
+            &lt;query dbtype="gae"&gt;&lt;![CDATA[lastLoginDate &gt; :1]]&gt;&lt;/query&gt;
+            &lt;query dbtype="gaejdo"&gt;&lt;![CDATA[lastLoginDate &gt; :_lastLoginDate]]&gt;&lt;/query&gt;
+            &lt;query&gt;&lt;![CDATA[last_login_date &gt; ?]]&gt;&lt;/query&gt;
+            &lt;params&gt;
+              &lt;column name="last_login_date"/&gt;
+            &lt;/params&gt;
+          &lt;/condition&gt;
+        &lt;/delete&gt;
+
+      &lt;/methods&gt;</pre>
+</p>
+<p>
+	This will create two more methods in the DAO layer:
+	<pre class="prettyprint java">
+public boolean deleteByPrimaryKey( long userId ) throws DaoException;
+public RegisteredUser[] findExpired( Timestamp lastLoginDate );</pre>
+</p>
+<p>
+	The name of the delete method is generated automatically, because all methods which take
+	primary key argument - <tt>&lt;pk/&gt;</tt> - are called "<i>&lt;method-type&gt;</i>ByPrimaryKey".
+</p>
+<p>
+	The second method is a finder which uses explicit condition. You can see that you can define
+	different conditions for different datastore types ("gae" = Google App Engine, "gaejdo" = GAE/JDO)
+	using native queries (SQL, GQL or JDOQL).
+	This allows you to develop code portable between different datastores.
+</p>
+<p class="note">
+	The finder method does not use any defined index. Developers should avoid such situation.
+	In this case we just wanted to show explicit conditions which can be useful
+	when doing more complex queries.
+</p>
+
+</div>
+
+</div> <!-- create -->
+
+
+<div class="section">
+<a name="generate"></a>
+<h2>Generate SQLs and Java Sources</h2>
+
+<p>
+	Once you have created you source configuration XML for AuDAO,
+	you can go ahead and let AuDAO work for you !
+</p>
+<p>
+	The generator - either the online or the standalone one - must know the following parameters
+	for generating the code:
+	<ul>
+		<li>
+			DB or datastore type: currently it can be either MySQL (mysql), Oracle (oracle),
+			Google App Engine (gae) or Google App Engine using JDO (gaejdo).
+		</li>
+		<li>
+			Java package name to generate the code into: for example if the package name is <tt>com.foo</tt>,
+			then the following subpackages are generated:
+			<ul>
+				<li><tt>com.foo.dto</tt> which contains all DTO classes</li>
+				<li><tt>com.foo.dto.gae</tt> - only for Google App Engine using JDO db-type - which contains all GAE DTO implementation classes</li>
+				<li><tt>com.foo.dao</tt> which contains all DAO classes</li>
+				<li><tt>com.foo.dao.<i>db-type</i></tt> which contains all DAO implementation classes
+					for <i>db-type</i> (mysql, oracle, gae or gaejdo)</li>
+			</ul>
+		</li>
+	</ul>
+	And of course you must also provide the source configuration XML.
+</p>
+
+<div class="subsection">
+<a name="generate_online"></a>
+<h3>Using the Online Tool</h3>
+
+<p>
+	The AuDAO <a href="http://audao.spoledge.com/audao.jsp">online generator</a>
+	allows you to quickly generate your code. Just fill the required fields and click the button "Generate".
+</p>
+<p>
+	If everything goes ok, then a download dialog should appear and you can save the zipped SQL and Java
+	source to your local disk:
+	<img src="images/screen-download.png"/>
+</p>
+<p>
+	Otherwise you will get an error like:
+
+<div class="fc-message-box fc-message-box-ko">
+	<div class="fc-message">
+		<div class="icon"></div>
+		<div class="label">The source XML is not valid</div>
+	</div>
+	<div class="fc-detail">
+
+		<div class="exception">
+			<div class="icon-exception exception-FATAL_ERROR"></div>
+			<div class="detail">
+line 7 column 15 after 'auto-find': cvc-complex-type.2.4.a: Invalid content was found starting with element 'edit-mode'. One of '{"http://www.spoledge.com/audao":columns, "http://www.spoledge.com/audao":indexes, "http://www.spoledge.com/audao":methods, "http://www.spoledge.com/audao":data}' is expected.
+			</div>
+		</div>
+
+	</div>
+</div>
+
+</p>
+<p>
+	If it is a XML syntax error (as shown above), please consult
+	the <a href="audao.html">AuDAO XML Schema Documentation</a>
+	or directly the <a href="audao.xsd">AuDAO XSD</a>.
+</p>
+<p>
+	If you get the following error message:
+
+<div class="fc-message-box fc-message-box-ko">
+	<div class="fc-message">
+		<div class="icon"></div>
+		<div class="label">The source configuration XML file is too large.</div>
+	</div>
+</div>
+
+	then it means that you reach the limits of the uploaded source XML file which are:
+	<ul>
+		<li><b>2kB</b> for anonymous users</li>
+		<li><b>8kB</b> for users logged in using their Google Account</li>
+	</ul>
+	So if you are not logged in, just log in.
+	If you are already logged in, then probably you need to use a standalone AuDAO tool.
+</p>
+
+</div>
+
+<div class="subsection">
+<a name="generate_build"></a>
+<h3>AuDAO Standalone - Ant Tools</h3>
+
+<p>
+	The standalone AuDAO tool contains Apache Ant build tools
+	(see the <a href="http://ant.apache.org">Apache Ant project</a>).
+	The next example shows how easy is to generate DAO, compile it and make a JAR:
+	<pre class="prettyprint ant">
+&lt;?xml version="1.0"?&gt;
+&lt;project name="test" basedir="." default="dist"&gt;
+
+  &lt;property name="audao.home" location="/usr/local/audao-1.0"/&gt;
+
+  &lt;import file="${audao.home}/tools/build-audao.xml"/&gt;
+
+  &lt;target name="dist"&gt;
+    &lt;antcall target="audao-jar"&gt;
+      &lt;param name="audao-xml" location="src/my-config.xml"/&gt;
+      &lt;param name="audao-gen-dir" location="build/audao"/&gt;
+      &lt;param name="audao-dbtype" value="oracle"/&gt;
+      &lt;param name="audao-package" value="com.foo"/&gt;
+      &lt;param name="audao-jar" location="dist/test-db-oracle.jar"/&gt;
+    &lt;/antcall&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt; </pre>
+
+	Instead of the target <tt>audao-jar</tt>, you can call <tt>audao-compile</tt>
+	to generate and compile classes or <tt>audao-generate</tt> to only generate the classes.
+</p>
+
+<p>
+	Using of predefined Ant targets and tasks is the preferred way how to invoke AuDAO.
+</p>
+
+<p>
+	You can also call the AuDAO Java classes or Ant tasks directly,
+	but there exist some traps with passing correct classpath to it.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[generator-tools]#ant_tools">Generator Tools</a>
+</p>
+
+</div>
+
+</div> <!-- generate -->
+
+
+<div class="section">
+<a name="use"></a>
+<h2>Use the Generated Java DAO</h2>
+<p>
+	You've created the source XML and AuDAO generated a set of classes for you.
+	Let's look how to use them.
+</p>
+
+
+<div class="subsection">
+<a name="use_compile"></a>
+<h3>Compiling DAO Sources</h3>
+
+<p>
+	The first thing you need to do is to compile the Java sources.
+	If you used the Ant's target <tt>audao-compile</tt> or <tt>audo-jar</tt>,
+	then you have already the classes compiled !
+	Otherwise the only thing you must know is the library dependency of the generated sources.
+</p>
+
+<p>
+	Currently AuDAO generates code which always uses
+	<a href="http://commons.apache.org/logging">Apache Commons Logging</a> library.
+	If you generate code for standard databases - MySQL or Oracle, then you do not need
+	anything else to compile the sources.
+</p>
+
+<p>
+	If you generate code for Google App Engine (gae), then you also need the GAE libraries
+	which are located in the GAE SDK lib directory.
+</p>
+
+<p>
+	If you generate code for Google App Engine using JDO (gaejdo), then you also need the JDO2 libraries
+	which are located in the GAE SDK lib directory.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="use_call"></a>
+<h3>Using the DAO</h3>
+
+<p>
+  First of all a DAO class must be obtained.
+	Depending on your config file and target database type you must either provide
+	an instance of <tt>java.sql.Connection</tt> (SQL DB),
+	<tt>com.google.appengine.api.datastore.DatastoreService</tt> (GAE)
+	or <tt>javax.jdo.PersistenceManager</tt> (GAE/JDO)
+	to the <tt>DaoFactory</tt> methods or either let the <tt>DaoFactory</tt> to obtain the instance itself.
+</p>
+
+<p>
+	The following example shows using the DAO layer (over GAE)
+	- we pass <tt>DatastoreService</tt> to <tt>DaoFactory</tt>
+	- as we defined it in <tt>config/factory/create-params</tt> section of the config file:
+	<pre class="prettyprint java">
+import com.foo.dao.DaoFactory;
+import com.foo.dao.RegisteredUserDao;
+import com.foo.dto.RegisteredUser;
+
+import com.spoledge.audao.db.dao.DaoException;
+...
+
+/**
+ * Gets or creates a new user.
+ * @param gaeId the Google App Engine unique user id
+ * @param name a name of the user (full name / email / nick )
+ */
+public RegisteredUser getOrCreateUserByGaeId( String gaeId, String name )
+      throws DaoException {
+
+    RegisteredUserDao dao = DaoFactory.createRegisteredUserDao( getDatastoreService());
+    RegisteredUser ret =  dao.findByGaeUserId( gaeId );
+
+    if (ret == null) {
+        ret = new RegisteredUser();
+        ret.setGaeUserId( gaeId );
+        ret.setUserName( name );
+
+        dao.insert( ret );
+    }
+    else {
+        dao.updateLastLoginDate( ret.getUserId(), now());
+    }
+
+    return ret;
+}</pre>
+</p>
+
+<p>
+	The other option is to define the default <tt>DaoFactory</tt> methods - no parameters are
+	passed to them:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;factory&gt;
+      &lt;create-params default="true"/&gt;
+    &lt;/factory&gt;
+  &lt;/config&gt; </pre>
+
+	You obtain DAO as shown in the next example:
+	<pre class="prettyprint java">
+    RegisteredUserDao dao = DaoFactory.createRegisteredUserDao(); </pre>
+</p>
+
+<p>
+  Then for Google App Engine you must install a <a href="[api:dao/gae]">DatastoreServiceProvider</a>
+	into the DaoFactory implementation - only once before any DAO is used
+	(the similar approach is used for standard databases - use <a href="[api:dao]">ConnectionProvider</a>
+	- or for GAE/JDO use <a href="[api:dao/gae]">PersistenceManagerProvider</a>).
+	The following example shows a thread-safe approach for both non-transactional and transactional
+	(with retrying) calls:
+	<pre class="prettyprint java">
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Transaction;
+
+import com.spoledge.audao.db.dao.gae.DatastoreServiceProvider;
+
+import com.foo.dao.gae.DaoFactoryImpl;
+
+public class Foo {
+
+    /**
+     * Our per Thread context.
+     */
+    private static class ThreadContext {
+        DatastoreService ds;
+    }
+
+    /**
+     * All contexts are stored here.
+     */
+    private static final ThreadLocal&lt;ThreadContext&gt; contexts = new ThreadLocal&lt;ThreadContext&gt;() {
+        @Override
+        protected ThreadContext initialValue() {
+            return new ThreadContext();
+        }
+    };
+
+    static {
+        // inject the provider of DatastoreService into the DAO implementation:
+        DaoFactoryImpl.setDatastoreServiceProvider( new DatastoreServiceProvider() {
+            public DatastoreService getDatastoreService() {
+                return getDS();
+            }
+        });
+    }
+
+    /**
+     * Returns the thread's local DatastoreService.
+     * @return the existing DatastoreService or creates a new one
+     */
+    private DatastoreService getDS() {
+        ThreadContext ctx = contexts.get();
+        if (ctx.ds == null) ctx.ds = DatastoreServiceFactory.getDatastoreService();
+
+        return ctx.ds;
+    }
+
+
+    /**
+     * Example of usage.
+     */
+    public void useIt() {
+        try {
+            <b>// call dao methods here</b>
+        }
+        finally {
+            // release reference
+            contexts.get().ds = null;
+        }
+    }
+
+
+    /**
+     * Example of usage - all DAO calls in one Transaction.
+     * If commit fails, then it retries it.
+     */
+    public void useItInTransaction() {
+        // max attempts when retrying
+        int MAX_ATTEMPTS = 3;
+
+        for (int i=0; i &lt; MAX_ATTEMPTS; i++) {
+            Transaction tx = null;
+            boolean success = false;
+
+            try {
+                tx = getDS().beginTransaction();
+
+                <b>// call dao methods here</b>
+
+                success = true;
+            }
+            catch (java.util.ConcurrentModificationException e) {
+                if (i+1 == MAX_ATTEMPTS) throw e;
+            }
+            finally {
+                // release reference
+                contexts.get().ds = null;
+
+                if (success) {
+                    try {
+                        tx.commit();
+                        return;
+                    } catch (Throwable t) {}
+                }
+                else if (tx != null) {
+                    tx.rollback();
+                }
+            }
+        }
+    }
+} </pre>
+</p>
+<p class="note">
+	We recommend to use Java proxy mechanism to make the code more readable.
+	The proxy can start and commit/rollback transactions for annotated methods and/or release
+	resources (Connection, PersistenceManager) for all methods.
+</p>
+
+</div>
+
+</div> <!-- use -->
+
+</div> <!-- chapter -->
+
+

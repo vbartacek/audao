@@ -1,0 +1,1799 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+
+	<tables>
+
+		<table name="dao_test_pk_001">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+			</columns>
+			<methods>
+				<find name="byPK">
+					<pk/>
+				</find>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<table name="dao_test_pk_002">
+			<auto-find/>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+			</columns>
+			<methods>
+				<find name="byPK">
+					<pk/>
+				</find>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<table name="dao_test_pk_003">
+			<auto-find/>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+			</columns>
+		</table>
+
+
+		<!-- ===================================================================================
+		     ===================================== Tests =======================================
+			   =================================================================================== -->
+
+		<table name="dao_dto" abstract="true" force-dto="true">
+			<columns>
+				<column name="prop_a">
+					<type max-length="500">String</type>
+				</column>
+				<column name="prop_b">
+					<type max-length="500">String</type>
+				</column>
+			</columns>
+		</table>
+
+
+		<!-- ===================================================================================
+		     =============================== Default Values Tests ==============================
+			   =================================================================================== -->
+
+		<table name="dao_default_value">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="boolean_type">
+					<type>boolean</type>
+					<not-null/>
+				</column>
+				<column name="def_boolean_type">
+					<type>boolean</type>
+					<not-null/>
+					<default-value>true</default-value>
+				</column>
+				<column name="string_type">
+					<type max-length="32">String</type>
+					<not-null/>
+				</column>
+				<column name="def_string_type">
+					<type max-length="32">String</type>
+					<not-null/>
+					<default-value>"STRING"</default-value>
+				</column>
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+		<table name="dao_default_value_null">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="boolean_type">
+					<type>boolean</type>
+				</column>
+				<column name="def_boolean_type">
+					<type>boolean</type>
+					<default-value>true</default-value>
+				</column>
+				<column name="string_type">
+					<type max-length="32">String</type>
+				</column>
+				<column name="def_string_type">
+					<type max-length="32">String</type>
+					<default-value>"STRING"</default-value>
+				</column>
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<!-- ===================================================================================
+		     ================================ Index Finder Tests ===============================
+			   =================================================================================== -->
+
+		<table name="dao_finder_index_null">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+				</column>
+
+			</columns>
+			<indexes>
+
+				<index name="inx_finnull_bool">
+					<columns>
+						<column name="boolean_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_short">
+					<columns>
+						<column name="short_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_int">
+					<columns>
+						<column name="int_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_long">
+					<columns>
+						<column name="long_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_double">
+					<columns>
+						<column name="double_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_enumplain">
+					<columns>
+						<column name="enum_type_plain"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_enumcust">
+					<columns>
+						<column name="enum_type_custom"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_enumstr">
+					<columns>
+						<column name="enum_type_string"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_enumstrd">
+					<columns>
+						<column name="enum_type_string_db"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_string">
+					<columns>
+						<column name="string_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_date">
+					<columns>
+						<column name="date_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_timestamp">
+					<columns>
+						<column name="timestamp_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_sblob">
+					<columns>
+						<column name="sblob_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_ser">
+					<columns>
+						<column name="serializable_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnull_dto">
+					<columns>
+						<column name="dto_type"/>
+					</columns>
+				</index>
+
+			</indexes>
+
+			<methods>
+
+				<find>
+					<index name="inx_finnull_bool"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_short"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_int"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_long"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_double"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_enumplain"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_enumcust"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_enumstr"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_enumstrd"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_string"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_date"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_timestamp"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_sblob"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_ser"/>
+				</find>
+
+				<find>
+					<index name="inx_finnull_dto"/>
+				</find>
+
+			</methods>
+		</table>
+
+
+		<!-- ================================ Index Finder - Not Null =========================== -->
+
+		<table name="dao_finder_index_not_null">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+					<not-null/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<not-null/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<not-null/>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+					<not-null/>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+					<not-null/>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+					<not-null/>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+					<not-null/>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+					<not-null/>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+					<not-null/>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+					<not-null/>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+					<not-null/>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+					<not-null/>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+					<not-null/>
+				</column>
+
+			</columns>
+			<indexes>
+
+				<index name="inx_finnnull_bool">
+					<columns>
+						<column name="boolean_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_short">
+					<columns>
+						<column name="short_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_int">
+					<columns>
+						<column name="int_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_long">
+					<columns>
+						<column name="long_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_double">
+					<columns>
+						<column name="double_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_enumplain">
+					<columns>
+						<column name="enum_type_plain"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_enumcust">
+					<columns>
+						<column name="enum_type_custom"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_enumstr">
+					<columns>
+						<column name="enum_type_string"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_enumstrd">
+					<columns>
+						<column name="enum_type_string_db"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_string">
+					<columns>
+						<column name="string_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_date">
+					<columns>
+						<column name="date_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_timestamp">
+					<columns>
+						<column name="timestamp_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_sblob">
+					<columns>
+						<column name="sblob_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_ser">
+					<columns>
+						<column name="serializable_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_finnnull_dto">
+					<columns>
+						<column name="dto_type"/>
+					</columns>
+				</index>
+
+			</indexes>
+
+			<methods>
+
+				<find>
+					<index name="inx_finnnull_bool"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_short"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_int"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_long"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_double"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_enumplain"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_enumcust"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_enumstr"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_enumstrd"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_string"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_date"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_timestamp"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_sblob"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_ser"/>
+				</find>
+
+				<find>
+					<index name="inx_finnnull_dto"/>
+				</find>
+
+			</methods>
+		</table>
+
+
+		<!-- ===================================================================================
+		     ============================ Index Finder Tests - Result - List ===================
+			   =================================================================================== -->
+
+		<table name="dao_l_finder_index_null">
+			<config>
+				<dao find-many-result="list"/>
+			</config>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+				</column>
+
+			</columns>
+			<indexes>
+
+				<index name="inx_fi2null_bool">
+					<columns>
+						<column name="boolean_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_short">
+					<columns>
+						<column name="short_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_int">
+					<columns>
+						<column name="int_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_long">
+					<columns>
+						<column name="long_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_double">
+					<columns>
+						<column name="double_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_enumplain">
+					<columns>
+						<column name="enum_type_plain"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_enumcust">
+					<columns>
+						<column name="enum_type_custom"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_enumstr">
+					<columns>
+						<column name="enum_type_string"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_enumstrd">
+					<columns>
+						<column name="enum_type_string_db"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_string">
+					<columns>
+						<column name="string_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_date">
+					<columns>
+						<column name="date_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_timestamp">
+					<columns>
+						<column name="timestamp_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_sblob">
+					<columns>
+						<column name="sblob_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_ser">
+					<columns>
+						<column name="serializable_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2null_dto">
+					<columns>
+						<column name="dto_type"/>
+					</columns>
+				</index>
+
+			</indexes>
+
+			<methods>
+
+				<find>
+					<index name="inx_fi2null_bool"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_short"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_int"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_long"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_double"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_enumplain"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_enumcust"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_enumstr"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_enumstrd"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_string"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_date"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_timestamp"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_sblob"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_ser"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2null_dto"/>
+				</find>
+
+			</methods>
+		</table>
+
+
+		<!-- =========================== Index Finder - Result List - Not Null ======================= -->
+
+		<table name="dao_l_finder_index_not_nul" java="DaoLFinderIndexNotNull">
+			<config>
+				<dao find-many-result="list"/>
+			</config>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+					<not-null/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<not-null/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<not-null/>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+					<not-null/>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+					<not-null/>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+					<not-null/>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+					<not-null/>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+					<not-null/>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+					<not-null/>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+					<not-null/>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+					<not-null/>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+					<not-null/>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+					<not-null/>
+				</column>
+
+			</columns>
+			<indexes>
+
+				<index name="inx_fi2nnull_bool">
+					<columns>
+						<column name="boolean_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_short">
+					<columns>
+						<column name="short_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_int">
+					<columns>
+						<column name="int_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_long">
+					<columns>
+						<column name="long_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_double">
+					<columns>
+						<column name="double_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_enumplain">
+					<columns>
+						<column name="enum_type_plain"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_enumcust">
+					<columns>
+						<column name="enum_type_custom"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_enumstr">
+					<columns>
+						<column name="enum_type_string"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_enumstrd">
+					<columns>
+						<column name="enum_type_string_db"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_string">
+					<columns>
+						<column name="string_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_date">
+					<columns>
+						<column name="date_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_timestamp">
+					<columns>
+						<column name="timestamp_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_sblob">
+					<columns>
+						<column name="sblob_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_ser">
+					<columns>
+						<column name="serializable_type"/>
+					</columns>
+				</index>
+
+				<index name="inx_fi2nnull_dto">
+					<columns>
+						<column name="dto_type"/>
+					</columns>
+				</index>
+
+			</indexes>
+
+			<methods>
+
+				<find>
+					<index name="inx_fi2nnull_bool"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_short"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_int"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_long"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_double"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_enumplain"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_enumcust"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_enumstr"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_enumstrd"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_string"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_date"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_timestamp"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_sblob"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_ser"/>
+				</find>
+
+				<find>
+					<index name="inx_fi2nnull_dto"/>
+				</find>
+
+			</methods>
+		</table>
+
+
+
+		<!-- ===================================================================================
+		     ================================== Update Tests ===================================
+			   =================================================================================== -->
+
+		<table name="dao_update_null">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+					<edit/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<edit/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<edit/>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+					<edit/>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+					<edit/>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+					<edit/>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+					<edit/>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+					<edit/>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+					<edit/>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+					<edit/>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+					<edit/>
+				</column>
+
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<table name="dao_update_column_null">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+					<edit/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<edit/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<edit/>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+					<edit/>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+					<edit/>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+					<edit/>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+					<edit/>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+					<edit/>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+					<edit/>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+					<edit/>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+					<edit/>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+					<edit/>
+				</column>
+
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<!-- ================================  Update - Not Null =========================== -->
+
+		<table name="dao_update_not_null">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+		<table name="dao_update_column_not_null">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="boolean_type">
+					<type>boolean</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="short_type">
+					<type>short</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="int_type">
+					<type>int</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="long_type">
+					<type>long</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="double_type">
+					<type>double</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_plain">
+					<type>int</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_custom">
+					<type>int</type>
+					<enum>
+						<value id="1">TYPE_A</value>
+						<value id="2">TYPE_B</value>
+						<value id="3">TYPE_C</value>
+						<value id="4">TYPE_D</value>
+						<value id="5">TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string">
+					<type max-length="6">String</type>
+					<enum>
+						<value>TYPE_A</value>
+						<value>TYPE_B</value>
+						<value>TYPE_C</value>
+						<value>TYPE_D</value>
+						<value>TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="enum_type_string_db">
+					<type max-length="1">String</type>
+					<enum>
+						<value db="A">TYPE_A</value>
+						<value db="B">TYPE_B</value>
+						<value db="C">TYPE_C</value>
+						<value db="D">TYPE_D</value>
+						<value db="E">TYPE_E</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="string_type">
+					<type max-length="500">String</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="date_type">
+					<type>Date</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="timestamp_type">
+					<type>Timestamp</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="sblob_type">
+					<type max-length="500">byte[]</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="serializable_type">
+					<type max-length="500">Serializable</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="dto_type">
+					<type max-length="500" class="table:dao_dto">Serializable</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+			</methods>
+		</table>
+
+
+
+		<!-- ===================================================================================
+		     ================================== Methods Tests ==================================
+			   =================================================================================== -->
+
+		<table name="dao_method_insert_all_auto">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="value">
+					<type max-length="32">String</type>
+					<not-null/>
+				</column>
+			</columns>
+			<methods>
+				<find>
+					<all/>
+					<order-by>
+						<column name="id"/>
+					</order-by>
+				</find>
+				<insert-all/>
+			</methods>
+		</table>
+
+		<table name="dao_method_insert_all_noau" java="DaoMethodInsertAllNoauto">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<pk/>
+				</column>
+				<column name="value">
+					<type max-length="32">String</type>
+					<not-null/>
+				</column>
+			</columns>
+			<methods>
+				<find>
+					<all/>
+					<order-by>
+						<column name="id"/>
+					</order-by>
+				</find>
+				<insert-all/>
+			</methods>
+		</table>
+
+	</tables>
+</database>
+

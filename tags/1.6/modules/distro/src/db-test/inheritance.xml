@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+
+	<tables>
+
+		<table name="gas_types">
+			<columns>
+				<column name="gas_type_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+
+				<column name="gas_type_name">
+					<type max-length="32">String</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="words">
+					<type class="String">List</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="gas_kind">
+					<type>int</type>
+					<enum>
+						<value>BENZINE</value>
+						<value>BENZINE_UNLEADED</value>
+						<value>DIESEL</value>
+						<value>LPG</value>
+						<value>CNG</value>
+						<value>H2</value>
+					</enum>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="diesel_kind">
+					<type>int</type>
+					<enum>
+						<value>NORMAL</value>
+						<value>BIO</value>
+					</enum>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+				<column name="octane_number">
+					<type>int</type>
+					<edit/>
+					<gae empty="true"/>
+				</column>
+
+			</columns>
+			<indexes>
+				<index name="inx_gastype_kindwords">
+					<columns>
+						<column name="gas_kind"/>
+						<column name="words"/>
+					</columns>
+				</index>
+			</indexes>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+				<find>
+					<index name="inx_gastype_kindwords" list="true"/>
+					<order-by>
+						<column name="gas_type_name"/>
+					</order-by>
+				</find>
+				<find>
+					<index name="inx_gastype_kindwords" level="2"/>
+					<order-by>
+						<column name="gas_type_name"/>
+					</order-by>
+				</find>
+			</methods>
+		</table>
+
+		<table name="gas_prices">
+			<columns>
+				<column name="gas_price_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="gas_type_id">
+					<ref table="gas_types"/>
+					<not-null/>
+				</column>
+				<column name="price">
+					<type>double</type>
+					<not-null/>
+				</column>
+				<column name="date">
+					<type>Timestamp</type>
+					<auto/>
+					<not-null/>
+				</column>
+			</columns>
+		</table>
+
+		<table name="refuel">
+			<columns>
+				<column name="refuel_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="date">
+					<type>Timestamp</type> <!-- I can tank more than once a day -->
+					<not-null/>
+				</column>
+				<column name="gas_price_id">
+					<ref table="gas_prices"/>
+					<not-null/>
+				</column>
+				<column name="amount">
+					<type>double</type> <!-- litres -->
+					<not-null/>
+				</column>
+				<column name="tachometer">
+					<type>int</type>
+					<not-null/>
+				</column>
+			</columns>
+		</table>
+
+		<table name="gas_price_new" abstract="true" force-dto="true">
+			<columns>
+				<column name="gas_price">
+					<type class="table:gas_prices">Serializable</type>
+				</column>
+				<column name="gas_type">
+					<type class="table:gas_types">Serializable</type>
+				</column>
+				<column name="gas_price_id">
+					<ref table="gas_prices"/>
+				</column>
+				<column name="gas_type_id">
+					<ref table="gas_types"/>
+				</column>
+			</columns>
+		</table>
+
+		<table name="refuel_new" extends="gas_price_new" abstract="true" force-dto="true">
+			<columns>
+				<column name="refuel">
+					<type class="table:refuel">Serializable</type>
+				</column>
+			</columns>
+		</table>
+
+	</tables>
+</database>

@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<project name="parser" basedir="." default="dist">
+
+	<!-- IMPORT THE COMMON PROPERTIES AND TARGETS -->
+	<import file="../../build-commons.xml"/>
+
+	<!-- SECTION PROPERTIES -->
+	<property name="src.grammar" location="${src.dir}/grammar"/>
+	<property name="grammar.subdir" value="com/spoledge/audao/parser/gql/impl"/>
+
+	<!-- SECTION FILESET AND CLASSPATH -->
+
+	<path id="antlr.path">
+		<pathelement path="${antlr.jar}"/>
+	</path>
+
+	<path id="compile.path">
+		<pathelement path="${antlr-runtime.jar}"/>
+		<fileset dir="${lib.global}/commons"/>
+		<fileset dir="${gae.home}/lib/user" includes="*.jar"/>
+		<fileset refid="lib.local.fileset"/>
+	</path>
+
+	<path id="compile-test.path">
+		<pathelement path="${antlr-runtime.jar}"/>
+		<pathelement path="${log4j.jar}"/>
+		<fileset dir="${lib.global}/junit"/>
+		<fileset dir="${gae.home}/lib/impl"/>
+		<fileset dir="${gae.home}/lib/testing"/>
+		<fileset dir="${dist.dir}"/>
+	</path>
+
+	<path id="run-test.path">
+		<path refid="compile-test.path"/>
+		<pathelement path="${build.classes-test.dir}"/>
+		<fileset refid="lib.local.fileset"/>
+	</path>
+
+	<!-- SECTION TARGETS -->
+
+	<target name="generate">
+		<antcall target="generate-g">
+			<param name="grammar" location="${src.grammar}/GqlStatic.g"/>
+			<param name="subdir" value="${grammar.subdir}"/>
+		</antcall>
+		<antcall target="generate-g">
+			<param name="grammar" location="${src.grammar}/GqlDynamic.g"/>
+			<param name="subdir" value="${grammar.subdir}"/>
+		</antcall>
+		<antcall target="generate-g">
+			<param name="grammar" location="${src.grammar}/GqlExtLexer.g"/>
+			<param name="subdir" value="${grammar.subdir}"/>
+		</antcall>
+		<antcall target="generate-g">
+			<param name="grammar" location="${src.grammar}/GqlExtParser.g"/>
+			<param name="subdir" value="${grammar.subdir}"/>
+		</antcall>
+		<antcall target="generate-g">
+			<param name="grammar" location="${src.grammar}/GqlExtTree.g"/>
+			<param name="subdir" value="${grammar.subdir}"/>
+		</antcall>
+		<antcall target="generate-g">
+			<param name="grammar" location="${src.grammar}/GqlExtExprTree.g"/>
+			<param name="subdir" value="${grammar.subdir}"/>
+		</antcall>
+	</target>
+
+
+	<target name="generate-g">
+		<basename property="grammar-base" file="${grammar}" suffix=".g"/>
+
+		<uptodate
+			property="generate-g.uptodate"
+			srcfile="${grammar}"
+			targetfile="${build.src-gen.dir}/${subdir}/${grammar-base}.tokens"
+		/>
+
+		<antcall target="generate-g.impl"/>
+	</target>
+
+
+	<target name="generate-g.impl" unless="generate-g.uptodate">
+		<echo message="ANTLR on ${grammar}"/>
+		<mkdir dir="${build.src-gen.dir}/${subdir}"/>
+
+		<java
+			classname="org.antlr.Tool"
+			classpathref="antlr.path"
+			fork="true"
+			failonerror="true"
+		>
+			<arg value="-o"/>
+			<arg file="${build.src-gen.dir}/${subdir}"/>
+			<arg value="-lib"/>
+			<arg file="${build.src-gen.dir}/${subdir}"/>
+			<arg file="${grammar}"/>
+		</java>
+	</target>
+
+
+	<target name="dist" description="Creates a JAR distribution">
+		<antcall target="generate"/>
+		<antcall target="compile-src-dest">
+			<param name="src-path" value="${build.src-gen.dir};${src.java}"/>
+			<param name="dest-dir" value="${build.classes.dir}"/>
+		</antcall>
+		<antcall target="make-jar"/>
+	</target>
+
+
+	<target name="test" depends="dist" description="Tests the distribution">
+		<antcall target="compile-test"/>
+		<antcall target="junit"/>
+	</target>
+
+</project>

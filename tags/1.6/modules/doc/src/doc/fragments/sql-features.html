@@ -1,0 +1,115 @@
+<div class="chapter">
+<a name="sql-features"></a>
+<h1 class="chapter">SQL Features</h1>
+
+<p class="chapter-abstract">
+	This chapter describes all available SQL features of the AuDAO generator.
+</p>
+
+
+<div class="section">
+<a name="sqlfeatures"></a>
+<h2>SQL Features</h2>
+
+
+<div class="subsection">
+<a name="sqlpk"></a>
+<h3>Primary Keys</h3>
+
+<p>
+	Primary keys are automatically generated on SQL level.
+	Although primary keys can contain more than one column,
+	it is recommended to use only one-column primary keys
+	due to limitations of the DAO layer.
+</p>
+
+<p>
+	The primary key columns are recognized by the column flag <tt>&lt;pk/&gt;</tt>.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ColumnType]">XSD - column</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="sqlindex"></a>
+<h3>Indexes</h3>
+
+<p>
+	Indexes are automatically generated on SQL level.
+	Both unique and nonunique indexes are supported.
+</p>
+
+<p>
+	Indexes are defined by separate <tt>indexes/index</tt> definitions.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:IndexType]">XSD - index</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="sqlfk"></a>
+<h3>Foreign Keys</h3>
+
+<p>
+	Foreign keys are automatically generated on SQL level.
+</p>
+
+<p>
+	Foreign keys are generated when <tt>&lt;ref&gt;</tt> reference is used.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:RefTableOptColumnOptType]">XSD - ref</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="sqlseq"></a>
+<h3>Sequences</h3>
+
+<p>
+	Sequences are automatically generated on SQL level only for Oracle DB.
+</p>
+
+<p>
+	Sequences are generated when <tt>&lt;auto/&gt;</tt> with <tt>&lt;pk/&gt;</tt> is used.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ColumnType]">XSD - column</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="sqldata"></a>
+<h3>Data</h3>
+
+<p>
+	Data insertion statements are automatically generated for standard databases.
+</p>
+
+<p>
+	Data insertion statements are generated when <tt>&lt;data&gt;</tt> definition is present.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:TableType]">XSD - table</a>
+</p>
+
+</div>
+
+</div> <!-- section -->
+
+</div> <!-- chapter -->

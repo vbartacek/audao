@@ -1,0 +1,115 @@
+/*
+ * Styles for documentation.
+ */
+
+.doc-navig {
+    font-size: 90%;
+}
+
+.doc-navig-top {
+    border-bottom: 1px solid #888;
+}
+
+.doc-navig-bottom {
+    border-top: 1px solid #888;
+}
+
+.doc-contents {
+    background: #ddf;
+    padding: 10px 0;
+}
+
+.doc-contents li {
+    display: block;
+}
+
+h2, h3 {
+    color: #333333;
+}
+
+p.note {
+    border-left: 10px solid #00f;
+    padding-left: 10px;
+}
+
+p.note:before {
+    content: "NOTE: ";
+    font-weight: bold;
+}
+
+p.modified {
+    font-style: italic;
+}
+
+pre {
+    width: 585px;
+    font-size: 85%;
+    padding: 10px;
+}
+
+pre.xml {
+    border: 1px solid #11ff11;
+    border-left: 5px solid #11ff11;
+    background: #ccffcc;
+}
+
+pre.java {
+    border: 1px solid #ee9911;
+    border-left: 5px solid #ee9911;
+    background: #ffeecc;
+}
+
+pre.sql {
+    border: 1px solid #1111ff;
+    border-left: 5px solid #1111ff;
+    background: #ccccff;
+}
+
+pre.shell {
+    border: 1px solid #ff11ff;
+    border-left: 5px solid #ff11ff;
+    background: #ffccff;
+}
+
+pre.ant {
+    border: 1px solid #11ffff;
+    border-left: 5px solid #11ffff;
+    background: #ccffff;
+}
+
+tt {
+    font-size: 90%;
+    color: #aa5500;
+}
+
+
+table.matrix {
+    border-collapse: collapse;
+    border: 2px solid #555;
+}
+
+table.matrix tr.header > td {
+    border: 1px solid #555;
+    padding: 3px 5px;
+    font-weight: bold;
+}
+
+table.matrix tr.sep > td {
+    border: 1px solid #555;
+    padding: 0;
+}
+
+table.matrix td {
+    border: 1px solid #ccc;
+    padding: 1px 5px;
+    text-align: center;
+}
+
+table.matrix td.ok {
+    background: #cfc;
+}
+
+table.matrix td.ko {
+    background: #fcc;
+}
+

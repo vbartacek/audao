@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright 2010 Spolecne s.r.o. (www.spoledge.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *-->
+<messages xmlns="http://www.spoledge.com/audao/xsl/messages">
+	<words>
+		<word name="COLUMN">Column</word>
+		<word name="DETAIL">Detail</word>
+		<word name="ERROR">Error</word>
+		<word name="INDEX">Index</word>
+		<word name="LOCATION">Location</word>
+		<word name="METHOD">Method</word>
+		<word name="TABLE">Table</word>
+		<word name="VIEW">View</word>
+	</words>
+	<errors>
+		<error errcode="MULTIPLE_PARENT_KEYS">More than one parent key is not allowed</error>
+		<error errcode="REFERENCE_NOT_FOUND">Reference not found</error>
+
+		<error errcode="GAE_AUTO_NUMBER_ONLY_INSERT">GAE - only operation 'insert' is supported for auto non pk non Date/Timestamp fields</error>
+		<error errcode="GAE_AUTO_NUMBER_ONLY_LONG">GAE - only type 'long' is supported for auto non pk non Date/Timestamp fields</error>
+		<error errcode="GAE_BATCH_UPDATE_NOT_SUPPORTED">GAE - batch update methods are not supported</error>
+		<error errcode="GAE_FINDER_NOT_SUPPORTED">GAE - this finder type is not supported</error>
+		<error errcode="GAE_FINDER_ON_UNINDEXED_PROPERTY">GAE - cannot find by unindexed property</error>
+		<error errcode="GAE_INDEX_ON_COMPLEX_ANCESTOR">GAE - index can contain only simple (1 level) ancestor field</error>
+		<error errcode="GAE_LIST_PARAM_ON_SIMPLE_PROPERTY">GAE - list parameter is not supported for non-list property</error>
+		<error errcode="GAE_MOVE_NOT_SUPPORTED">GAE - move methods are not supported</error>
+		<error errcode="GAE_PK_TYPE_NOT_SUPPORTED">GAE - only 'long' or 'String' primary key types are allowed</error>
+		<error errcode="GAE_TRUNCATE_NOT_SUPPORTED">GAE - truncate methods are not supported</error>
+	</errors>
+</messages>

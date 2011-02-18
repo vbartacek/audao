@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+
+	<config>
+		<dto enum-column="true"/>
+		<dao method-get-order-expr="true"/>
+		<factory>
+			<create-params default="false" connection="true"/>
+		</factory>
+	</config>
+
+	<tables>
+		<auto-find/>
+
+		<table name="users">
+			<columns>
+
+				<column name="user_id">
+					<type>int</type>
+					<auto start="100"/>
+					<pk/>
+				</column>
+
+				<column name="user_name">
+					<type max-length="32" min-length="2">String</type>
+					<not-null/>
+				</column>
+
+				<column name="full_name">
+					<type max-length="128" min-length="2">String</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+				<column name="digest_password">
+					<type max-length="128">String</type>
+					<not-null/>
+					<edit/>
+				</column>
+
+			</columns>
+
+			<indexes>
+				<index name="inx_user_name">
+					<unique/>
+					<columns>
+						<column name="user_name"/>
+					</columns>
+				</index>
+			</indexes>
+
+			<methods>
+				<find name="all">
+					<all/>
+					<order-by>
+						<column name="user_name"/>
+					</order-by>
+				</find>
+			</methods>
+
+			<data>
+				<row>
+					<c>1</c>
+					<c>superuser</c>
+					<c>The Superuser</c>
+					<c>8e67bb26b358e2ed20fe552ed6fb832f397a507d</c> <!-- superuser -->
+				</row>
+			</data>
+
+		</table>
+
+
+		<table name="roles">
+			<columns>
+				<column name="role_id">
+					<type>int</type>
+					<auto start="10"/>
+					<pk/>
+				</column>
+				<column name="role_name">
+					<type max-length="32" min-length="2">String</type>
+					<not-null/>
+				</column>
+			</columns>
+
+			<indexes>
+				<index name="inx_role_name">
+					<unique/>
+					<columns>
+						<column name="role_name"/>
+					</columns>
+				</index>
+			</indexes>
+
+			<methods>
+
+				<find name="all">
+					<all/>
+					<order-by>
+						<column name="role_name"/>
+					</order-by>
+				</find>
+
+				<find name="byUser">
+					<ref table="user_roles"/>
+					<order-by>
+						<column name="role_name"/>
+					</order-by>
+				</find>
+
+				<find name="byAppAction">
+					<ref table="app_accesses"/>
+					<order-by>
+						<column name="role_name"/>
+					</order-by>
+				</find>
+
+			</methods>
+
+			<data>
+				<row>
+					<c>1</c>
+					<c>Administrator</c>
+				</row>
+				<row>
+					<c>2</c>
+					<c>User</c>
+				</row>
+				<row>
+					<c>3</c>
+					<c>UserManager</c>
+				</row>
+			</data>
+
+		</table>
+
+
+		<table name="user_roles">
+			<columns>
+				<column name="user_id">
+					<ref table="users" column="user_id"/>
+					<pk/>
+				</column>
+				<column name="role_id">
+					<ref table="roles" column="role_id"/>
+					<pk/>
+				</column>
+			</columns>
+			<methods>
+				<delete name="byPrimaryKey">
+					<pk/>
+				</delete>
+			</methods>
+		</table>
+
+
+		<table name="app_modules" java="AppDbModule">
+			<columns>
+				<column name="module_id">
+					<type>int</type>
+					<pk/>
+				</column>
+				<column name="module_name">
+					<type max-length="32" min-length="2">String</type>
+					<not-null/>
+				</column>
+			</columns>
+
+			<indexes>
+				<index name="inx_app_mod_name">
+					<unique/>
+					<columns>
+						<column name="module_name"/>
+					</columns>
+				</index>
+			</indexes>
+
+			<methods>
+				<find name="all">
+					<all/>
+					<order-by>
+						<column name="module_name"/>
+					</order-by>
+				</find>
+
+			</methods>
+
+			<data>
+				<row>
+					<c>1</c>
+					<c>user-mgmt</c>
+				</row>
+				<row>
+					<c>10</c>
+					<c>fc-setup</c>
+				</row>
+				<row>
+					<c>11</c>
+					<c>fc-party</c>
+				</row>
+				<row>
+					<c>12</c>
+					<c>fc-batch</c>
+				</row>
+			</data>
+
+		</table>
+
+		<table name="app_actions" java="AppDbAction">
+			<columns>
+				<column name="action_id">
+					<type>int</type>
+					<pk/>
+				</column>
+				<column name="module_id">
+					<ref table="app_modules" column="module_id"/>
+					<not-null/>
+				</column>
+				<column name="action_name">
+					<type max-length="32" min-length="2">String</type>
+					<not-null/>
+				</column>
+				<column name="action_mode">
+					<type>int</type>
+					<enum>
+						<value>READ</value>
+						<value>WRITE</value>
+						<value>READ_WRITE</value>
+					</enum>
+					<not-null/>
+				</column>
+
+			</columns>
+
+			<indexes>
+				<index name="inx_app_act_name">
+					<unique/>
+					<columns>
+						<column name="module_id"/>
+						<column name="action_name"/>
+					</columns>
+				</index>
+			</indexes>
+
+			<methods>
+				<find name="byRole">
+					<ref table="app_accesses"/>
+					<order-by>
+						<column name="module_id"/>
+						<column name="action_name"/>
+					</order-by>
+				</find>
+			</methods>
+
+			<data>
+				<row>
+					<c>1</c>
+					<c>1</c>
+					<c>role-new</c>
+					<c>2</c>
+				</row>
+				<row>
+					<c>2</c>
+					<c>1</c>
+					<c>role-get</c>
+					<c>1</c>
+				</row>
+				<row>
+					<c>3</c>
+					<c>1</c>
+					<c>user-new</c>
+					<c>3</c>
+				</row>
+			</data>
+
+		</table>
+
+		<table name="app_accesses" java="AppDbAccess">
+			<columns>
+				<column name="action_id">
+					<ref table="app_actions" column="action_id"/>
+					<pk/>
+				</column>
+				<column name="role_id">
+					<ref table="roles" column="role_id"/>
+					<pk/>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_app_acc_rid">
+					<columns>
+						<column name="role_id"/>
+					</columns>
+				</index>
+			</indexes>
+			<methods>
+				<delete name="byPrimaryKey">
+					<pk/>
+				</delete>
+			</methods>
+
+		</table>
+
+
+	</tables>
+
+	<views>
+		<view name="tomcat_user_roles">
+			<tables>
+				<ref table="users" alias="u"/>
+				<ref table="roles" alias="r"/>
+			</tables>
+			<columns>
+				<column name="user_name">
+					<ref table="users"/>
+				</column>
+				<column name="role_name">
+					<ref table="roles"/>
+				</column>
+			</columns>
+
+			<sql>
+				<query>
+				select u.user_name, r.role_name
+					from users u, user_roles ur, roles r
+					where u.user_id=ur.user_id and ur.role_id=r.role_id
+				UNION
+				select user_name, 'User' from users
+				</query>
+			</sql>
+		</view>
+	</views>
+
+</database>
