@@ -1,8 +1,8 @@
 AUDAO - Automatic DAO Generator README
 ======================================
 
-Version 1.5
-June 9, 2010
+Version 1.6
+February 19, 2011
 
 
 OVERVIEW
@@ -39,7 +39,7 @@ DEPENDENCIES
 Currently the following external libraries are needed for compilation
 of the generated Java source files:
     * Apache Commons Logging: commons-logging-1.1.1.jar
-    * Google AppEngine API: appengine-api-1.0-sdk-1.3.4.jar  (only for GAE)
+    * Google AppEngine API: appengine-api-1.0-sdk-1.4.2.jar  (only for GAE)
     * JDO2 - javax.jdo.*: jdo2-api*.jar  (only for GAE - JDO)
     * Google Web Toolkit API (1.6 or higher): gwt-user.jar
         (only for DTO GWT custom serializers)
@@ -58,7 +58,7 @@ the AppEngine API - which is a part of the Google App Engine SDK.
 If you are using dynamic queries for Google App Engine DB type,
 then you also the following libraries are needed:
     * ANTLR3 runtime library: lib/antlr-runtime.jar
-    * GQL dynamic query parser library: lib/audao-runtime-gql-1.5.jar
+    * GQL dynamic query parser library: lib/audao-runtime-gql-1.6.jar
 
 For Google App Engine - JDO - you need to have installed also the JDO2 library
 (javax.jdo.*) - which is a part of the Google App Engine SDK.
