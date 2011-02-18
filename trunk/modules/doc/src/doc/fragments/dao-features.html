@@ -1295,6 +1295,8 @@
 
 <p>
 	The method name is always <tt>insert</tt>.
+	The method is generated if and only if the table is not <tt>&lt;read-only/&gt;</tt>
+	is added to the <tt>methods</tt> section.
 </p>
 
 <p>
@@ -1309,6 +1311,11 @@
 
 <p>
 	<b>Throws</b>: <a href="[api:dao:DaoException]">DaoException</a> when underlying DB operation fails.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:TableType]">XSD - table</a>,
+  								<a href="#insertAll">Batch insert</a>
 </p>
 
 </div>
@@ -1430,6 +1437,49 @@
 									 <a href="#updateBatchMethods">raw or batch update methods</a>,
 									 <a href="[xsd:EditModeType]">XSD - edit-mode</a>,
 									 <a href="[xsd:UpdateType]">XSD - update</a>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="insertMethods"></a>
+<h2>Insert Methods</h2>
+
+<div class="subsection">
+<a name="insertAll"></a>
+<h3>Batch Insert</h3>
+
+<p>
+	Inserts several records at once.
+</p>
+
+<p>
+	The default method name is <tt>insertAll</tt>. 
+	The method is generated if and only if a special tag <tt>&lt;insert-all/&gt;</tt>
+	is added to the <tt>methods</tt> section.
+</p>
+
+<p>
+	<b>Example</b>:
+	<pre class="prettyprint xml">
+		
+  &lt;methods&gt;
+    &lt;insert-all/&gt;
+  &lt;/methods&gt; </pre>
+
+	<pre class="prettyprint java">
+    /**
+     * Inserts several records to the table at once.
+     */
+    public void insertAll( Iterable&lt;DtoClass&gt; dtos ) throws DaoException;</pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:InsertAllType]">XSD - insert-all</a>,
 </p>
 
 </div>

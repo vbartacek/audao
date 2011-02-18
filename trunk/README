@@ -23,6 +23,7 @@ Currently the following databases are supported:
 
 Currently the following DAO / DTO programming language is supported:
     * Java - version 1.5, 1.6
+      (note: a problem found in JDK 1.5 when compiling unit tests - see issue#10)
 
 
 Dependencies

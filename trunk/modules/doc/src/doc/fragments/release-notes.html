@@ -5,6 +5,30 @@
 
 
 <div class="section">
+<a class="date" name="2011-02-19"></a>
+<h2>Release 1.6</h2>
+
+<p>
+	Lists instead of arrays in finders.
+	Enumerations mapped to Strings in DB.
+	Batch inserts.
+</p>
+
+<p>
+	<b>New Features</b>
+	<ul>
+		<li>Updated Google App Engine SDK to version 1.4.2</li>
+		<li><a href="[generator-output]#dao_find_method_return_type">Lists</a> can be returned instead of arrays as finder results</li>
+		<li><a href="[dao-features]#enums">String enumerations</a> - implemented.</li>
+		<li><a href="[dao-features]#insertAll">Batch inserts</a> - issue#5. Currently the optimization is implemented only for GAE. For MySQL and Oracle it is only a shortcut method.</li>
+		<li>Count() methods in GAE are not limited by max of 1000 records now.</li>
+	</ul>
+</p>
+
+</div>
+
+
+<div class="section">
 <a class="date" name="2010-06-10"></a>
 <h2>Release 1.5</h2>
 
