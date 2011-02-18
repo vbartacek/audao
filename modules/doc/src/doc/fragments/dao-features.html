@@ -451,8 +451,9 @@
 
 <p>
 	The enumeration is not a type, developer must still define the underlying database type.
-	The types <a href="#typeShort">short</a> and <a href="#typeInt">int</a> are supported.
-	The value of the column containing enumeration can be null or not-null.
+	The types <a href="#typeShort">short</a>, <a href="#typeInt">int</a> and <a href="#typeString">String</a>
+	are supported.
+	The value of the column containing enumeration can be both null or not-null.
 	Let's look at an example:
 	<pre class="prettyprint xml">
   &lt;column name="payer_status"&gt;
@@ -479,7 +480,9 @@
 </p>
 
 <p>
-	The mapping to database values shows the following formula:
+	The mapping to database values depends on the type of the column - integer or String.
+	For String types the enum value name is used (<tt>enum_object.name()</tt>).
+	For integer types the following formula is used:
 	<pre class="prettyprint java">
     db_value = enum_object.ordinal() + 1</pre>
 	It means that the values stored in database are: 1, 2, 3,...
@@ -503,6 +506,25 @@
 	The option <tt>id</tt> is the actual value which is stored into database.
 	You must provide <tt>id</tt> for all or for none of enumeration values.
 	Mixing of both types is not allowed.
+</p>
+
+<p>
+	The following example shows possibility to map also String enumerations to a different values
+	than the enum name is:
+	<pre class="prettyprint xml">
+  &lt;column name="status_type"&gt;
+    &lt;type max-length="1"&gt;String&lt;/type&gt;
+    &lt;enum&gt;
+      &lt;value db="N"&gt;NEW&lt;/value&gt;
+      &lt;value db="A"&gt;ACTIVE&lt;/value&gt;
+      &lt;value db="C"&gt;CLOSED&lt;/value&gt;
+    &lt;/enum&gt;
+    &lt;not-null/&gt;
+  &lt;/column&gt;</pre>
+
+	The option <tt>db</tt> is used for String types.
+	You must provide <tt>db</tt> for all or for none of enumeration values.
+	Mixing of both types or mixing of <tt>db</tt> and <tt>id</tt> is not allowed.
 </p>
 
 <p>
