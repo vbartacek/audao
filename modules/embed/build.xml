@@ -90,7 +90,9 @@
 		<antcall target="prepare-schemas"/>
 		<antcall target="prepare-templates"/>
 		<antcall target="prepare-sources"/>
-		<antcall target="compile"/>
+		<antcall target="compile">
+			<param name="includeantruntime" value="yes"/>
+		</antcall>
 		<antcall target="make-my-jar"/>
 	</target>
 

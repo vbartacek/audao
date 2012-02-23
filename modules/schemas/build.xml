@@ -99,7 +99,9 @@
 
 	<target name="dist" description="Generates all.">
 		<antcall target="gen-doc"/>
+		<!--
 		<antcall target="xmlbeans"/>
+		-->
 	</target>
 
 </project>

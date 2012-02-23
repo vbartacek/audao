@@ -219,6 +219,11 @@
 	</target>
 
 	<target name="compile-src-dest-5" if="jdk-5">
+		<condition property="includeantruntime" value="false">
+			<not>
+				<isset property="includeantruntime"/>
+			</not>
+		</condition>
 		<javac
 			destdir="${dest-dir}"
 			classpathref="compile.path"
@@ -227,6 +232,7 @@
 			debug="true"
 			deprecation="true"
 			optimize="false"
+			includeantruntime="${includeantruntime}"
 		>
 			<src path="${src-path}"/>
 			<compilerarg value="-Xlint:unchecked"/>
@@ -235,6 +241,11 @@
 
 	<target name="compile-src-dest-6" unless="jdk-5">
 		<mkdir dir="${build.src-gen.dir}"/>
+		<condition property="includeantruntime" value="false">
+			<not>
+				<isset property="includeantruntime"/>
+			</not>
+		</condition>
 		<javac
 			destdir="${dest-dir}"
 			classpathref="compile.path"
@@ -243,6 +254,7 @@
 			debug="true"
 			deprecation="true"
 			optimize="false"
+			includeantruntime="${includeantruntime}"
 		>
 			<src path="${src-path}"/>
 			<compilerarg value="-Xlint:unchecked"/>
@@ -262,6 +274,7 @@
 			debug="true"
 			deprecation="true"
 			optimize="false"
+			includeantruntime="false"
 		>
 			<compilerarg value="-Xlint:unchecked"/>
 		</javac>

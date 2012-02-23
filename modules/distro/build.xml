@@ -145,6 +145,7 @@
 			debug="true"
 			deprecation="true"
 			optimize="false"
+			includeantruntime="false"
 		>
 			<src path="${build.java-src.dir}"/>
 			<compilerarg value="-Xlint:unchecked"/>

@@ -102,7 +102,7 @@ public class Main {
 
 
     private static final void usage() {
-        System.out.println("usage: java " + Main.class + " [OPTIONS] {oracle|mysql|gae} PACKAGE INPUT_XML {OUTPUT_DIR|OUTPUT_ZIP_FILE.zip}");
+        System.out.println("usage: java " + Main.class + " [OPTIONS] {oracle|mysql|gae|hsqldb} PACKAGE INPUT_XML {OUTPUT_DIR|OUTPUT_ZIP_FILE.zip}");
         System.out.println("OPTIONS:");
         System.out.println("\t-g FILE_TYPES\tor --generate FILE_TYPES");
         System.out.println("\t\tgenerates only specified types");

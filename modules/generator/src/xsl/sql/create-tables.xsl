@@ -71,6 +71,7 @@
 
 
 	<xsl:template match="db:table">
+		<xsl:call-template name="db-table-before"/>
 		<xsl:text>
 
 -- ======================== TABLE </xsl:text>
@@ -96,15 +97,16 @@
 		<xsl:value-of select="@name"/>
 		<xsl:text> </xsl:text>
 		<xsl:call-template name="db-type"/>
-		<xsl:if test="db:not-null or db:pk">
-			<xsl:text> NOT NULL</xsl:text>
-		</xsl:if>
+		<xsl:call-template name="not-null-constraint"/>
 		<xsl:call-template name="db-column-epilog"/>
 		<xsl:if test="position() != last()">
 			<xsl:text>,</xsl:text>
 		</xsl:if>
 		<xsl:text>
 </xsl:text>
+	</xsl:template>
+
+	<xsl:template name="db-table-before">
 	</xsl:template>
 
 	<xsl:template name="db-column-epilog">
@@ -258,6 +260,13 @@ CREATE VIEW </xsl:text>
 		<xsl:text>ALTER TABLE </xsl:text>
 		<xsl:value-of select="$tname"/>
 		<xsl:text> ADD CONSTRAINT </xsl:text>
+	</xsl:template>
+
+
+	<xsl:template name="not-null-constraint">
+		<xsl:if test="db:not-null or db:pk">
+			<xsl:text> NOT NULL</xsl:text>
+		</xsl:if>
 	</xsl:template>
 
 </xsl:stylesheet>
