@@ -225,6 +225,7 @@ The property "audao-package" is missing. Set it to the target Java package (e.g.
 			debug="true"
 			deprecation="true"
 			optimize="false"
+			includeantruntime="false"
 		>
 			<src path="${audao-gen-dir}/dao"/>
 			<compilerarg value="-Xlint:unchecked"/>

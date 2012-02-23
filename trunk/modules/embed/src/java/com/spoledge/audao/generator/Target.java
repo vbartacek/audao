@@ -23,7 +23,8 @@ public enum Target {
     ORACLE( "oracle" ),
     GAEJDO( "gaejdo"),
     GAE( "gae"),
-    GOOGLE_APP_ENGINE( "gae");
+    GOOGLE_APP_ENGINE( "gae"),
+    HSQLDB( "hsqldb");
 
     private String identifier;
 
