@@ -71,11 +71,13 @@
 				</xsl:call-template>
 			</xsl:variable>
 
-			<xsl:call-template name="db-foreign-key">
-				<xsl:with-param name="ctx" select="$ctx"/>
-				<xsl:with-param name="tname" select="$tname"/>
-				<xsl:with-param name="fk" select="$fkname"/>
-			</xsl:call-template>
+			<xsl:if test="//db:table[@name=$tname and not(@abstract='true')]">
+				<xsl:call-template name="db-foreign-key">
+					<xsl:with-param name="ctx" select="$ctx"/>
+					<xsl:with-param name="tname" select="$tname"/>
+					<xsl:with-param name="fk" select="$fkname"/>
+				</xsl:call-template>
+			</xsl:if>
 
 			<xsl:call-template name="db-foreign-keys-impl">
 				<xsl:with-param name="cols" select="$cols"/>
