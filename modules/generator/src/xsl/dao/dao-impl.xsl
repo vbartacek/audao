@@ -190,7 +190,10 @@ public</xsl:text>
 			<xsl:call-template name="attr-default-cache"/>
 		</xsl:if>
 
-		<xsl:call-template name="enums-mapping"/>
+		<xsl:if test="not(@abstract='true')">
+			<xsl:call-template name="enums-mapping"/>
+		</xsl:if>
+
 		<xsl:call-template name="constructors"/>
 
 		<xsl:call-template name="dao-methods"/>
