@@ -7,6 +7,20 @@
 		     ===================================== Tests =======================================
 			   =================================================================================== -->
 
+		<table name="dto_issue" abstract="true">
+			<comment>issue#11 - DaoImpl cannot be compiled - enum mapping is present</comment>
+			<columns>
+				<column name="prop_enum">
+					<type>int</type>
+					<enum>
+						<value>VAL_A</value>
+						<value>VAL_B</value>
+					</enum>
+				</column>
+			</columns>
+		</table>
+
+
 		<table name="dto_dto" abstract="true" force-dto="true">
 			<columns>
 				<column name="prop_a">
