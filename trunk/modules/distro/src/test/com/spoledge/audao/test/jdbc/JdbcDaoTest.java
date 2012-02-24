@@ -45,6 +45,12 @@ public class JdbcDaoTest extends AbstractDaoTest {
                 .setConnectionProvider( jdbc.getConnectionProvider() );
         }
         catch (Throwable e) {}
+
+        try {
+            com.spoledge.audao.test.db.dao.hsqldb.DaoFactoryImpl
+                .setConnectionProvider( jdbc.getConnectionProvider() );
+        }
+        catch (Throwable e) {}
     }
 
 
