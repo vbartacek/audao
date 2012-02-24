@@ -92,6 +92,12 @@
 		<fileset dir="${build.tests.dir}" includes="*-oracle/*.jar"/>
 	</path>
 
+	<path id="junit-hsqldb.path">
+		<path refid="run-test.path"/>
+		<fileset dir="${lib.global}" includes="jdbc/hsqldb/*.jar"/>
+		<fileset dir="${build.tests.dir}" includes="*-hsqldb/*.jar"/>
+	</path>
+
 	<fileset id="junit-no-jdbc.fs" dir="${build.classes-test.dir}">
 		<include name="**/*Test.class"/>
 		<include name="**/*Tests.class"/>
@@ -322,6 +328,7 @@
 		<antcall target="test-gqlext"/>
 		<antcall target="test-mysql"/>
 		<antcall target="test-oracle"/>
+		<antcall target="test-hsqldb"/>
 	</target>
 
 
@@ -363,6 +370,16 @@
 			<param name="jdbc.url" value="${oracle.url}"/>
 			<param name="jdbc.username" value="${oracle.username}"/>
 			<param name="jdbc.password" value="${oracle.password}"/>
+		</antcall>
+	</target>
+
+	<target name="test-hsqldb" if="hsqldb.url">
+		<antcall target="test-jdbc">
+			<param name="dbtype" value="hsqldb"/>
+			<param name="jdbc.driver" value="${hsqldb.driver}"/>
+			<param name="jdbc.url" value="${hsqldb.url}"/>
+			<param name="jdbc.username" value="${hsqldb.username}"/>
+			<param name="jdbc.password" value="${hsqldb.password}"/>
 		</antcall>
 	</target>
 

@@ -21,6 +21,7 @@
 		<audao package="com.spoledge.audao.test.dto" dbtype="mysql"/>
 		<audao package="com.spoledge.audao.test.dto" dbtype="oracle"/>
 		<audao package="com.spoledge.audao.test.dto" dbtype="gae"/>
+		<audao package="com.spoledge.audao.test.dto" dbtype="hsqldb"/>
 	</test>
 
 	<test name="dto-identity">
@@ -32,6 +33,7 @@
 		<audao package="com.spoledge.audao.test.dtoident" dbtype="mysql"/>
 		<audao package="com.spoledge.audao.test.dtoident" dbtype="oracle"/>
 		<audao package="com.spoledge.audao.test.dtoident" dbtype="gae"/>
+		<audao package="com.spoledge.audao.test.dtoident" dbtype="hsqldb"/>
 	</test>
 
 	<test name="dto-pk">
@@ -43,6 +45,7 @@
 		<audao package="com.spoledge.audao.test.dtopk" dbtype="mysql"/>
 		<audao package="com.spoledge.audao.test.dtopk" dbtype="oracle"/>
 		<audao package="com.spoledge.audao.test.dtopk" dbtype="gae"/>
+		<audao package="com.spoledge.audao.test.dtopk" dbtype="hsqldb"/>
 	</test>
 
 
@@ -55,6 +58,7 @@
 		<audao package="com.spoledge.audao.test.db" dbtype="mysql"/>
 		<audao package="com.spoledge.audao.test.db" dbtype="oracle"/>
 		<audao package="com.spoledge.audao.test.db" dbtype="gae"/>
+		<audao package="com.spoledge.audao.test.db" dbtype="hsqldb"/>
 	</test>
 
 
@@ -98,6 +102,7 @@
 		<audao package="com.spoledge.audao.test.blob" dbtype="gae"/>
 		<audao package="com.spoledge.audao.test.blob" dbtype="mysql"/>
 		<audao package="com.spoledge.audao.test.blob" dbtype="oracle"/>
+		<audao package="com.spoledge.audao.test.blob" dbtype="hsqldb"/>
 	</test>
 
 
