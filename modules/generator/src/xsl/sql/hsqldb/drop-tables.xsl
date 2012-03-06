@@ -40,7 +40,7 @@ SHUTDOWN;
 		<xsl:param name="fk"/>
 		<xsl:text>ALTER TABLE </xsl:text>
 		<xsl:value-of select="$ctx/../../@name"/>
-		<xsl:text> DROP FOREIGN KEY </xsl:text>
+		<xsl:text> DROP CONSTRAINT </xsl:text>
 		<xsl:value-of select="$fk"/>
 		<xsl:text>;
 
