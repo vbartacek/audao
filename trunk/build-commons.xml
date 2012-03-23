@@ -63,6 +63,10 @@
 
 	<whichresource property="log4j.config.url" resource="${log4j.conf}" classpath="."/>
 
+	<condition property="logging.properties" value="${logging.properties}" else="conf/logging.properties">
+		<isset property="logging.properties"/>
+	</condition>
+
 	<!-- SECTION FILESET AND CLASSPATH -->
 
 	<fileset id="lib.global.fileset" dir="${lib.global}">
@@ -320,6 +324,14 @@
 		<exclude name="**/*Abstract*Tests.class"/>
 	</fileset>
 
+	<fileset id="junit-custom.fs" dir="${build.classes-test.dir}">
+		<include name="${junit-custom-pattern}"/>
+		<include name="${junit-custom-pattern-include}"/>
+		<exclude name="${junit-custom-pattern-exclude}"/>
+		<exclude name="**/*Abstract*Test.class"/>
+		<exclude name="**/*Abstract*Tests.class"/>
+	</fileset>
+
 	<target name="junit">
 
 		<condition property="junit-fs" value="junit-default.fs">
@@ -336,6 +348,7 @@
 
 		<echo message="log4j.conf=${log4j.conf}"/>
 		<echo message="log4j.configuration=${log4j.config.url}"/>
+		<echo message="logging.properties=${logging.properties}"/>
 		<junit
 			printsummary="on" fork="false"
 			haltonfailure="false"
@@ -349,6 +362,7 @@
 				<fileset refid="${junit-fs}"/>
 			</batchtest>
 			<sysproperty key="log4j.configuration" value="${log4j.config.url}"/>
+			<sysproperty key="java.util.logging.config.file" value="${logging.properties}"/>
 			<sysproperty key="jdbc.driver" value="${jdbc.driver}"/>
 			<sysproperty key="jdbc.url" value="${jdbc.url}"/>
 			<sysproperty key="jdbc.username" value="${jdbc.username}"/>

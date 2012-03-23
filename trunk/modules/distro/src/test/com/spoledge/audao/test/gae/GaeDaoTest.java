@@ -37,6 +37,7 @@ public class GaeDaoTest extends AbstractDaoTest {
     public void setUp() {
         super.setUp();
         gae.setUp();
+        resetDateFormatters();
     }
 
 

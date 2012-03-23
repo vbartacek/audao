@@ -24,9 +24,16 @@ import org.apache.log4j.Logger;
 
 
 public class AbstractTest {
-    private static final SimpleDateFormat FMT_DATETIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static final SimpleDateFormat FMT_DATE = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat FMT_TIME = new SimpleDateFormat("HH:mm:ss");
+
+    private static final String PATTERN_DATETIME = "yyyy-MM-dd HH:mm:ss";
+    private static final String PATTERN_DATE = "yyyy-MM-dd";
+    private static final String PATTERN_TIME = "HH:mm:ss";
+
+    // Unfortunately GAE now sets UTC timezone to the Calendar,
+    // but if we create our parsers sooner than GAE, then the tests will fail
+    private static SimpleDateFormat FMT_DATETIME = null;
+    private static SimpleDateFormat FMT_DATE = null;
+    private static SimpleDateFormat FMT_TIME = null;
 
     protected Logger log = Logger.getLogger( getClass());
 
@@ -40,7 +47,7 @@ public class AbstractTest {
 
 
     protected static java.sql.Date sqlDate( String s ) {
-        return new java.sql.Date( parsedate( s, FMT_DATE).getTime());
+        return new java.sql.Date( parsedate( s, getFmtDate()).getTime());
     }
 
     protected static java.sql.Date sqlDate( java.util.Date date ) {
@@ -49,21 +56,21 @@ public class AbstractTest {
 
 
     protected static java.sql.Timestamp sqlTimestamp( String s ) {
-        return new java.sql.Timestamp( parsedate( s, FMT_DATETIME ).getTime());
+        return new java.sql.Timestamp( parsedate( s, getFmtDateTime()).getTime());
     }
 
     protected static Date date( String s ) {
-        return parsedate( s, FMT_DATE);
+        return parsedate( s, getFmtDate());
     }
 
 
     protected static Date datetime( String s ) {
-        return parsedate( s, FMT_DATETIME );
+        return parsedate( s, getFmtDateTime());
     }
 
 
     protected static Date time( String s ) {
-        return parsedate( s, FMT_TIME );
+        return parsedate( s, getFmtTime());
     }
 
 
@@ -76,5 +83,34 @@ public class AbstractTest {
         }
     }
 
+
+    protected static void resetDateFormatters() {
+        FMT_DATE = FMT_DATETIME = FMT_TIME = null;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Private
+    ////////////////////////////////////////////////////////////////////////////
+
+    private static SimpleDateFormat getFmtDate() {
+        if (FMT_DATE == null) FMT_DATE = new SimpleDateFormat( PATTERN_DATE );
+
+        return FMT_DATE;
+    }
+
+
+    private static SimpleDateFormat getFmtDateTime() {
+        if (FMT_DATETIME == null) FMT_DATETIME = new SimpleDateFormat( PATTERN_DATETIME );
+
+        return FMT_DATETIME;
+    }
+
+
+    private static SimpleDateFormat getFmtTime() {
+        if (FMT_TIME == null) FMT_TIME = new SimpleDateFormat( PATTERN_TIME );
+
+        return FMT_TIME;
+    }
 
 }

@@ -69,6 +69,7 @@ public class GaeTest extends AbstractTest {
     public void setUp() {
         super.setUp();
         gae.setUp();
+        resetDateFormatters();
         establishEntities();
     }
 
@@ -2085,7 +2086,7 @@ public class GaeTest extends AbstractTest {
     @Test 
     public void testEmptyUnindexedDate() throws DaoException {
         String kind = "GaePropDate";
-        java.util.Date[][] values = EMPTY_UNINDEXED_VALS_Date;
+        java.util.Date[][] values = EMPTY_UNINDEXED_VALS_Date();
         GaePropDateDao dao = DaoFactory.createGaePropDateDao();
 
         long id = dao.insert( setPropsDate( values[0] ));
@@ -2107,7 +2108,7 @@ public class GaeTest extends AbstractTest {
     @Test 
     public void testEmptyUnindexedDateCol() throws DaoException {
         String kind = "GaePropDateCol";
-        java.util.Date[][] values = EMPTY_UNINDEXED_VALS_Date;
+        java.util.Date[][] values = EMPTY_UNINDEXED_VALS_Date();
         GaePropDateColDao dao = DaoFactory.createGaePropDateColDao();
 
         GaePropDateCol dto = new GaePropDateCol();
@@ -2129,13 +2130,21 @@ public class GaeTest extends AbstractTest {
         testEmptyUnindexed( "update null->full", kind, id, values[1] );
     }
 
-    private static final java.util.Date[][] EMPTY_UNINDEXED_VALS_Date = {
+
+    /**
+     * Unfortunately we must construct this after GAE runtime is initialized:
+     */
+    private static java.util.Date[][] EMPTY_UNINDEXED_VALS_Date() {
+        java.util.Date[][] ret = {
         { date("2010-03-25"), date("2010-03-24"), date("2010-03-23"),
             date("2010-03-22"), date("2010-03-21"), date("2010-03-20") },
         { date("2010-02-25"), date("2010-02-24"), date("2010-02-23"),
             date("2010-02-22"), date("2010-02-21"), date("2010-02-20") },
         { date("2010-02-25"), date("2010-02-24"), null, null, null, null }
-    };
+        };
+
+        return ret;
+    }
 
     private GaePropDate setPropsDate( java.util.Date[] vals ) {
         GaePropDate dto = new GaePropDate();
