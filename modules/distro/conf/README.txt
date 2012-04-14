@@ -1,8 +1,8 @@
 AUDAO - Automatic DAO Generator README
 ======================================
 
-Version 1.6
-February 19, 2011
+Version 1.7
+April 14, 2012
 
 
 OVERVIEW
@@ -22,7 +22,8 @@ DB exceptions (SQLException or JDOException).
 Currently the following databases are supported:
     * MySQL - version 3, 4, 5
     * Oracle - version 9i, 10g and 11g
-    * Google App Engie (Java - low-level API) - Appengine SDK 1.3.3.1
+    * HSQLDB - version 2.2 and later
+    * Google App Engie (Java - low-level API) - Appengine SDK 1.6.1
     * JDO (Google App Engine) - DEPRECATED - NOT FULLY IMPLEMENTED !
 
 Currently the following DAO / DTO programming language is supported:
@@ -58,7 +59,7 @@ the AppEngine API - which is a part of the Google App Engine SDK.
 If you are using dynamic queries for Google App Engine DB type,
 then you also the following libraries are needed:
     * ANTLR3 runtime library: lib/antlr-runtime.jar
-    * GQL dynamic query parser library: lib/audao-runtime-gql-1.6.jar
+    * GQL dynamic query parser library: lib/audao-runtime-gql-1.7.jar
 
 For Google App Engine - JDO - you need to have installed also the JDO2 library
 (javax.jdo.*) - which is a part of the Google App Engine SDK.

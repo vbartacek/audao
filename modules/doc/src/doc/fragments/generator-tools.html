@@ -32,7 +32,7 @@
 </p>
 
 <p>
-	Either you develop for standard databases (Oracle, MySQL) or for Google App Engine
+	Either you develop for standard databases (Oracle, MySQL or HSQLDB) or for Google App Engine
 	you need to import the correct build file fragment into your project's build.xml.
 </p>
 
@@ -133,7 +133,7 @@
 		<td class="ok"><b>yes</b></td>
 		<td class="ok"><b>yes</b></td>
 		<td class="ok"><b>yes</b></td>
-		<td>the target database type (mysql|oracle|gae|gaejdo)</td>
+		<td>the target database type (mysql|oracle|gae|gaejdo|hsqldb)</td>
 	</tr>
 
 	<tr>
@@ -302,7 +302,7 @@
 	The audao.sh UNIX script is located in the directory <i>AUDAO_HOME</i>/bin.
 	The invocation is as follows:
 	<pre class="shell">
-usage: audao.sh [OPTIONS] {oracle|mysql|gae} PACKAGE INPUT_XML {OUTPUT_DIR|OUTPUT_ZIP_FILE.zip}
+usage: audao.sh [OPTIONS] {oracle|mysql|gae|hsqldb} PACKAGE INPUT_XML {OUTPUT_DIR|OUTPUT_ZIP_FILE.zip}
 OPTIONS:
         -g FILE_TYPES   or --generate FILE_TYPES
                 generates only specified types

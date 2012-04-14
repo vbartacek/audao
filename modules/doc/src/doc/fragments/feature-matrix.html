@@ -23,12 +23,14 @@
 		<td>Feature</td>
 		<td>MySQL</td>
 		<td>Oracle DB</td>
+		<td>HSQLDB</td>
 		<td>Google App Engine</td>
 		<td>Google App Engine - JDO</td>
 	</tr>
 
 	<tr class="sql">
 		<td><a href="[sql-features]#sqlpk">primary keys</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ko">no</td>
@@ -39,12 +41,14 @@
 		<td><a href="[sql-features]#sqlindex">indexes</a></td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 		<td class="ko">no</td>
 		<td class="ko">no</td>
 	</tr>
 
 	<tr class="sql">
 		<td><a href="[sql-features]#sqlfk">foreign keys</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ko">no</td>
@@ -55,12 +59,14 @@
 		<td><a href="[sql-features]#sqlseq">sequences</a></td>
 		<td class="ko">no</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 		<td class="ko">no</td>
 		<td class="ko">no</td>
 	</tr>
 
 	<tr class="sql">
 		<td><a href="[sql-features]#sqldata">data</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ko">no</td>
@@ -86,12 +92,14 @@
 		<td>Feature</td>
 		<td>MySQL</td>
 		<td>Oracle DB</td>
+		<td>HSQLDB</td>
 		<td>Google App Engine</td>
 		<td>Google App Engine - JDO</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#typeBoolean">type boolean</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -104,10 +112,12 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#typeInt">type int</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -120,10 +130,12 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#typeDouble">type double</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -136,10 +148,12 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#typeDate">type Date</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">emulated</td>
@@ -148,6 +162,7 @@
 
 	<tr class="dao">
 		<td><a href="[dao-features]#typeTimestamp">type Timestamp</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">emulated</td>
@@ -159,6 +174,7 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 		<td class="ko">no</td>
 	</tr>
 
@@ -167,11 +183,13 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 		<td class="ko">no</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#typeList">type List</a></td>
+		<td class="ko">no</td>
 		<td class="ko">no</td>
 		<td class="ko">no</td>
 		<td class="ok">yes</td>
@@ -184,6 +202,7 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
@@ -192,14 +211,16 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="sep">
-		<td colspan="5"></td>
+		<td colspan="6"></td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#primary-keys">primary key</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -210,6 +231,7 @@
 		<td><a href="[dao-features]#parent-keys">parent key</a></td>
 		<td class="ok">ignored</td>
 		<td class="ok">ignored</td>
+		<td class="ok">ignored</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 	</tr>
@@ -218,17 +240,19 @@
 		<td><a href="[dao-features]#ancestor-keys">ancestor key</a></td>
 		<td class="ok">ignored</td>
 		<td class="ok">ignored</td>
+		<td class="ok">ignored</td>
 		<td class="ok">yes</td>
 		<td class="ko">no</td>
 	</tr>
 
 	<tr class="sep">
-		<td colspan="5"></td>
+		<td colspan="6"></td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#autoincrement-pk">autoincrement pk</a></td>
 		<td class="ok">autoincrement</td>
+		<td class="ok">sequence</td>
 		<td class="ok">sequence</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -236,6 +260,7 @@
 
 	<tr class="dao">
 		<td><a href="[dao-features]#autoincrement-pk">autoincrement not pk</a></td>
+		<td class="ko">no</td>
 		<td class="ko">no</td>
 		<td class="ko">no</td>
 		<td class="ok">yes</td>
@@ -248,6 +273,7 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
@@ -256,14 +282,16 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="sep">
-		<td colspan="5"></td>
+		<td colspan="6"></td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#methodCount">method count</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -276,10 +304,12 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#methodFind">method find</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -292,10 +322,12 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#methodMove">method move</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ko">no</td>
@@ -304,6 +336,7 @@
 
 	<tr class="dao">
 		<td><a href="[dao-features]#methodTruncate">method truncate</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ko">no</td>
@@ -316,10 +349,11 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="sep">
-		<td colspan="5"></td>
+		<td colspan="6"></td>
 	</tr>
 
 	<tr class="dao">
@@ -328,10 +362,12 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#finderDynamic">dynamic finder</a></td>
+		<td class="ok">SQL</td>
 		<td class="ok">SQL</td>
 		<td class="ok">SQL</td>
 		<td class="ok">GQL</td>
@@ -344,10 +380,12 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#finderIndex">index finder</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -358,6 +396,7 @@
 		<td><a href="[dao-features]#finderCondition">condition finder</a></td>
 		<td class="ok">SQL</td>
 		<td class="ok">SQL</td>
+		<td class="ok">SQL</td>
 		<td class="ok">GQL</td>
 		<td class="ok">JDOQL</td>
 	</tr>
@@ -366,16 +405,18 @@
 		<td><a href="[dao-features]#finderRef">reference finder</a></td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 		<td class="ko">no</td>
 		<td class="ko">no</td>
 	</tr>
 
 	<tr class="sep">
-		<td colspan="5"></td>
+		<td colspan="6"></td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#insertAll">batch insert</a></td>
+		<td class="ok">emulated</td>
 		<td class="ok">emulated</td>
 		<td class="ok">emulated</td>
 		<td class="ok">yes</td>
@@ -383,11 +424,12 @@
 	</tr>
 
 	<tr class="sep">
-		<td colspan="5"></td>
+		<td colspan="6"></td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#countAll">count all</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -400,10 +442,12 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#countByIndex">count by index</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -416,10 +460,12 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#countByRef">count by reference</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ko">no</td>
@@ -427,11 +473,12 @@
 	</tr>
 
 	<tr class="sep">
-		<td colspan="5"></td>
+		<td colspan="6"></td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#deleteByPrimaryKey">delete by primary key</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -442,12 +489,14 @@
 		<td><a href="[dao-features]#deleteAll">delete all</a></td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 		<td class="ok">max 500 rows</td>
 		<td class="ok">max 500 rows</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#deleteDynamic">delete dynamic</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">max 500 rows</td>
@@ -458,6 +507,7 @@
 		<td><a href="[dao-features]#deleteByIndex">delete by index</a></td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 		<td class="ok">max 500 rows</td>
 		<td class="ok">max 500 rows</td>
 	</tr>
@@ -466,16 +516,18 @@
 		<td><a href="[dao-features]#deleteByCondition">delete by condition</a></td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 		<td class="ok">max 500 rows</td>
 		<td class="ok">max 500 rows</td>
 	</tr>
 
 	<tr class="sep">
-		<td colspan="5"></td>
+		<td colspan="6"></td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#findByPrimaryKey">find by primary key</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -488,10 +540,12 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#findDynamic">find dynamic</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -504,10 +558,12 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#findByCondition">find by condition</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -518,16 +574,18 @@
 		<td><a href="[dao-features]#findByRef">find by reference</a></td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 		<td class="ko">no</td>
 		<td class="ko">no</td>
 	</tr>
 
 	<tr class="sep">
-		<td colspan="5"></td>
+		<td colspan="6"></td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#update">update by primary key</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
@@ -540,14 +598,16 @@
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 	</tr>
 
 	<tr class="sep">
-		<td colspan="5"></td>
+		<td colspan="6"></td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#updateByPrimaryKey">raw update by primary key</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ko">no</td>
@@ -558,12 +618,14 @@
 		<td><a href="[dao-features]#updateAll">batch update all</a></td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 		<td class="ko">no</td>
 		<td class="ko">no</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#updateDynamic">batch update dynamic</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ko">no</td>
@@ -574,12 +636,14 @@
 		<td><a href="[dao-features]#updateByIndex">batch update by index</a></td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
+		<td class="ok">yes</td>
 		<td class="ko">no</td>
 		<td class="ko">no</td>
 	</tr>
 
 	<tr class="dao">
 		<td><a href="[dao-features]#updateByCondition">batch update by condition</a></td>
+		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ok">yes</td>
 		<td class="ko">no</td>
