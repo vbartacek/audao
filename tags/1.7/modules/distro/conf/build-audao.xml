@@ -1,0 +1,267 @@
+<!--
+ * Copyright 2010 Spolecne s.r.o. (www.spoledge.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *-->
+<project name="audao" basedir=".">
+
+	<!-- ================================================================= -->
+	<!-- NOTE: property audao.home must be set to AuDAO home               -->
+	<!-- ================================================================= -->
+
+	<!-- SECTION PATHS -->
+
+	<path id="audao.path">
+		<fileset dir="${audao.home}" includes="*.jar"/>
+		<fileset dir="${audao.home}/lib">
+			<include name="*.jar"/>
+			<exclude name="audao-runtime*.jar"/>
+		</fileset>
+	</path>
+
+	<condition property="gwt.home" value=".">
+		<not>
+			<isset property="gwt.home"/>
+		</not>
+	</condition>
+
+	<path id="gwt-user.path">
+		<fileset dir="${gwt.home}" includes="gwt-user.jar"/>
+	</path>
+
+	<path id="audao-default-compile.path">
+		<fileset dir="${audao.home}/lib" includes="commons-logging*.jar"/>
+		<path refid="gwt-user.path"/>
+	</path>
+
+
+	<!-- SECTION TASK-DEFS -->
+
+	<taskdef name="audao" classname="com.spoledge.audao.generator.GeneratorTask" classpathref="audao.path"/>
+
+
+	<!-- SECTION TARGETS -->
+
+	<target name="audao-generate" description="Generates Java DAO and SQL">
+		<fail unless="audao-xml">
+The property "audao-xml" is missing. Set it to your AuDAO source config XML file, please.
+		</fail>
+		<fail unless="audao-gen-dir">
+The property "audao-gen-dir" is missing. Set it to your output directory, please.
+		</fail>
+		<fail unless="audao-dbtype">
+The property "audao-dbtype" is missing. Set it to the target database type (mysql|oracle|gae|gaejdo), please.
+		</fail>
+		<fail unless="audao-package">
+The property "audao-package" is missing. Set it to the target Java package (e.g. com.foo.db), please.
+		</fail>
+
+		<condition property="audao-generate.uptodate">
+			<and>
+				<available file="${audao-gen-dir}"/>
+				<resourcecount count="2" when="gt">
+					<fileset dir="${audao-gen-dir}"/>
+				</resourcecount>
+				<not>
+					<uptodate targetfile="${audao-xml}">
+						<srcfiles dir="${audao-gen-dir}"/>
+					</uptodate>
+				</not>
+			</and>
+		</condition>
+
+		<antcall target="audao-generate.impl"/>
+	</target>
+
+
+	<target name="audao-generate.impl" unless="audao-generate.uptodate">
+		<condition property="audao-debug" value="false">
+			<not>
+				<isset property="audao-debug"/>
+			</not>
+		</condition>
+
+		<available
+			property="audao-generate.xalan-present"
+			classname="org.apache.xalan.processor.TransformerFactoryImpl"
+		/>
+
+		<antcall target="audao-generate.impl-task"/>
+		<antcall target="audao-generate.impl-java"/>
+	</target>
+
+
+	<target name="audao-generate.impl-task" if="audao-generate.xalan-present">
+		<condition property="audao-dto-gwt-serializer" value="false">
+			<not>
+				<isset property="audao-dto-gwt-serializer"/>
+			</not>
+		</condition>
+		<condition property="audao-option-generate" value="">
+			<not>
+				<isset property="audao-option-generate"/>
+			</not>
+		</condition>
+
+		<audao
+			src="${audao-xml}"
+			dest="${audao-gen-dir}"
+			dbtype="${audao-dbtype}"
+			pkg="${audao-package}"
+			debug="${audao-debug}"
+			generateDtoGwtSerializer="${audao-dto-gwt-serializer}"
+			generate="${audao-option-generate}"
+		/>
+	</target>
+
+
+	<target name="audao-generate.impl-java" unless="audao-generate.xalan-present">
+
+		<condition property="audao-options" value="-s -g ${audao-option-generate}">
+			<and>
+				<not>
+					<isset property="audao-options"/>
+				</not>
+				<equals arg1="true" arg2="${audao-dto-gwt-serializer}"/>
+				<isset property="audao-option-generate"/>
+			</and>
+		</condition>
+		<condition property="audao-options" value="-g ${audao-option-generate}">
+			<and>
+				<not>
+					<isset property="audao-options"/>
+				</not>
+				<isset property="audao-option-generate"/>
+			</and>
+		</condition>
+		<condition property="audao-options" value="-s">
+			<and>
+				<not>
+					<isset property="audao-options"/>
+				</not>
+				<equals arg1="true" arg2="${audao-dto-gwt-serializer}"/>
+			</and>
+		</condition>
+		<condition property="audao-options" value="">
+			<not>
+				<isset property="audao-options"/>
+			</not>
+		</condition>
+
+		<condition property="audao-debug-level" value="warn">
+			<and>
+				<not>
+					<isset property="audao-debug-level"/>
+				</not>
+				<not>
+					<equals arg1="true" arg2="${audao-debug}"/>
+				</not>
+			</and>
+		</condition>
+		<condition property="audao-debug-level" value="debug">
+			<and>
+				<not>
+					<isset property="audao-debug-level"/>
+				</not>
+				<equals arg1="true" arg2="${audao-debug}"/>
+			</and>
+		</condition>
+
+		<java
+			classname="com.spoledge.audao.generator.Main"
+			classpathref="audao.path"
+			fork="true"
+			failonerror="true"
+		>
+			<sysproperty key="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.SimpleLog"/>
+			<sysproperty key="org.apache.commons.logging.simplelog.defaultlog" value="${audao-debug-level}"/>
+			<arg line="${audao-options}"/>
+			<arg value="${audao-dbtype}"/>
+			<arg value="${audao-package}"/>
+			<arg file="${audao-xml}"/>
+			<arg file="${audao-gen-dir}"/>
+		</java>
+	</target>
+
+
+	<target name="audao-compile" depends="audao-generate" description="Generates and compiles Java DAO">
+		<mkdir dir="${audao-gen-dir}/classes"/>
+
+		<condition property="java-version" value="${ant.java.version}">
+			<not>
+				<isset property="java-version"/>
+			</not>
+		</condition>
+
+		<condition property="audao-compile-pathid" value="audao-default-compile.path">
+			<and>
+				<not>
+					<isset property="audao-compile-pathid"/>
+				</not>
+				<not>
+					<equals arg1="gae" arg2="${audao-dbtype}"/>
+				</not>
+				<not>
+					<equals arg1="gaejdo" arg2="${audao-dbtype}"/>
+				</not>
+			</and>
+		</condition>
+
+		<javac
+			destdir="${audao-gen-dir}/classes"
+			classpathref="${audao-compile-pathid}"
+			source="${java-version}"
+			target="${java-version}"
+			debug="true"
+			deprecation="true"
+			optimize="false"
+			includeantruntime="false"
+		>
+			<src path="${audao-gen-dir}/dao"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+
+	</target>
+
+
+	<fileset id="audao-empty-fs" dir="." includes="n/a"/>
+
+	<target name="audao-jar" depends="audao-compile" description="Generates, compiles and create JAR of Java DAO">
+		<fail unless="audao-jar">
+The property "audao-jar" is missing. Set it to the target Jar location, please.
+		</fail>
+
+		<dirname file="${audao-jar}" property="audao-jar-dir"/>
+		<mkdir dir="${audao-jar-dir}"/>
+
+		<dirname file="${audao-xml}" property="audao-xml-dir"/>
+		<basename file="${audao-xml}" property="audao-xml-file"/>
+
+		<condition property="audao-metainf-includes" value="${audao-xml-file}">
+			<not>
+				<isset property="audao-exclude-xml"/>
+			</not>
+		</condition>
+
+		<jar destfile="${audao-jar}">
+			<fileset dir="${audao-gen-dir}/classes"/>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-Jdk" value="${java.version}"/>
+				<attribute name="Build-Platform" value="${os.name} ${os.arch} ${os.version}"/>
+			</manifest>
+			<metainf dir="${audao-xml-dir}" includes="${audao-xml-file}"/>
+		</jar>
+	</target>
+
+</project>

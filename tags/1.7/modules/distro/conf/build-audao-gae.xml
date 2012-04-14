@@ -1,0 +1,108 @@
+<!--
+ * Copyright 2010 Spolecne s.r.o. (www.spoledge.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *-->
+<project name="audao-gae" basedir=".">
+
+	<!-- ================================================================= -->
+	<!-- NOTE: property gae.home must be set to Google App Engine SDK home -->
+	<!-- ================================================================= -->
+
+	<import file="build-audao.xml"/>
+
+	<!-- SECTION PATHS -->
+
+	<fileset id="gae-tools.fs" dir="${gae.home}/lib">
+		<include name="*.jar"/>
+	</fileset>
+
+	<fileset id="gae-api.fs" dir="${gae.home}/lib/user">
+		<include name="*.jar"/>
+	</fileset>
+
+	<fileset id="gae-jdo.fs" dir="${gae.home}/lib/user/orm">
+		<include name="jdo2*.jar"/>
+	</fileset>
+
+	<path id="gae-tools.path">
+		<fileset refid="gae-tools.fs"/>
+		<fileset refid="gae-api.fs"/>
+	</path>
+
+	<path id="audao-default-compile-gae.path">
+		<path refid="audao-default-compile.path"/>
+		<fileset refid="gae-api.fs"/>
+		<fileset refid="gae-jdo.fs"/>
+		<path refid="gwt-user.path"/>
+	</path>
+
+
+	<!-- SECTION TASK-DEFS -->
+
+	<taskdef
+		name="gae-enhancer"
+		classpathref="gae-tools.path" 
+		classname="com.google.appengine.tools.enhancer.EnhancerTask"
+	/>
+
+
+	<!-- SECTION TARGETS -->
+
+	<target name="audao-compile" description="Generates and compiles Java DAO (GAE)">
+		<mkdir dir="${audao-gen-dir}/classes"/>
+
+		<condition property="audao-compile-pathid" value="audao-default-compile-gae.path">
+			<and>
+				<not>
+					<isset property="audao-compile-pathid"/>
+				</not>
+				<or>
+					<equals arg1="gae" arg2="${audao-dbtype}"/>
+					<equals arg1="gaejdo" arg2="${audao-dbtype}"/>
+				</or>
+			</and>
+		</condition>
+
+		<condition property="audao-no-enhance">
+			<or>
+				<not>
+					<equals arg1="gaejdo" arg2="${audao-dbtype}"/>
+				</not>
+				<not>
+					<uptodate targetfile="${audao-xml}">
+						<srcfiles dir="${audao-gen-dir}"/>
+					</uptodate>
+				</not>
+			</or>
+		</condition>
+
+		<antcall target="audao.audao-compile"/>
+
+		<antcall target="audao-enhance"/>
+	</target>
+
+
+	<target name="audao-enhance" unless="audao-no-enhance">
+		<gae-enhancer verbose="true">
+			<classpath>
+				<path refid="gae-tools.path"/>
+				<pathelement location="${audao-gen-dir}/classes"/>
+			</classpath>
+			<fileset dir="${audao-gen-dir}/classes">
+				<include name="**/dto/gae/*.class"/>
+			</fileset>
+		</gae-enhancer>
+	</target>
+
+</project>

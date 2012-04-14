@@ -1,0 +1,128 @@
+<tests xmlns="http://www.spoledge.com/audao/distro/tests">
+
+	<test name="seo">
+		<label>SEO test</label>
+		<description>
+			This is an test of search engine optimization used by a standalone application.
+			A basic word indexing is implemented to achieve fast full-text search in selected
+			entities and their attributes. This allows to provide suggestion boxes on client
+			side.
+		</description>
+		<audao package="com.spoledge.seo.db" dbtype="mysql"/>
+	</test>
+
+
+	<test name="dto">
+		<label>DTO test</label>
+		<description>
+			DTO methods tests.
+		</description>
+
+		<audao package="com.spoledge.audao.test.dto" dbtype="mysql"/>
+		<audao package="com.spoledge.audao.test.dto" dbtype="oracle"/>
+		<audao package="com.spoledge.audao.test.dto" dbtype="gae"/>
+		<audao package="com.spoledge.audao.test.dto" dbtype="hsqldb"/>
+	</test>
+
+	<test name="dto-identity">
+		<label>DTO test - identity equality</label>
+		<description>
+			DTO identity tests.
+		</description>
+
+		<audao package="com.spoledge.audao.test.dtoident" dbtype="mysql"/>
+		<audao package="com.spoledge.audao.test.dtoident" dbtype="oracle"/>
+		<audao package="com.spoledge.audao.test.dtoident" dbtype="gae"/>
+		<audao package="com.spoledge.audao.test.dtoident" dbtype="hsqldb"/>
+	</test>
+
+	<test name="dto-pk">
+		<label>DTO test - pk equality</label>
+		<description>
+			DTO pk tests.
+		</description>
+
+		<audao package="com.spoledge.audao.test.dtopk" dbtype="mysql"/>
+		<audao package="com.spoledge.audao.test.dtopk" dbtype="oracle"/>
+		<audao package="com.spoledge.audao.test.dtopk" dbtype="gae"/>
+		<audao package="com.spoledge.audao.test.dtopk" dbtype="hsqldb"/>
+	</test>
+
+
+	<test name="dao">
+		<label>DAO test</label>
+		<description>
+			DAO methods tests.
+		</description>
+
+		<audao package="com.spoledge.audao.test.db" dbtype="mysql"/>
+		<audao package="com.spoledge.audao.test.db" dbtype="oracle"/>
+		<audao package="com.spoledge.audao.test.db" dbtype="gae"/>
+		<audao package="com.spoledge.audao.test.db" dbtype="hsqldb"/>
+	</test>
+
+
+	<test name="tweak">
+		<label>Tweak test</label>
+		<description>
+			Tweaking classes test.
+		</description>
+
+		<audao package="com.spoledge.audao.test.tweak" dbtype="mysql"/>
+		<audao package="com.spoledge.audao.test.tweak" dbtype="gaejdo"/>
+	</test>
+
+
+	<test name="appsec">
+		<label>Appsec test</label>
+		<description>
+			Appsec - references.
+		</description>
+
+		<audao package="com.spoledge.appsec" dbtype="mysql"/>
+	</test>
+
+
+	<test name="gae">
+		<label>GAE test</label>
+		<description>
+			GAE - low level API.
+		</description>
+
+		<audao package="com.spoledge.audao.test.gae" dbtype="gae" dto-gwt-ser="true"/>
+	</test>
+
+
+	<test name="blobs">
+		<label>Blob test</label>
+		<description>
+			Blobs.
+		</description>
+
+		<audao package="com.spoledge.audao.test.blob" dbtype="gae"/>
+		<audao package="com.spoledge.audao.test.blob" dbtype="mysql"/>
+		<audao package="com.spoledge.audao.test.blob" dbtype="oracle"/>
+		<audao package="com.spoledge.audao.test.blob" dbtype="hsqldb"/>
+	</test>
+
+
+	<test name="cache">
+		<label>Cache test</label>
+		<description>
+			Caching of DTOs.
+		</description>
+
+		<audao package="com.spoledge.audao.test.cache" dbtype="gae"/>
+	</test>
+
+
+	<test name="cache-gae">
+		<label>Cache test - GAE specific tests</label>
+		<description>
+			Caching of DTOs.
+		</description>
+
+		<audao package="com.spoledge.audao.test.cachegae" dbtype="gae"/>
+	</test>
+
+</tests>

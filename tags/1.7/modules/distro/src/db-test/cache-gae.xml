@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+
+	<config>
+		<dto equality="columns"/>
+	</config>
+
+	<tables>
+
+		<table name="parent">
+			<columns>
+				<column name="parent_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+			</columns>
+		</table>
+
+
+		<table name="son_cache_default">
+			<config>
+				<dao-impl>
+					<default-cache max-size="5" expire-millis="1000"/>
+				</dao-impl>
+			</config>
+			<columns>
+				<column name="son_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="parent_id">
+					<ref table="parent" gae-parent="true"/>
+					<not-null/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="value">
+					<type>int</type>
+					<edit/>
+				</column>
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+				<find name="byPrimaryKeyNoCache">
+					<pk/>
+					<use-no-cache/>
+				</find>
+				<delete>
+					<pk/>
+				</delete>
+			</methods>
+		</table>
+
+		<table name="son_cache_default_column">
+			<config>
+				<dto equality="columns"/>
+				<dao-impl>
+					<default-cache max-size="5" expire-millis="1000"/>
+				</dao-impl>
+			</config>
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="son_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="parent_id">
+					<ref table="parent" gae-parent="true"/>
+					<not-null/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="value">
+					<type>int</type>
+					<edit/>
+				</column>
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+				<find name="byPrimaryKeyNoCache">
+					<pk/>
+					<use-no-cache/>
+				</find>
+				<delete>
+					<pk/>
+				</delete>
+			</methods>
+		</table>
+
+
+		<table name="grandson_cache_default">
+			<config>
+				<dao-impl>
+					<default-cache max-size="5" expire-millis="1000"/>
+				</dao-impl>
+			</config>
+			<columns>
+				<column name="grandson_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="son_id">
+					<ref table="son_cache_default" gae-parent="true"/>
+					<not-null/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="value">
+					<type>int</type>
+					<edit/>
+				</column>
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+				<find name="byPrimaryKeyNoCache">
+					<pk/>
+					<use-no-cache/>
+				</find>
+				<delete>
+					<pk/>
+				</delete>
+			</methods>
+		</table>
+
+		<table name="grandson_cache_default_column">
+			<config>
+				<dao-impl>
+					<default-cache max-size="5" expire-millis="1000"/>
+				</dao-impl>
+			</config>
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="grandson_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="son_id">
+					<ref table="son_cache_default" gae-parent="true"/>
+					<not-null/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="value">
+					<type>int</type>
+					<edit/>
+				</column>
+			</columns>
+			<methods>
+				<find>
+					<pk/>
+				</find>
+				<find name="byPrimaryKeyNoCache">
+					<pk/>
+					<use-no-cache/>
+				</find>
+				<delete>
+					<pk/>
+				</delete>
+			</methods>
+		</table>
+
+
+	</tables>
+
+</database>
+
+

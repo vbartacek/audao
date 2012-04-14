@@ -1,0 +1,1685 @@
+<div class="chapter">
+<a name="gae-features"></a>
+<h1 class="chapter">Google App Engine Specific Features</h1>
+
+<p class="chapter-abstract">
+	This chapter describes DAO generator features specific for Google App Engine target.
+</p>
+
+
+<div class="section">
+<a name="types"></a>
+<h2>GAE Types</h2>
+
+
+<div class="subsection">
+<a name="typecore"></a>
+<h3>GAE Core Types</h3>
+
+<p>
+	As of the version 1.2 we support all GAE core types including Key, GeoPt or User.
+</p>
+
+<p>
+	AuDAO recognizes all GAE core classes by the <tt>column/type/@class</tt> attribute
+	for types <a href="[dao-features]#typeSerializable">Serializable</a>
+	and <a href="[dao-features]#typeList">List</a>. If you specify a non-core GAE class,
+	then it is stored as GAE types Blob or ShortBlob - according to the attribute
+	<tt>column/type/@max-length</tt> (ShortBlob is used only when <tt>max-length</tt> &lt;= 500).
+</p>
+
+<p>
+	For the GAE specific objects the <tt>column/type/@class</tt> attribute must start
+	with prefix "gae:" following by the simple class name - for example <tt>class="gae:GeoPt"</tt>.
+	Example of the XML:
+	<pre class="prettyprint xml">
+  &lt;column name="location"&gt;
+    &lt;type class="gae:GeoPt"&gt;Serializable&lt;/type&gt;
+  &lt;/column&gt; </pre>
+  will allow you to pass GeoPt objects directly into your DTOs:
+  <pre class="prettyprint java">
+  dto.setLocation( new GeoPt( latitude, longitude )); </pre>
+</p>
+
+<p class="note">
+	Do not specify the attribute <tt>column/type/@max-length</tt> for GAE core types.
+	If you do so, then the objects will be stored as Blob or ShortBlob - according to the <tt>max-length</tt>'
+	value.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ColumnTypeType]">XSD - column type</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="typelist"></a>
+<h3>Lists</h3>
+
+<p>
+	As of the version 1.2 the lists support almost the same types as simple fields
+	including all GAE core types like  Key, GeoPt or User.
+	The only restriction is that lists cannot contain enumeration types now.
+</p>
+
+<p>
+	We recognize the following list types:
+</p>
+
+<table class="matrix" width="100%">
+	<tr class="header">
+		<td>Name</td>
+		<td>Example of Java Type</td>
+		<td>Example of XML Definition</td>
+		<td>Elements Stored as</td>
+	</tr>
+
+	<tr>
+		<td>list of core java.lang types</td>
+		<td><code class="prettyprint">List&lt;Boolean&gt;</code></td>
+		<td><code class="prettyprint">List&lt;Boolean&gt;</code></td>
+		<td><code class="prettyprint">Boolean</code></td>
+	</tr>
+
+	<tr>
+		<td>list of java.util.Date</td>
+		<td><code class="prettyprint">List&lt;java.util.Date&gt;</code></td>
+		<td><code class="prettyprint">&lt;type class="java.util.Date"&gt;List&lt;/type&gt;</code></td>
+		<td><code class="prettyprint">java.util.Date</code></td>
+	</tr>
+
+	<tr>
+		<td>list of other GAE core types</td>
+		<td><code class="prettyprint">List&lt;GeoPt&gt;</code></td>
+		<td><code class="prettyprint">&lt;type class="gae:GeoPt"&gt;List&lt;/type&gt;</code></td>
+		<td><code class="prettyprint">GeoPt</code></td>
+	</tr>
+
+	<tr>
+		<td>list of other DTO types - short</td>
+		<td><code class="prettyprint">List&lt;MyDto&gt;</code></td>
+		<td><code class="prettyprint">&lt;type class="table:my_dto" max-length="500"&gt;List&lt;/type&gt;</code></td>
+		<td><code class="prettyprint">ShortBlob</code></td>
+	</tr>
+
+	<tr>
+		<td>list of other DTO types</td>
+		<td><code class="prettyprint">List&lt;MyDto&gt;</code></td>
+		<td><code class="prettyprint">&lt;type class="table:my_dto"&gt;List&lt;/type&gt;</code></td>
+		<td><code class="prettyprint">Blob</code></td>
+	</tr>
+
+	<tr>
+		<td>list of other types - short</td>
+		<td><code class="prettyprint">List&lt;com.foo.MyClass&gt;</code></td>
+		<td><code class="prettyprint">&lt;type class="com.foo.MyClass" max-length="500"&gt;List&lt;/type&gt;</code></td>
+		<td><code class="prettyprint">ShortBlob</code></td>
+	</tr>
+
+	<tr>
+		<td>list of other types</td>
+		<td><code class="prettyprint">List&lt;com.foo.MyClass&gt;</code></td>
+		<td><code class="prettyprint">&lt;type class="com.foo.MyClass"&gt;List&lt;/type&gt;</code></td>
+		<td><code class="prettyprint">Blob</code></td>
+	</tr>
+
+	<tr>
+		<td>native list</td>
+		<td><code class="prettyprint">List</code></td>
+		<td><code class="prettyprint">&lt;type class="java.util.List"&gt;Serializable&lt;/type&gt;</code></td>
+		<td>exactly as stored in list</td>
+	</tr>
+
+	<tr>
+		<td>anonymous list - short</td>
+		<td><code class="prettyprint">List</code></td>
+		<td><code class="prettyprint">&lt;type max-length="500"&gt;List&lt;/type&gt;</code></td>
+		<td><code class="prettyprint">ShortBlob</code></td>
+	</tr>
+
+	<tr>
+		<td>anonymous list</td>
+		<td><code class="prettyprint">List</code></td>
+		<td><code class="prettyprint">&lt;type&gt;List&lt;/type&gt;</code></td>
+		<td><code class="prettyprint">Blob</code></td>
+	</tr>
+
+</table>
+
+<p>
+	Native lists allow you to store exactly what you want - no conversions are performed.
+	It is your responsibility to store to list only types supported by GAE.
+</p>
+
+<p>
+	Anonymous lists allow you to create lists of several types objects which are
+	converted to Blobs or ShortBlobs.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:ColumnTypeType]">XSD - column type</a>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="storage"></a>
+<h2>Storage Options</h2>
+
+<p>
+	GAE's datastore is schema-less and defines one column indexes by default.
+	We will show you how to optimize DAOs generated by AuDAO.
+</p>
+
+<div class="subsection">
+<a name="storage-empty"></a>
+<h3>Do Not Store Null Values</h3>
+
+<p>
+	By default AuDAO generates code which stores <tt>null</tt> values.
+	This is similar to normal RDBMS. But null values occupies a place in the storage
+	and also consumes CPU when storing/retrieving. AuDAO allows you to not store null
+	values optionally.
+</p>
+
+<p>
+	You can specify exactly in which columns/properties your DAOs will store nulls and where don't.
+	It is specified by the <tt>&lt;gae empty="true"&gt;</tt> flag added to the column definition.
+</p>
+
+<p>
+	<b>Example:</b>
+	<pre class="prettyprint xml">
+  &lt;column name="normal_type"&gt;
+    &lt;type max-length="500"&gt;String&lt;/type&gt;
+    &lt;not-null/&gt;
+    &lt;edit/&gt;
+  &lt;/column&gt;
+
+  &lt;column name="null_normal_type"&gt;
+    &lt;ref column="normal_type"/&gt;
+    &lt;edit/&gt;
+  &lt;/column&gt;
+
+  &lt;column name="null_empty_type"&gt;
+    &lt;ref column="normal_type"/&gt;
+    &lt;edit/&gt;
+    <b>&lt;gae empty="true"/&gt;</b>
+  &lt;/column&gt; </pre>
+
+	The <tt>null_empty_type</tt> column does not store nulls,
+	the <tt>null_normal_type</tt> column stores nulls
+	and the <tt>normal_type</tt> column does not store nulls - it is a <tt>&lt;not-null/&gt;</tt> column.
+</p>
+
+<p>
+	You can only tag as <tt>empty</tt> columns which are not <tt>&lt;not-null/&gt;</tt>.
+	the following example shows nonsense definitions:
+	<pre class="prettyprint xml">
+  &lt;!-- nonsense
+  &lt;column name="empty_type"&gt;
+    &lt;ref column="normal_type"/&gt;
+    <b>&lt;not-null/&gt;</b>
+    &lt;edit/&gt;
+    <b>&lt;gae empty="true"/&gt;</b>
+  &lt;/column&gt;
+  --&gt; </pre>
+</p>
+
+<p class="note">
+	You cannot search for <tt>null</tt> values in columns which do not store nulls.
+	If you want to search for <tt>null</tt> values, then you have to let you DAOs
+	to store nulls into datastore.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:GaeColumnExtType]">XSD - gae element</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="storage-unindexed"></a>
+<h3>Explicit Unindexed Columns</h3>
+
+<p>
+	By default AuDAO generates code which stores column values as indexed ones.
+	It means that you can search for values stored in such columns.
+	But it also means that an index is created for such column and such index
+	occupies space in the datastore. Also additional CPU is needed when storing/updating
+	whole entity.
+</p>
+
+<p>
+	AuDAO allows you to disable such indexing for the given column explicitly.
+	It is specified by the <tt>&lt;gae unindexed="true"&gt;</tt> flag added to the column definition.
+</p>
+
+<p class="note">
+	If a column is tagged as <tt>unindexed</tt>, it behave as <a href="#storage-empty">empty</a> 
+	for null values - it means that no null values are stored in such column.
+	The reason is obvious: you cannot search by the unindexed columns and <tt>null</tt> values
+	would only occupy place in the datastore without any advantage.
+</p>
+
+<p>
+	<b>Example:</b>
+	<pre class="prettyprint xml">
+  &lt;column name="normal_type"&gt;
+    &lt;type max-length="500"&gt;String&lt;/type&gt;
+    &lt;not-null/&gt;
+    &lt;edit/&gt;
+  &lt;/column&gt;
+
+  &lt;column name="unindexed_type"&gt;
+    &lt;ref column="normal_type"/&gt;
+    &lt;not-null/&gt;
+    &lt;edit/&gt;
+    <b>&lt;gae unindexed="true"/&gt;</b>
+  &lt;/column&gt;
+
+  &lt;column name="null_normal_type"&gt;
+    &lt;ref column="normal_type"/&gt;
+    &lt;edit/&gt;
+  &lt;/column&gt;
+
+  &lt;column name="null_unindexed_type"&gt;
+    &lt;ref column="normal_type"/&gt;
+    &lt;edit/&gt;
+    <b>&lt;gae unindexed="true"/&gt;</b>
+  &lt;/column&gt;
+
+  &lt;column name="null_empty_unindexed_type"&gt;
+    &lt;ref column="normal_type"/&gt;
+    &lt;edit/&gt;
+    <b>&lt;gae unindexed="true" empty="true"/&gt;</b>
+  &lt;/column&gt; </pre>
+
+	The <tt>null_empty_unindexed_type</tt> column does not store nulls,
+	but the <tt>empty</tt> flag is useless,
+	the <tt>null_unindexed_type</tt> column does not store nulls,
+	the <tt>null_normal_type</tt> column stores nulls and you can search by all values
+	and the <tt>unindexed_type</tt> column does not store nulls - it is a <tt>&lt;not-null/&gt;</tt> column.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[xsd:GaeColumnExtType]">XSD - gae element</a>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="gqlFinders"></a>
+<h2>Finders and Lists</h2>
+
+<p>
+	AuDAO offers you more functionalities concerning Lists.
+	We will describe here the rules how <a href="[dao-features]#finders">finder</a>
+	method signatures are constructed and how the finder filters are implemented.
+</p>
+
+
+<div class="subsection">
+<a name="gqlFinderSignature"></a>
+<h2>Finder Signature - List or Element</h2>
+
+<p>
+	The basic rule how finder signatures are generated is the following:
+	<span style="font-weight:bold">the finder's parameter is a List if and only if you explicitly specify it</span>.
+</p>
+
+<p>
+	The following example shows usage of <a href="[dao-features]#finderIndex">index finders</a>:
+	<pre class="prettyprint xml">
+  &lt;columns&gt;
+    &lt;column name="location"&gt;
+      &lt;type class="gae:GeoPt"&gt;Serializable&lt;/type&gt;
+    &lt;/column&gt;
+    &lt;column name="friends"&gt;
+      &lt;type class="gae:User"&gt;List&lt;/type&gt;
+    &lt;/column&gt;
+  &lt;/columns&gt;
+  &lt;indexes&gt;
+    &lt;index name="inx_location"&gt;
+      &lt;columns&gt;
+        &lt;column name="location"/&gt;
+      &lt;/columns&gt;
+    &lt;/index&gt;
+    &lt;index name="inx_friends"&gt;
+      &lt;columns&gt;
+        &lt;column name="friends"/&gt;
+      &lt;/columns&gt;
+    &lt;/index&gt;
+  &lt;/indexes&gt;
+  &lt;methods&gt;
+    &lt;find&gt;
+      &lt;index name="inx_location"/&gt;
+    &lt;/find&gt;
+    &lt;find name="byOneFriend"&gt;
+      &lt;index name="inx_friends"/&gt;
+    &lt;/find&gt;
+    &lt;find name="byAllFriends"&gt;
+      &lt;index name="inx_friends" list="true"/&gt;
+    &lt;/find&gt;
+  &lt;/methods&gt; </pre>
+
+	will generate these DAO methods:
+	<pre class="prettyprint java">
+  public MyEntity[] findByLocation( GeoPt location );
+  public MyEntity[] findByOneFriend( User friends );
+  public MyEntity[] findByAllFriends( List&lt;User&gt; friends ); </pre>
+
+	You can see that only the last method <tt>findByAllFriends</tt> was generated with a List parameter,
+	because the only one explicitly defined the <tt>list</tt> attribute.
+</p>
+
+<p>
+	The following example shows the same + two more methods generated using
+	<a href="[dao-features]#finderCondition">condition finders</a> (same columns as above):
+	<pre class="prettyprint xml">
+  &lt;methods&gt;
+    &lt;find name="byLocation"&gt;
+      &lt;condition&gt;
+        &lt;query&gt;location = :1&lt;/query&gt;
+        &lt;params&gt;
+          &lt;column name="location"/&gt;
+        &lt;/params&gt;
+      &lt;/condition&gt;
+    &lt;/find&gt;
+    &lt;find name="byLocations"&gt;
+      &lt;condition&gt;
+        &lt;query&gt;location IN :1&lt;/query&gt;
+        &lt;params&gt;
+          &lt;!-- @java specifies the param name in java --&gt;
+          &lt;column name="location" list="true" java="locations"/&gt;
+        &lt;/params&gt;
+      &lt;/condition&gt;
+    &lt;/find&gt;
+    &lt;find name="byOneFriend"&gt;
+      &lt;condition&gt;
+        &lt;query&gt;friends = :1&lt;/query&gt;
+        &lt;params&gt;
+          &lt;column name="friends" java="friend"/&gt;
+        &lt;/params&gt;
+      &lt;/condition&gt;
+    &lt;/find&gt;
+    &lt;find name="byAllFriends"&gt;
+      &lt;condition&gt;
+        &lt;query&gt;friends = :1&lt;/query&gt;
+        &lt;params&gt;
+          &lt;column name="friends" list="true"/&gt;
+        &lt;/params&gt;
+      &lt;/condition&gt;
+    &lt;/find&gt;
+    &lt;find name="bySomeFriends"&gt;
+      &lt;condition&gt;
+        &lt;query&gt;friends IN :1&lt;/query&gt;
+        &lt;params&gt;
+          &lt;column name="friends" list="true"/&gt;
+        &lt;/params&gt;
+      &lt;/condition&gt;
+    &lt;/find&gt;
+  &lt;methods&gt;</pre>
+
+	will generate these DAO methods:
+	<pre class="prettyprint java">
+  public MyEntity[] findByLocation( GeoPt location );
+  public MyEntity[] findByLocations( List&lt;GeoPt&gt; locations );
+  public MyEntity[] findByOneFriend( User friend );
+  public MyEntity[] findByAllFriends( List&lt;User&gt; friends );
+  public MyEntity[] findBySomeFriends( List&lt;User&gt; friends ); </pre>
+
+	Again, a List parameter is generated only when explicitly declared by the <tt>list</tt> attribute.
+</p>
+
+<p class="note">
+	In the example above you can see that condition finders are more powerfull than index finders.
+</p>
+
+
+</div>
+
+
+<div class="subsection">
+<a name="gqlFinderExpandAnd"></a>
+<h2>Expanded Conditions for List Properties</h2>
+
+<p>
+	In the examples in the previous section you have seen methods
+	<tt>findByAllFriends( List&lt;User&gt; users)</tt>.
+	It was an example of so called "expanded conditions".
+</p>
+
+<p>
+	Normally, when a non-list parameter is passed to the finder, then the parameter is used
+	in a plain condition like equality condition e.g. <tt>location = myparam</tt>.
+</p>
+
+<p>
+	But when a list parameter is passed to the finder containing simple equality condition,
+	then the simple equality condition is repeated and concatenated by 'AND' operator
+	as many times as the list's values.
+</p>
+
+<p>
+	<b>Example:</b>
+	calling of
+	<pre class="prettyprint java">dao.findByAllFriends( Arrays.asList( user1, user2, user3 ))</pre>
+	will expand condition into
+	<pre class="prettyprint xml">friends=user1 AND friends=user2 AND friends=user3</pre>
+	It means that only entities which have all three users stored in their 'friends' property will be found.
+</p>
+
+<p class="note">
+	Expanded conditions are allowed only for List properties.
+</p>
+
+
+</div>
+
+
+<div class="subsection">
+<a name="gqlFinderIn"></a>
+<h2>"IN" Conditions</h2>
+
+<p>
+	"IN" conditions are allowed for both List and non-list properties.
+	In our example the corresponding methods were <tt>findByLocations( List&lt;GeoPt&gt; locations)</tt>
+	and <tt>findBySomeFriends( List&lt;User&gt; friends)</tt>.
+</p>
+
+<p>
+	As the result of the "IN" operator it is a union of all entities matching at least with one list's
+	element. In our examples it is when the entities' location is int the 'locations' list
+	and when the entities' list of friends has at least one common item with the list of friends
+	passed as the parameter.
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+
+<div class="section">
+<a name="caches"></a>
+<h2>Caches</h2>
+
+<p>
+	The GAE implementation currently uses 3-level caching mechanism.
+	The caches are used only for entities fetched by primary keys.
+	Entities fetched as results of Queries are not cached now.
+</p>
+
+<p>
+	All caches are synchronized so they can be accessed by several threads in parallel.
+</p>
+
+
+<div class="subsection">
+<a name="cache_l0"></a>
+<h3>L0 Cache - Entity Memory Cache</h3>
+
+<p>
+	This is a short term cache allowing to optimize subsequent calls of <tt>findByPrimaryKey</tt>
+	and <tt>update</tt>.
+</p>
+
+<p>
+	The items are stored in memory only and there exists only one global instance
+	for all non-transaction calls - serving for all kinds:
+
+	<pre class="prettyprint java">
+  protected static DtoCache&lt;Key, Entity&gt; entityCache = new ExpiringMemoryDtoCacheImpl&lt;Key, Entity&gt;( 100, 10 );</pre>
+</p>
+
+<p>
+	For explicit transaction calls (when an explicit Transaction exists) each DAO instance creates own
+	entity cache instance:
+	<pre class="prettyprint java">
+  protected DtoCache&lt;Key, Entity&gt; entityCache;
+  ...
+  
+  // when really needed:
+  entityCache = new ExpiringMemoryDtoCacheImpl&lt;Key, Entity&gt;( 100, 10 );</pre>
+</p>
+
+<p>
+	To explicitly clear the non-transactional gloabl entity cache
+	you can call static method <tt>clearEntityCache()</tt> of the class
+	<a href="[api:dao/gae]">GaeAbstractDaoImpl</a>.
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="cache_l1"></a>
+<h3>L1 Cache - DTO Memory Cache</h3>
+
+<p>
+	This cache must enabled by the <tt>config/dao-impl/default-cache</tt> element
+	in the source XML file.
+	The cached items are stored in the memory.
+</p>
+
+<p>
+	<b>See also</b>: <a href="[generator-output]#daoimpl_default_cache">Default DTO Cache</a>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="cache_l2"></a>
+<h3>L2 Cache - DTO MemcacheService Cache</h3>
+
+<p>
+	This cache is enabled whenever L1 cache is enabled.
+	It uses MemcacheService and no expiration policy by default.
+	To set expiration use the attribute <tt>l2-expire-millis</tt>:
+	<pre class="prettyprint xml">
+  &lt;config&gt;
+    &lt;dao-impl&gt;
+      &lt;default-cache max-size="50" expire-millis="60000" l2-expire-millis="300000"/&gt;
+    &lt;/dao-impl&gt;
+  &lt;/config&gt; </pre>
+</p>
+
+</div>
+
+
+</div> <!-- section -->
+
+
+
+<div class="section">
+<a name="gqlparser"></a>
+<h2>Dynamic GQL Parser</h2>
+
+<p>
+	A part of AuDAO runtime libraries is a "Dynamic GQL Parser", which dynamically
+	parses GQL string queries and converts them into GAE datastore API calls
+	(GAE datastore API itself does not provide such functionality).
+</p>
+
+<p>
+	This parser is used by all generated <a href="[dao-features]#finderDynamic">dynamic finders</a>.
+	But the parser can be used as an independent module.
+</p>
+
+<p>
+	The GQL dynamic parser module (audao-runtime-gql-*.jar) has the following dependencies:
+	<ul>
+		<li><a href="http://audao.spoledge.com/download.jsp">AuDAO Runtime</a> - audao-runtime-*.jar</li>
+		<li><a href="http://commons.apache.org">Apache Commons Logging Library</a> - commons-logging*.jar</li>
+		<li><a href="http://www.antlr.org">ANTLR3 Parser Generator Runtime Library</a> - antlr-runtime-3.2.jar</li>
+	</ul>
+</p>
+
+<p>
+	A bigger example of usage - GQL Console - you can find at
+	<a href="http://vaclavb.blogspot.com/2010/02/google-app-engine-data-viewer-gql-java.html">http://vaclavb.blogspot.com/2010/02/google-app-engine-data-viewer-gql-java.html</a>
+</p>
+
+<p>
+	<b>Example</b> - parses GQL string into low-level datastore Query:
+	<pre class="prettyprint java">
+  GqlDynamic gqld = new GqlDynamic();
+  Query q = gqld.parseQuery( "SELECT * FROM MyEntity WHERE prop='test'" );</pre>
+</p>
+
+<p>
+	<b>Example</b> - parses GQL string into low-level datastore PreparedQuery:
+	<pre class="prettyprint java">
+  GqlDynamic gqld = new GqlDynamic();
+  gqld.setDatastoreService( DatastoreServiceFactory.getDatastoreService());
+
+  PreparedQuery pq = gqld.prepareQuery(
+      "SELECT * FROM MyEntity WHERE propName='test'" );</pre>
+</p>
+
+<p>
+	<b>Example</b> - parses GQL string into PreparedQuery and FetchOptions:
+	<pre class="prettyprint java">
+  GqlDynamic gqld = new GqlDynamic();
+  gqld.setDatastoreService( DatastoreServiceFactory.getDatastoreService());
+
+  PreparedQuery pq = gqld.prepareQuery(
+      "SELECT * FROM MyEntity WHERE propName='test' LIMIT 20" );
+
+  for ( Entity ent : pq.asIterable( gqld.getFetchOptions())) {
+      // process entities here
+      ...
+  }</pre>
+</p>
+
+<p>
+	<b>Example</b> - parses GQL string with parameters into PreparedQuery and FetchOptions:
+	<pre class="prettyprint java">
+  GqlDynamic gqld = new GqlDynamic();
+  gqld.setDatastoreService( DatastoreServiceFactory.getDatastoreService());
+
+  PreparedQuery pq = gqld.prepareQuery(
+      "SELECT * FROM MyEntity WHERE propName=:1 LIMIT 20", "test" );
+  for ( Entity ent : pq.asIterable( gqld.getFetchOptions())) {
+      // process entities here
+      ...
+  }</pre>
+</p>
+
+<p>
+	<b>Example</b> - escaping kind and property names which conflict with GQL keywords:
+	<pre class="prettyprint java">
+  gqld.prepareQuery( "SELECT * FROM 'Order' WHERE 'limit'=:1", mylimit );</pre>
+</p>
+
+<p>
+	<b>Example</b> - collections cause exploding condition into multiple ANDed conditions:
+	<pre class="prettyprint java">
+  gqld.prepareQuery(
+      "SELECT * FROM MyEntity WHERE listProp=:1 AND singleProp=:2",
+      Arrays.asList( 1, 2, 3), 4);</pre>
+	the condition will be: <code>listProp=1 AND listProp=2 AND listProp=3 AND singleProp=4</code>
+</p>
+
+<p>
+	<b>Example</b> - the IN operator accepts collections:
+	<pre class="prettyprint java">
+  gqld.prepareQuery(
+      "SELECT * FROM MyEntity WHERE prop IN :1", Arrays.asList( 1, 2, 3));</pre>
+</p>
+
+<p>
+	<b>Example</b> - the IN operator accepts hard-coded lists which values can be expressions (I heard that Python's parser did not allow this):
+	<pre class="prettyprint java">
+  gqld.prepareQuery(
+      "SELECT * FROM MyEntity WHERE prop IN (:1, :2, KEY('Entity2', :3))",
+      1, 2, "myKeyName");</pre>
+</p>
+
+<p>
+	<b>See also</b>: <a href="[api:parser/gql::GqlDynamic]">GQLDynamic</a>
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a name="gqlext"></a>
+<h2>Extended GQL Parser</h2>
+
+<p>
+	A part of AuDAO runtime libraries is an "Extended GQL Parser", which dynamically
+	parses GQL string statements and converts them into GAE datastore API calls
+	(GAE datastore API itself does not provide such functionality).
+</p>
+
+<p>
+	The "extended" means that the statements are not limited to "SELECT" queries only,
+	but you can use also other SQL commands like "INSERT", "DELETE" and UPDATE
+	and also use so called soft conditions, expressions and nested queries.
+</p>
+
+<p class="note">
+	We do not recommend to use this library in the real application as the way to access
+	GAE's datastore. Instead of that we think that this library can be useful for administrators
+	or can be used by some admin tasks to preprocess, migrate or download data.
+</p>
+
+<p>
+	The parser can be used as an independent module.
+</p>
+
+<p>
+	The extended GQL parser module (audao-runtime-gqlext-*.jar) has the following dependencies:
+	<ul>
+		<li><a href="http://commons.apache.org">Apache Commons Logging Library</a> - commons-logging*.jar</li>
+		<li><a href="http://www.antlr.org">ANTLR3 Parser Generator Runtime Library</a> - antlr-runtime-3.2.jar</li>
+	</ul>
+</p>
+
+<p>
+	<b>Example</b> - parses GQL string and executes prepared query:
+	<pre class="prettyprint java">
+  import com.spoledge.audao.parser.gql.GqlExtDynamic;
+  import com.spoledge.audao.parser.gql.PreparedGql;
+
+  GqlExtDynamic gqld = new GqlExtDynamic( DatastoreServiceFactory.getDatastoreService());
+  PreparedGql pq = gqld.prepare( "SELECT prop2 FROM MyEntity WHERE prop=:1" );
+
+  for (String val : Arrays.asList( "value1", "value2" )) {
+      for (Entity ent : pq.executeQuery( val )) {
+          ...
+      }
+  } </pre>
+</p>
+
+<p>
+	<b>Example</b> - updates entities - change indexed property to unindexed. Natively finds records
+	by prop's value and then filters them again by expression (starting by a specified character).
+	<pre class="prettyprint java">
+  GqlExtDynamic gqld = new GqlExtDynamic( DatastoreServiceFactory.getDatastoreService());
+  PreparedGql pq = gqld.prepare(
+      "UPDATE MyEntity SET unindexed('prop')=prop WHERE prop=:1 SOFT substr(prop2,1,1)=:2" );
+
+  int count = pq.executeUpdate( "value1", "A"); </pre>
+</p>
+
+
+<p>
+	You can also use a simple tool - 'gqlext.jsp' within your appengine application.
+	<ol>
+		<li>put gqlext.jsp to your's web application directory (the main war directory)</li>
+		<li>put commons-logging-1.1.1.jar to your's web application WEB-INF/lib directory</li>
+		<li>put antlr-runtime-3.2.jar to your's web application WEB-INF/lib directory</li>
+		<li>put audao-runtime-gqlext-*.jar to your's web application WEB-INF/lib directory</li>
+	</ol>
+
+	To limit acccess to the GQL console, you should add this section to your WEB-INF/web.xml config:
+	<pre class="prettyprint xml">
+  &lt;security-constraint&gt;
+    &lt;web-resource-collection&gt;
+      &lt;web-resource-name&gt;Admin Area&lt;/web-resource-name&gt;
+      &lt;url-pattern&gt;/gqlext.jsp&lt;/url-pattern&gt;
+    &lt;/web-resource-collection&gt;
+    &lt;auth-constraint&gt;
+      &lt;role-name&gt;admin&lt;/role-name&gt;
+    &lt;/auth-constraint&gt;
+  &lt;/security-constraint&gt;</pre>
+
+	Point your web-browser to the 'gqlext.jsp' page.
+</p>
+
+<p class="note">
+	Unlike the standard GQL consle, the extended GQL console allows you to change data
+	in the datastore. Be carefull !!!
+</p>
+
+
+<div class="subsection">
+<a name="gqlext_select"></a>
+<h3>SELECT Statement</h3>
+
+<p>
+	SELECT <i>getcolumns</i> FROM <i>kind_or_query</i> [<i>where</i>] [<i>orderby</i>] [<i>limitoffset</i>]
+</p>
+
+<p>
+	It allows you to fetch entities from the datastore, nested query or just to evaluate an expression.
+</p>
+
+<p>
+	The implementation fetches data from the underlying datasource (datastore, nested query or virtual kind),
+	optionally filters by soft conditions and optionally maps the source entity to a destination one.
+</p>
+
+<p>
+	<b>Examples:</b>
+	<pre class="prettyprint java">
+  // returns all unmodified records:
+  SELECT * FROM MyKind
+
+  // returns only selected columns - filters natively in GAE by 'property':
+  SELECT __key__,property FROM MyKind WHERE property &gt; 1
+
+  // filters natively in GAE by 'property' and then softly by 'unindexed_property':
+  SELECT * FROM MyKind WHERE property &gt; 1 SOFT unindexed_property=1
+
+  // filters natively in GAE by 'property' and then softly by several properties:
+  SELECT * FROM
+    (SELECT * FROM MyKind
+       WHERE property &gt; 1
+         SOFT unindexed_property=1 OR unindexed_property2=1)
+    WHERE SOFT unindexed_property3=1
+
+  // evaluates expression:
+  SELECT sysdate() AS now FROM dual </pre>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="gqlext_insert"></a>
+<h3>INSERT Statement</h3>
+
+<p>
+	INSERT INTO <i>kind</i> (<i>columns</i>) VALUES (<i>values</i>)
+</p>
+
+<p>
+	It allows you to insert one entity into the datastore.
+</p>
+
+<p>
+	You can create your own keys, or you can let the GAE to generate long id key for you.
+</p>
+
+<p>
+	<b>Examples:</b>
+	<pre class="prettyprint java">
+  // inserts a new record with generated key:
+  INSERT INTO MyKind (bool_prop,int_prop,string_prop)
+    VALUES (true,1,'test')
+
+  // inserts a new record with manually created key:
+  INSERT INTO MyKind (__key__,bool_prop,int_prop,string_prop)
+    VALUES (key('MyKind', 'john'),true,1,'test')
+
+  // inserts a new record - the 'string_prop' will be unindexed property:
+  INSERT INTO MyKind (bool_prop,int_prop,unindexed(string_prop))
+    VALUES (true,1,'test') </pre>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="gqlext_update"></a>
+<h3>UPDATE Statement</h3>
+
+<p>
+	UPDATE <i>kind</i> SET <i>setcolumns</i> [<i>where</i>] [<i>orderby</i>] [<i>limitoffset</i>]
+</p>
+
+<p>
+	It allows you to update one or several entities at once.
+</p>
+
+<p>
+	The implementation fetches data from the datastore, optionally filters by soft conditions
+	and then updates each entity by the SET rule(s).
+	The entities are put one-by-one back to the datastore.
+</p>
+
+<p>
+	<b>Examples:</b>
+	<pre class="prettyprint java">
+  // simply updates all records it founds:
+  UPDATE MyKind SET bool_prop=true WHERE bool_prop=false
+
+  // simply updates all records it founds (max 100):
+  UPDATE MyKind SET bool_prop=true WHERE bool_prop=false LIMIT 100
+
+  // removes null values of the property 'int_prop' (null -&gt; &lt;missing&gt;)
+  UPDATE MyKind SET empty(int_prop)=int_prop, bool_prop=true
+    WHERE bool_prop=false LIMIT 100
+
+  // removes property 'int_prop' (whatever -&gt; &lt;missing&gt;)
+  UPDATE MyKind SET empty(int_prop)=null, bool_prop=true
+    WHERE bool_prop=false LIMIT 100
+
+  // changes property 'int_prop' from indexed to unindexed:
+  UPDATE MyKind SET unindexed(int_prop)=int_prop, bool_prop=true
+    WHERE bool_prop=false LIMIT 100
+
+  // changes property 'int_prop' from unindexed to indexed:
+  UPDATE MyKind SET int_prop=int_prop, bool_prop=true
+    WHERE bool_prop=false LIMIT 100 </pre>
+</p>
+
+</div>
+
+
+<div class="subsection">
+<a name="gqlext_delete"></a>
+<h3>DELETE Statement</h3>
+
+<p>
+	DELETE FROM <i>kind</i> [<i>where</i>] [<i>orderby</i>] [<i>limitoffset</i>]
+</p>
+
+<p>
+	It allows you to delete one or several entities at once.
+</p>
+
+<p>
+	The implementation fetches data from the datastore, optionally filters by soft conditions
+	and then deletes each entity.
+</p>
+
+<p>
+	<b>Examples:</b>
+	<pre class="prettyprint java">
+  // simply deletes all records it founds:
+  DELETE FROM MyKind WHERE bool_prop=false
+
+  // simply deletes all records it founds (max 100):
+  DELETE FROM MyKind WHERE bool_prop=false LIMIT 100 </pre>
+</p>
+
+</div>
+
+
+
+<div class="subsection">
+<a name="gqlext_soft_cond"></a>
+<h3>Soft Conditions</h3>
+
+<p>
+	Soft conditions are conditions evaluated in the library on the client
+	(as opposite to the normal conditions which are evaluated in the appengine
+	on the server).
+</p>
+
+<p>
+	You should use soft conditions carefully and with conjunction with the normal ones.
+</p>
+
+<p>
+	<b>Examples:</b>
+	<pre class="prettyprint java">
+  SELECT * FROM MyKind WHERE indexed_property=:1 SOFT unindexed_property=:2 </pre>
+</p>
+
+</div>
+
+
+
+<div class="subsection">
+<a name="gqlext_nested_queries"></a>
+<h3>Nested Queries</h3>
+
+<p>
+	Nested queries can be used in:
+	<ul>
+		<li>in SELECT query instead of the FROM kind</li>
+		<li>condition IN</li>
+		<li>soft condition IN</li>
+	</ul>
+</p>
+
+<p>
+  In conditions the nested query must return only one column/field.
+</p>
+
+<p>
+	<b>Examples:</b>
+	<pre class="prettyprint java">
+  SELECT * FROM (SELECT * from MyKind WHERE prop=:1) WHERE SOFT prop2=:2
+  DELETE FROM MyKind WHERE id IN (SELECT id FROM MyKindType WHERE name=:1)</pre>
+</p>
+
+</div>
+
+
+
+<div class="subsection">
+<a name="gqlext_functions"></a>
+<h3>Functions</h3>
+
+
+<div class="subsubsection">
+<a name="gqlext_functions_gql"></a>
+<h3>Standard GQL Functions</h3>
+
+<p>
+	These functions can be used in both kinds of conditions (standard + soft)
+	and also in expressions.
+</p>
+
+<p>
+	The full list of these functions
+	is at 
+	<a href="http://code.google.com/appengine/docs/python/datastore/gqlreference.html">http://code.google.com/appengine/docs/python/datastore/gqlreference.html</a>.
+</p>
+
+</div>
+
+
+<div class="subsubsection">
+<a name="gqlext_functions_math"></a>
+<h3>Mathematic Functions</h3>
+
+<p>
+	These functions can be used in expressions and therefore in the soft conditions.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncABS]">ABS</a>
+	<tt>y = ABS( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncACOS]">ACOS</a>
+	<tt>y = ACOS( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncASIN]">ASIN</a>
+	<tt>y = ASIN( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncATAN2]">ATAN2</a>
+	<tt>z = ATAN2( y, x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncATAN]">ATAN</a>
+	<tt>y = ATAN( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncCEIL]">CEIL</a>
+	<tt>y = CEIL( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncCOSH]">COSH</a>
+	<tt>y = COSH( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncCOS]">COS</a>
+	<tt>y = COS( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncDIV]">DIV</a>
+	<tt>z = DIV( x, y )</tt><br/>
+	The standard div operator '/' uses this function.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncEXP]">EXP</a>
+	<tt>y = EXP( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncFLOOR]">FLOOR</a>
+	<tt>y = FLOOR( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncLN]">LN</a>
+	<tt>y = LN( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncMINUS]">MINUS</a>
+	<tt>z = MINUS( x, y )</tt><br/>
+	The standard minus operator '-' uses this function.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncMOD]">MOD</a>
+	<tt>z = MOD( x, y )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncMUL]">MUL</a>
+	<tt>z = MUL( x, y )</tt><br/>
+	The standard mul operator '*' uses this function.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncPLUS]">PLUS</a>
+	<tt>z = PLUS( x, y )</tt><br/>
+	The standard plus operator '+' uses this function.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncPOWER]">POWER</a>
+	<tt>z = POWER( x, y )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncRAND]">RAND</a>
+	<tt>y = RAND()</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSIGN]">SIGN</a>
+	<tt>y = SIGN( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSINH]">SINH</a>
+	<tt>y = SINH( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSIN]">SIN</a>
+	<tt>y = SIN( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSQRT]">SQRT</a>
+	<tt>y = SQRT( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncTANH]">TANH</a>
+	<tt>y = TANH( x )</tt><br/>
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncTAN]">TAN</a>
+	<tt>y = TAN( x )</tt><br/>
+</p>
+
+</div>
+
+
+<div class="subsubsection">
+<a name="gqlext_functions_string"></a>
+<h3>String Functions</h3>
+
+<p>
+	These functions can be used in expressions and therefore in the soft conditions.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncINSTR]">INSTR</a>
+	<tt>index = INSTR( text, substring[, position[, occurence ]])</tt><br/>
+	Same as Oracle's INSTR function.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSUBSTR]">SUBSTR</a>
+	<tt>s = SUBSTR( text, position[, length ])</tt><br/>
+	Same as Oracle's SUBSTR function.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncLENGTH]">LENGTH</a>
+	<tt>x = LENGTH( text )</tt><br/>
+	Returns the length of the text in characters.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncLOWER]">LOWER</a>
+	<tt>s = LOWER( text )</tt><br/>
+	Returns the text in lowercase.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncMUL]">MUL</a>
+	<tt>s = MUL( text, x )</tt><br/>
+	Concatenates text many times as is the value of x.
+	Same as Perl's 'x' operator.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncPLUS]">PLUS</a>
+	<tt>s = PLUS( text, whatever )</tt><br/>
+	Concatenates text and any other value.
+	The standard plus operator '+' uses this function.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncTO_CHAR]">TO_CHAR</a>
+	<tt>s = TO_CHAR( date[, fmt ])</tt><br/>
+	Converts objects to string.
+	Optional 'fmt' string - the format used for dates ans numbers
+	- see java.text.SimpleDateFormat and java.text.DecimalFormat .
+	The default date format string is 'yyyy-MM-dd HH:mm:ss',
+	the default number format string is '0.####'.
+	If the converted object is not date nor number, then the toString()
+	method is called.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncUPPER]">UPPER</a>
+	<tt>s = UPPER( text )</tt><br/>
+	Returns the text in uppercase.
+</p>
+
+</div>
+
+
+<div class="subsubsection">
+<a name="gqlext_functions_date"></a>
+<h3>Date Functions</h3>
+
+<p>
+	These functions can be used in expressions and therefore in the soft conditions.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncMINUS]">MINUS</a>
+	<tt>d = MINUS( date, x )</tt><br/>
+	Subtracts x days from the date.
+	Same as Oracle's functionality.
+	The standard plus operator '-' uses this function.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncPLUS]">PLUS</a>
+	<tt>d = PLUS( date, x )</tt><br/>
+	Adds x days to the date.
+	Same as Oracle's functionality.
+	The standard plus operator '+' uses this function.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncSYSDATE]">SYSDATE</a>
+	<tt>d = SYSDATE()</tt><br/>
+	Returns the current date and time.
+</p>
+
+</div>
+
+
+<div class="subsubsection">
+<a name="gqlext_functions_other"></a>
+<h3>Other Functions</h3>
+
+<p>
+	These functions can be used in expressions and therefore in the soft conditions.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncDECODE]">DECODE</a>
+	<tt>o = DECODE( val, search1, value1[, search2, value2 ...[, default]])</tt><br/>
+	Same as Oracle's functionality.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncGEOPT_LAT]">GEOPT_LAT</a>
+	<tt>lat = GEOPT_LAT( geopt )</tt><br/>
+	Extracts latitude (double) from a geo point.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncGEOPT_LNG]">GEOPT_LNG</a>
+	<tt>lng = GEOPT_LNG( geopt )</tt><br/>
+	Extracts longitude (double) from a geo point.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncKEY_ID]">KEY_ID</a>
+	<tt>x = KEY_ID( key )</tt><br/>
+	Extracts id (long) from a key.
+</p>
+
+<p>
+	<tt>s = KEY_NAME key )</tt><br/>
+	<a href="[api:parser/gql/impl/soft/func::FuncKEY_NAME]">KEY_NAME</a>
+	Extracts name (String) from a key.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncKEY_PARENT]">KEY_PARENT</a>
+	<tt>key = KEY_PARENT( key )</tt><br/>
+	Returns the parent key.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncKEY_VALUE]">KEY_VALUE</a>
+	<tt>o = KEY_VALUE( key )</tt><br/>
+	Extracts id (long) or name (String) from a key.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncLIST]">LIST</a>
+	<tt>l = LIST( [item1[, item2...] )</tt><br/>
+	Creates a list - stored as multi-value property.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncLIST_JOIN]">LIST_JOIN</a>
+	<tt>s = LIST_JOIN( string, list )</tt><br/>
+	Joins a list items into a string.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncNVL]">NVL</a>
+	<tt>o = NVL( val, val2 )</tt><br/>
+	Same as Oracle's functionality.
+</p>
+
+<p>
+	<a href="[api:parser/gql/impl/soft/func::FuncNVL2]">NVL2</a>
+	<tt>o = NVL2( val, val1, val2 )</tt><br/>
+	Same as Oracle's functionality.
+</p>
+
+
+</div>
+
+
+
+<div class="subsubsection">
+<a name="gqlext_functions_pseudo"></a>
+<h3>Pseudo Functions</h3>
+
+<p>
+	<tt>EMPTY( string )</tt><br/>
+	Forces the property with name string and null value to be empty (missing).
+	This function can be used only in <i>aliases</i>.
+</p>
+
+<p>
+	<tt>KIND( string )</tt><br/>
+	Escapes the kind name.
+	This function can be used only in the <i>kind</i> section.
+</p>
+
+<p>
+	<tt>PROP( string )</tt><br/>
+	Escapes the property name.
+	This function can be used almost everywhere (expressions, conditions, column names).
+</p>
+
+<p>
+	<tt>UNINDEXED( string )</tt><br/>
+	Forces the property with name string to be unindexed.
+	This function can be used only in <i>aliases</i>.
+</p>
+
+</div>
+
+
+<div class="subsubsection">
+<a name="gqlext_functions_user"></a>
+<h3>User Defined Functions</h3>
+
+<p>
+	All standard functions are defined in the package <tt>com.spoledge.audao.parser.gql.impl.soft.func</tt>.
+	The parser dynamically looks up the function by its name. Only several functions are defined
+	directly in the parser - the standard GQL functions (KEY(), DATE(), ...) and pseudo-functions.
+</p>
+
+<p>
+	To add a new user-defined function, you must create an implementation
+	of the <a href="[api:parser/gql/impl/soft::]">SoftFunction</a> and register it
+	in the <a href="[api:parser/gql/impl/soft::]">SoftFunctionFactory</a>:
+	<pre class="prettyprint java">
+  import java.util.List;
+  import com.spoledge.audao.parser.gql.impl.soft.SoftFunction;
+  import com.spoledge.audao.parser.gql.impl.soft.SoftFunctionFactory;
+  ...
+  SoftFunctionFactory.getDefaultFactory().defineSoftFunction(
+      "MY_FUNC", new SoftFunction() {
+          public Object getFunctionValue( List&lt;Object&gt; args ) {
+              // concatenates all parameters:
+              StringBuilder sb = new StringBuilder();
+              for (Object o : args)
+                  sb.append( o );
+              }
+              return sb.toString();
+          }
+      }); </pre>
+</p>
+
+<p class="note">
+	You can also redefine any existing function (like ABS) by your own implementation.
+</p>
+
+<p>
+	We recommend to extend existing parent functions like 
+	<a href="[api:parser/gql/impl/soft/func::]">Func</a>,
+	<a href="[api:parser/gql/impl/soft/func::]">Func0</a>,
+	<a href="[api:parser/gql/impl/soft/func::]">Func1</a>,
+	<a href="[api:parser/gql/impl/soft/func::]">Func2</a>,
+	<a href="[api:parser/gql/impl/soft/func::]">MathFunc1</a>,
+	<a href="[api:parser/gql/impl/soft/func::]">StringFunc1</a>.
+</p>
+
+
+<p>
+	Another approach is to define own <a href="[api:parser/gql/impl/soft::]">SoftFunctionFactory</a>,
+	which is responsible for creating/mapping of functions:
+	<pre class="prettyprint java">
+  import com.spoledge.audao.parser.gql.impl.soft.SoftFunctionFactory;
+  ...
+  SoftFunctionFactory.setDefaultFactory( new MyFunctionFactory()); </pre>
+</p>
+
+
+</div>
+
+
+</div> <!-- Functions -->
+
+
+<div class="subsection">
+<a name="gqlext_grammar"></a>
+<h3>Grammar</h3>
+
+<p class="note">
+	The real grammar is defined in files GqlExtParser.g, GqlExtLexer.g and GqlLexer.g.
+</p>
+
+<p>
+	<ul>
+		<li>SELECT <i>getcolumns</i> FROM <i>kind_or_query</i> [<i>where</i>] [<i>orderby</i>] [<i>limitoffset</i>]</li>
+		<li>UPDATE <i>kind</i> SET <i>setcolumns</i> [<i>where</i>] [<i>orderby</i>] [<i>limitoffset</i>]</li>
+		<li>DELETE FROM <i>kind</i> [<i>where</i>] [<i>orderby</i>] [<i>limitoffset</i>]</li>
+		<li>INSERT INTO <i>kind</i> (<i>columns</i>) VALUES (<i>values</i>)</li>
+	</ul>
+</p>
+
+<p>
+	<i>getcolumns</i>: comma separated list of:
+	<ul>
+		<li>* (asterisk) = all available properties</li>
+		<li>__key__ = the key</li>
+		<li><i>property</i> = property specified by its name</li>
+		<li><i>entity_expression</i> AS <i>alias</i> = expression's result stored into property specified by the alias</li>
+	</ul>
+	Example:
+	<pre class="prettyprint java">
+  SELECT * FROM ...
+  SELECT property FROM ...
+  SELECT prop('property') FROM ...
+  SELECT 1+property AS property FROM ...
+  SELECT list(property,:1) AS unindexed('property') FROM ...
+  SELECT cos(property) AS empty('property') FROM ...  </pre>
+</p>
+
+<p>
+	<i>setcolumns</i>: <i>alias</i> = <i>entity_expression</i> [, <i>alias2</i> = <i>entity_expression</i>...]
+	<pre class="prettyprint java">
+  UPDATE ... SET property = 'value'...
+  UPDATE ... SET property = cos(:1 + property2) ...
+  UPDATE ... SET prop('property') = null ...
+  UPDATE ... SET empty(property) = null ...
+  UPDATE ... SET unindexed(property) = property ...</pre>
+</p>
+
+<p>
+	<i>columns</i>: <i>alias</i> [, <i>alias2</i> ...]
+	<pre class="prettyprint java">
+  INSERT INTO ... (property, property2) ...
+  INSERT INTO ... (prop('property'), unindexed(property2)) ...</pre>
+</p>
+
+<p>
+	<i>values</i>: <i>expression</i> [, <i>expression2</i> ...]
+	<pre class="prettyprint java">
+  INSERT INTO ... VALUES ('test', 1, null)
+  INSERT INTO ... VALUES (:1,:2,:3)
+  INSERT INTO ... VALUES (:1,:2, cos(:3) + sin(:3))</pre>
+</p>
+
+<p>
+	<i>kind_or_query</i>: one of:
+	<ul>
+		<li><i>kind</i></li>
+		<li>(SELECT ...) = nested query</li>
+		<li>dual = a special virtual kind which always returns exactly one empty record</li>
+	</ul>
+	Example:
+	<pre class="prettyprint java">
+  SELECT * FROM MyKind ...
+  SELECT * FROM kind('com.foo.MyKind') ...
+  SELECT * FROM (SELECT property FROM MyKind) ...
+  SELECT sysdate() AS now FROM dual</pre>
+</p>
+
+<p>
+	<i>kind</i>: one of:
+	<ul>
+		<li><i>identifier</i></li>
+		<li>kind(<i>string</i>) = for escaping special characters or keywords</li>
+	</ul>
+	Example:
+	<pre class="prettyprint java">
+  SELECT * FROM MyKind ...
+  SELECT * FROM kind('com.foo.MyKind') ...</pre>
+</p>
+
+<p>
+	<i>where</i>:
+	<ul>
+		<li>WHERE <i>conditions</i> [SOFT <i>softconditions</i>]</li>
+		<li>WHERE SOFT <i>softconditions</i></li>
+	</ul>
+	Example:
+	<pre class="prettyprint java">
+  ... WHERE property=1
+  ... WHERE property=1 SOFT cos(:1+property2) = sin(property3)
+  ... WHERE SOFT property1 &lt; property2</pre>
+</p>
+
+<p>
+	<i>orderby</i>: ORDER BY property1 [ASC|DESC] [, property2 [ASC|DESC]
+	Example:
+	<pre class="prettyprint java">
+  ... ORDER BY property
+  ... ORDER BY property DESC, property2 ASC</pre>
+</p>
+
+<p>
+	<i>limitoffset</i>: ORDER BY property1 [ASC|DESC] [, property2 [ASC|DESC]
+	<ul>
+		<li>LIMIT [<i>offset</i>,] <i>limit</i></li>
+		<li>[LIMIT <i>limit</i>] OFFSET <i>offset</i></li>
+	</ul>
+	Example:
+	<pre class="prettyprint java">
+  ... LIMIT 1
+  ... LIMIT 10,1
+  ... LIMIT 1 OFFSET 10
+  ... OFFSET 10</pre>
+</p>
+
+<p>
+	<i>conditions</i>: condition [AND condition ...]
+</p>
+
+<p>
+	<i>condition</i>: one of:
+	<ul>
+		<li>ANCESTOR IS <i>key_or_param</i></li>
+		<li>__key__ {=|&lt;|&gt;|&lt;=|&gt;=|!=} <i>key_or_param</i></li>
+		<li>__key__ IN (<i>key_or_param</i>[, <i>key_or_param2</i> ...])</li>
+		<li>__key__ IN <i>param</i></li>
+		<li>__key__ IN (SELECT ...)</li>
+		<li><i>property</i> {=|&lt;|&gt;|&lt;=|&gt;=|!=} <i>value_or_param</i></li>
+		<li><i>property</i> IN (<i>value_or_param</i>[, <i>value_or_param2</i> ...])</li>
+		<li><i>property</i> IN <i>param</i></li>
+		<li><i>property</i> IN (SELECT ...)</li>
+	</ul>
+	Example:
+	<pre class="prettyprint java">
+  ... WHERE ANCESTOR IS key('test',1)
+  ... WHERE ANCESTOR IS :1
+  ... WHERE __key__ &gt; key('test',:1)
+  ... WHERE property = :1
+  ... WHERE property IN (:1,:2)
+  ... WHERE property IN :1
+  ... WHERE property IN (SELECT prop FROM ...)</pre>
+</p>
+
+<p>
+	<i>softconditions</i>: [NOT] softcondition [{AND|OR} [NOT] softcondition ...] 
+	<br/>
+	<b>NOTE:</b> parentheses in softconditions are not implemented yet. As a workaround you can
+	use nested queries:
+	<pre class="prettyprint java">
+  // invalid:
+  SELECT * FROM MyKind WHERE SOFT (property=1 OR property2=1) AND property3=2
+
+	// valid:
+  SELECT * FROM (SELECT * FROM MyKind WHERE SOFT property=1 OR property2=1) WHERE SOFT property3=2
+	</pre>
+</p>
+
+<p>
+	<i>softcondition</i>: one of:
+	<ul>
+		<li>ANCESTOR IS <i>entity_expression</i></li>
+		<li><i>entity_expression</i> {=|&lt;|&gt;|&lt;=|&gt;=|!=} <i>entity_expression</i></li>
+		<li><i>entity_expression</i> IN <i>entity_expression</i></li>
+		<li><i>entity_expression</i> IN (<i>entity_expression</i>[, <i>entity_expression</i> ...])</li>
+		<li><i>entity_expression</i> IN (SELECT ...)</li>
+	</ul>
+	Example:
+	<pre class="prettyprint java">
+  ... WHERE SOFT ANCESTOR IS key_parent('test',1)
+  ... WHERE SOFT property1+property2 = cos(:1)
+  ... WHERE SOFT nvl(property1,property2) IN (:1,:2)
+  ... WHERE SOFT property IN (SELECT prop FROM ...) </pre>
+</p>
+
+<p>
+	<i>expression</i>: an expression which cannot refer to any existing properties (INSERT):
+	<ul>
+		<li>operators '+', '-', '/', '*'</li>
+		<li>parentheses '(', ')'</li>
+		<li>functions</li>
+		<li>literals</li>
+		<li>parameters</li>
+	</ul>
+	Example:
+	<pre class="prettyprint java">
+  SELECT (1+cos(:1)) / (1-cos(:1)) AS val FROM dual
+  SELECT 'con' + 'cat' + :1 AS val FROM dual
+  SELECT sysdate() - 1 AS yesterday FROM dual
+  SELECT decode(sign(rand()-0.5), -1, true, false) AS random_bool FROM dual</pre>
+</p>
+
+<p>
+	<i>alias</i>: one of:
+	<ul>
+		<li><i>__key__</i> = the key</li>
+		<li><i>property</i> = property name</li>
+		<li><i>string</i> = property name encapsulated in string quotes</li>
+		<li>empty(<i>string</i>) = if the property value is null, then the property will not be stored at all</li>
+		<li>unindexed(<i>string</i>) = the property is stored as an unindexed property</li>
+	</ul>
+	Example:
+	<pre class="prettyprint java">
+  SELECT __key__ FROM ...
+  SELECT property FROM ...
+  UPDATE ... SET unindexed(property)=property ...
+  UPDATE ... SET empty(property)=property ... </pre>
+</p>
+
+<p>
+	<i>property</i>: one of:
+	<ul>
+		<li><i>identifier</i> = property name</li>
+		<li>prop(<i>string</i>) = escapes characters</li>
+	</ul>
+	Example:
+	<pre class="prettyprint java">
+  SELECT property FROM ...
+  UPDATE ... SET prop('property')= ...</pre>
+</p>
+
+</div>
+
+</div> <!-- section -->
+
+
+
+</div> <!-- chapter -->
+

@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!--
+ * Copyright 2010 Spolecne s.r.o. (www.spoledge.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *-->
+<project name="gwt" basedir="." default="dist">
+
+	<!-- SECTION PROPERTIES -->
+
+	<property name="src.gwt.dir" location="${src.dir}/gwt"/>
+
+	<property name="build.src.dir" location="${build.dir}/src"/>
+	<property name="build.gwt.dir" location="${build.dir}/gwt"/>
+	<property name="build.gwt-modules.dir" location="${build.dir}/gwt-modules"/>
+
+	<property name="gwt-dev.jar" location="${gwt.home}/gwt-dev.jar"/>
+	<property name="gwt-dev-linux.jar" location="${gwt.home}/gwt-dev-linux.jar"/>
+	<property name="gwt-dev-windows.jar" location="${gwt.home}/gwt-dev-windows.jar"/>
+	<property name="gwt-dev-macos.jar" location="${gwt.home}/gwt-dev-macos.jar"/>
+
+	<property name="gwt-user.jar" location="${gwt.home}/gwt-user.jar"/>
+	<property name="gwt-servlet.jar" location="${gwt.home}/gwt-servlet.jar"/>
+	<property name="servlet-api.jar" location="${tomcat.home}/lib/servlet-api.jar"/>
+
+	<property name="audao.db" location="${audao.home}/modules/generator"/>
+	<property name="audao.java" location="${audao.db}/src/java"/>
+
+
+	<!-- SECTION FILESET AND CLASSPATH -->
+
+	<path id="gwt-compile.path">
+		<fileset refid="lib.local.fileset"/>
+		<pathelement location="${gwt-user.jar}"/>
+		<pathelement location="${gwt-dev.jar}"/>
+		<pathelement location="${gwt-dev-linux.jar}"/>
+		<pathelement location="${gwt-dev-windows.jar}"/>
+		<pathelement location="${gwt-dev-macos.jar}"/>
+		<pathelement path="${build.src.dir}"/>
+	</path>
+
+	<!-- SECTION TARGETS -->
+
+	<target name="gwt-check-user-agent" if="gwt.user-agent">
+		<echo level="warn" message="*** WARNING *********************************************************"/>
+		<echo level="warn" message="* The property 'gwt.user-agent' is set to '${gwt.user-agent}'."/>
+		<echo level="warn" message="* The compilation of GWT modules will be faster."/>
+		<echo level="warn" message="* But the application can be used only for DEVELOPMENT."/>
+		<echo level="warn" message="*********************************************************************"/>
+	</target>
+
+	<target name="gwt-check-style" if="gwt.style">
+		<echo level="warn" message="*** WARNING *********************************************************"/>
+		<echo level="warn" message="* The property 'gwt.style' is set to '${gwt.style}'."/>
+		<echo level="warn" message="* The application should be used only for DEVELOPMENT."/>
+		<echo level="warn" message="*********************************************************************"/>
+	</target>
+
+	<target name="gwt">
+		<mkdir dir="${build.gwt.dir}"/>
+		<uptodate property="gwt.uptodate" targetfile="${build.gwt.dir}/${gwt-pkg-name}/${gwt-pkg-name}.nocache.js">
+			<srcfiles dir="${build.src.dir}/" >
+				<include name="**/${gwt-pkg-name}.gwt.xml"/>
+				<include name="**/db/dto/**"/>
+				<include name="**/core/**"/>
+				<include name="**/web/services/**"/>
+				<include name="**/web/client/${gwt-pkg-name}/**"/>
+				<!--
+				<exclude name="**/server/**"/>
+				-->
+			</srcfiles>
+		</uptodate>
+		<antcall target="gwt.impl"/>
+	</target>
+
+	<target name="gwt.impl" unless="gwt.uptodate">
+		<antcall target="gwt-check-user-agent"/>
+		<antcall target="gwt-check-style"/>
+		<condition property="gwt.style" value="OBF">
+			<not>
+				<isset property="gwt.style"/>
+			</not>
+		</condition>
+		<java
+			classname="com.google.gwt.dev.Compiler"
+			classpathref="gwt-compile.path"
+			fork="true"
+			failonerror="true"
+		>
+			<jvmarg value="-Xmx256M"/>
+			<jvmarg value="-Djava.awt.headless=true"/>
+			<arg value="-style"/>
+			<arg value="${gwt.style}"/>
+			<arg value="-war"/>
+			<arg file="${build.gwt.dir}"/>
+			<arg line="${pkg-prefix}.${gwt-pkg-name}"/>
+		</java>
+	</target>
+
+</project>

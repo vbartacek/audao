@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+
+	<config>
+		<dao method-get-order-expr="true"/>
+		<factory>
+			<create-params default="false" connection="true"/>
+		</factory>
+	</config>
+
+	<tables>
+		<auto-find/>
+
+		<!-- ================ ENTITIES and Logging =================== -->
+
+		<table name="entities" java="Entity">
+			<read-only/>
+			<columns>
+				<column name="entity_id">
+					<type>int</type>
+					<enum>
+						<value id="100">SEGMENT</value>
+						<value id="110">SEGMENT_RATING</value>
+						<value id="120">SEGMENT_CONFIDENCE</value>
+						<value id="190">COMPANY_ACTIVITY_TYPE</value>
+						<value id="200">PARTY</value>
+						<value id="201">PARTY_ICO</value>
+						<value id="202">PARTY_NAME</value>
+						<value id="203">PARTY_ADDRESS</value>
+						<value id="204">PARTY_PHONE</value>
+						<value id="300">PAYMENT_RATING</value>
+						<value id="310">FINANCIAL_STATE</value>
+						<value id="390">PARTY_RATING</value>
+						<value id="400">USER_COMMENT</value>
+						<value id="410">BATCH</value>
+
+						<value id="980">LOG_HISTORY</value>
+
+						<value id="990">USER</value>
+						<value id="991">ROLE</value>
+						<value id="992">USER_ROLE</value>
+						<value id="995">APPSEC_MODULE</value>
+						<value id="996">APPSEC_ACTION</value>
+						<value id="997">APPSEC_ACCESS</value>
+					</enum>
+					<pk/>
+				</column>
+				<column name="entity_name">
+					<type max-length="32">String</type>
+					<not-null/>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_entity_name">
+					<unique/>
+					<columns>
+						<column name="entity_name"/>
+					</columns>
+				</index>
+			</indexes>
+			<data>
+				<row><c>100</c><c>SEGMENT</c></row>
+				<row><c>110</c><c>SEGMENT_RATING</c></row>
+				<row><c>120</c><c>SEGMENT_CONFIDENCE</c></row>
+				<row><c>190</c><c>COMPANY_ACTIVITY_TYPE</c></row>
+				<row><c>200</c><c>PARTY</c></row>
+				<row><c>201</c><c>PARTY_ICO</c></row>
+				<row><c>202</c><c>PARTY_NAME</c></row>
+				<row><c>203</c><c>PARTY_ADDRESS</c></row>
+				<row><c>204</c><c>PARTY_PHONE</c></row>
+				<row><c>300</c><c>PAYMENT_RATING</c></row>
+				<row><c>310</c><c>FINANCIAL_STATE</c></row>
+				<row><c>390</c><c>PARTY_RATING</c></row>
+				<row><c>400</c><c>USER_COMMENT</c></row>
+				<row><c>410</c><c>BATCH</c></row>
+
+				<row><c>980</c><c>LOG_HISTORY</c></row>
+
+				<row><c>990</c><c>USER</c></row>
+				<row><c>991</c><c>ROLE</c></row>
+				<row><c>992</c><c>USER_ROLE</c></row>
+				<row><c>995</c><c>APPSEC_MODULE</c></row>
+				<row><c>996</c><c>APPSEC_ACTION</c></row>
+				<row><c>997</c><c>APPSEC_ACCESS</c></row>
+			</data>
+		</table>
+
+
+		<table name="log_operations">
+			<read-only/>
+			<columns>
+				<column name="log_oper_id">
+					<type>int</type>
+					<enum>
+						<value>CREATE</value>
+						<value>UPDATE</value>
+						<value>DELETE</value>
+						<value>COMMENT</value>
+					</enum>
+					<pk/>
+				</column>
+				<column name="log_oper_name">
+					<type max-length="32">String</type>
+					<not-null/>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_log_oper_name">
+					<unique/>
+					<no-find/>
+					<columns>
+						<column name="log_oper_name"/>
+					</columns>
+				</index>
+			</indexes>
+			<data>
+				<row><c>1</c><c>CREATE</c></row>
+				<row><c>2</c><c>UPDATE</c></row>
+				<row><c>3</c><c>DELETE</c></row>
+				<row><c>4</c><c>COMMENT</c></row>
+			</data>
+		</table>
+
+
+		<table name="log_history">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="log_id">
+					<type>int</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="created_date">
+					<type>Timestamp</type>
+					<auto/>
+					<not-null/>
+				</column>
+				<column name="user_id">
+					<type>int</type>
+					<not-null/>
+				</column>
+				<column name="entity_id">
+					<ref table="entities"/>
+					<not-null/>
+				</column>
+				<column name="record_id">
+					<type>int</type>
+					<not-null/>
+				</column>
+				<column name="log_oper_id">
+					<ref table="log_operations"/>
+					<not-null/>
+				</column>
+				<column name="user_comment_id"> <!-- remove it in future version! -->
+					<ref table="user_comments"/>
+					<edit/>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_log_hist_created">
+					<no-find/>
+					<columns>
+						<column name="created_date"/>
+					</columns>
+				</index>
+				<index name="inx_log_hist_entity_record">
+					<no-find/>
+					<columns>
+						<column name="entity_id"/>
+						<column name="record_id"/>
+					</columns>
+				</index>
+				<index name="inx_log_hist_user">
+					<no-find/>
+					<columns>
+						<column name="user_id"/>
+						<column name="created_date"/>
+					</columns>
+				</index>
+			</indexes>
+			<methods>
+				<count name="dynamic">
+					<dynamic/>
+				</count>
+				<find name="dynamic">
+					<dynamic/>
+					<order-by>
+						<column name="created_date"/>
+					</order-by>
+				</find>
+			</methods>
+		</table>
+
+
+		<table name="user_comments">
+			<edit-mode>column</edit-mode>
+			<columns>
+				<column name="user_comment_id">
+					<type>int</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="entity_id">
+					<ref table="entities"/>
+					<not-null/>
+				</column>
+				<column name="record_id">
+					<type>int</type>
+				</column>
+				<column name="comment_subtype">
+					<type>int</type>
+				</column>
+				<column name="user_comment">
+					<type max-length="2000">String</type>
+					<edit/>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_user_comm_records">
+					<columns>
+						<column name="entity_id"/>
+						<column name="record_id"/>
+					</columns>
+				</index>
+			</indexes>
+		</table>
+
+	</tables>
+
+</database>
+

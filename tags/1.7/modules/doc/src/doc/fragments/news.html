@@ -1,0 +1,407 @@
+<div class="chapter">
+<a name="news"></a>
+<h1 class="chapter">AuDAO News</h1>
+<h2>AuDAO - SQL and Java DAO Generator</h2>
+
+
+<div class="section">
+<a class="date" name="2012-04-13"></a>
+<h2>AuDAO 1.7 - HSQLDB</h2>
+<p class="modified">16:07:19</p>
+
+<p>
+	AuDAO can generate SQL script and Java DAO layer for HSQLDB engine.
+</p>
+
+<p>
+	We also updated AuDAO to use and run on Google App Engine SDK 1.6.1.
+	The GWT serialization code was compiled and tested using GWT 2.4.0.
+</p>
+
+<p>
+	The full release notes you can find <a href="[release-notes]#2012-04-14">here</a>.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2011-02-19"></a>
+<h2>AuDAO 1.6 - Misc Improvements</h2>
+<p class="modified">00:20:42</p>
+
+<p>
+	Several improvements were packed into this release.
+</p>
+
+<p>
+	The biggest one is the possibility to generate finder methods which return <tt>List</tt> instead of array.
+	For more information see <a href="[generator-output]#dao_find_method_return_type">array or list</a>
+	documentation.
+</p>
+
+<p>
+	Another improvement is mapping of Java enumerations to String / character types in databases.
+	The details you can find <a href="[dao-features]#enums">here</a>.
+</p>
+
+<p>
+	We also updated AuDAO to use and run on Google App Engine SDK 1.4.2.
+	The GWT serialization code was compiled and tested using GWT 2.2.0.
+</p>
+
+<p>
+	The full release notes you can find <a href="[release-notes]#2011-02-19">here</a>.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2010-06-10"></a>
+<h2>AuDAO 1.5 - Open Source</h2>
+<p class="modified">13:50:24</p>
+
+<p>
+	AuDAO is fully open-sourced now !
+</p>
+
+<p>
+	As we promised last time, AuDAO is an open-source project now.
+	The sources and as well the binary distributions can be downloaded
+	from <a href="http://code.google.com/p/audao/">http://code.google.com/p/audao/</a>,
+	although the official site is still <a href="http://audao.spoledge.com">audao.spoledge.com</a>.
+</p>
+
+<p>
+	As of the new features:<br/>
+	the biggest improvement is enabling <a href="[gae-features]#caches">caches</a> for GAE.
+</p>
+
+<p>
+	We also introduced a new library for administrators -
+	<a href="[gae-features]#gqlext">Extended GQL Parser</a>,
+	which brings possibility to execute not only SELECT queries,
+	but also INSERT, UPDATE and DELETE statements with almost same manner as in standard SQL databases.
+</p>
+
+<p>
+	We also updated AuDAO to use and run on Google App Engine SDK 1.3.4.
+</p>
+
+<p>
+	The full release notes you can find <a href="[release-notes]#2010-06-10">here</a>.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2010-05-05"></a>
+<h2>AuDAO 1.4 - GAE + GWT</h2>
+<p class="modified">12:30:31</p>
+
+<p>
+	The standalone binary version is available for free now !
+</p>
+
+<p>
+	We released the latest version of AuDAO for free.
+	This is the first step of moving the AuDAO project towards open-source projects.
+	You can enjoy to use AuDAO on your computer locally.
+	There exist no limitiations concerning the input XML or number of entities.
+	Using of the standalone version will speed-up your development.
+</p>
+
+<p>
+	To obtain the full AuDAO standalone version, please go to the
+	<a href="download.jsp">download</a> page.
+</p>
+
+<p>
+	As of the new features:
+	you can use new column flag <a href="[dao-features]#transient">transient</a>
+	to save you disk-space (when saving DTOs into a file or into GAE's memcache),
+	or to save a bandwidth (when sending DTOs ove GWT serialization stream):
+
+  <pre class="prettyprint xml">
+    &lt;column name="words"&gt;
+      &lt;type class="String"&gt;List&lt;/type&gt;
+      &lt;transient/&gt;
+    &lt;/column&gt;
+
+    &lt;column name="geo_tiles"&gt;
+      &lt;type class="String"&gt;List&lt;/type&gt;
+      &lt;transient io="false" gwt="true"/&gt;
+    &lt;/column&gt; </pre>
+</p>
+
+<p>
+	We also updated AuDAO to use and run on Google App Engine SDK 1.3.3.1.
+</p>
+
+<p>
+	The full release notes you can find <a href="[release-notes]#2010-05-05">here</a>.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2010-03-26"></a>
+<h2>AuDAO 1.3 - GAE + GWT</h2>
+<p class="modified">23:55:26</p>
+
+<p>
+	Now we support GAE+GWT projects.
+	Fetch DTOs with GeoPts and send them
+	to the client directly.
+	Sending from client to server and storing to the datastore
+	is also possible !
+</p>
+
+<p>
+	If you want to control your used space in the GAE datastore,
+	then you can use new column options 
+	<a href="[gae-features]#storage-empty">gae/@empty</a>
+	and <a href="[gae-features]#storage-unindexed">gae/@unindexed</a>:
+
+  <pre class="prettyprint xml">
+    &lt;column name="geopt_type"&gt;
+      &lt;type class="gae:GeoPt"&gt;Serializable&lt;/type&gt;
+      &lt;gae unindexed="true"/&gt;
+    &lt;/column&gt;
+
+    &lt;column name="description"&gt;
+      &lt;type max-length="64"&gt;String&lt;/type&gt;
+      &lt;gae empty="true"/&gt;
+    &lt;/column&gt; </pre>
+</p>
+
+<p>
+	We also updated AuDAO to use and run on Google App Engine SDK 1.3.2.
+</p>
+
+<p>
+	The full release notes you can find <a href="[release-notes]#2010-03-26">here</a>
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2010-02-25"></a>
+<h2>AuDAO 1.2 - GAE Classes</h2>
+<p class="modified">23:55:35</p>
+
+<p>
+	Now we support all GAE core types including Key, GeoPt or User.
+	Also Lists can contain these types.
+</p>
+
+<p>
+  So you can simply use these types in your DTOs and DAOs - just declare them in the XML:
+  <pre class="prettyprint xml">
+    &lt;column name="key_type"&gt;
+      &lt;type class="gae:Key"&gt;Serializable&lt;/type&gt;
+    &lt;/column&gt;
+
+    &lt;column name="geopt_type"&gt;
+      &lt;type class="gae:GeoPt"&gt;Serializable&lt;/type&gt;
+    &lt;/column&gt;
+
+    &lt;column name="user_type"&gt;
+      &lt;type class="gae:User"&gt;Serializable&lt;/type&gt;
+    &lt;/column&gt;
+
+
+    &lt;column name="key_list"&gt;
+      &lt;type class="gae:Key"&gt;List&lt;/type&gt;
+    &lt;/column&gt;
+
+    &lt;column name="geopt_list"&gt;
+      &lt;type class="gae:GeoPt"&gt;List&lt;/type&gt;
+    &lt;/column&gt;
+
+    &lt;column name="user_list"&gt;
+      &lt;type class="gae:User"&gt;List&lt;/type&gt;
+    &lt;/column&gt;
+
+    &lt;column name="native_list"&gt;
+      &lt;type class="java.util.List"&gt;Serializable&lt;/type&gt;
+    &lt;/column&gt;
+
+    &lt;column name="anonymous_list"&gt;
+      &lt;type&gt;List&lt;/type&gt;
+    &lt;/column&gt;</pre>
+
+	You can search by them - the finder methods support both single element parameter
+	and a collection/list parameter like the following:
+  <pre class="prettyprint xml">
+    &lt;indexes&gt;
+
+      &lt;index name="inx_geopt"&gt;
+        &lt;columns&gt;
+          &lt;column name="geopt_type"/&gt;
+        &lt;/columns&gt;
+      &lt;/index&gt;
+
+      &lt;index name="inx_geopt_list"&gt;
+        &lt;columns&gt;
+          &lt;column name="geopt_list"/&gt;
+        &lt;/columns&gt;
+      &lt;/index&gt;
+
+    &lt;/indexes&gt;
+
+    &lt;methods&gt;
+
+      &lt;find name="singleEqual"&gt;
+        &lt;index name="inx_geopt"/&gt;
+      &lt;/find&gt;
+
+      &lt;find name="singleIn"&gt;
+        &lt;condition&gt;
+          &lt;query&gt;geoptType IN :1&lt;/query&gt;
+          &lt;params&gt;
+            &lt;column name="geopt_type" list="true"/&gt;
+          &lt;/params&gt;
+        &lt;/condition&gt;
+      &lt;/find&gt;
+
+      &lt;find name="listContainsAllOf"&gt;
+        &lt;index name="inx_geopt_list" list="true"/&gt;
+      &lt;/find&gt;
+
+      &lt;find name="listContainAtLeastOne"&gt;
+        &lt;condition&gt;
+          &lt;query&gt;geoptList IN :1&lt;/query&gt;
+          &lt;params&gt;
+            &lt;column name="geopt_type" list="true"/&gt;
+          &lt;/params&gt;
+        &lt;/condition&gt;
+      &lt;/find&gt;
+
+    &lt;/methods&gt; </pre>
+
+		will produce these DAO methods:
+	<pre class="prettyprint java">
+    public MyEntity[] findSingleEqual( GeoPt geoptType );
+    public MyEntity[] findSingleIn( List&lt;GeoPt&gt; geoptType );
+    public MyEntity[] findListContainsAllOf( List&lt;GeoPt&gt; geoptList );
+    public MyEntity[] findListContainsAtLeastOne( List&lt;GeoPt&gt; geoptList ); </pre>
+</p>
+
+<p>
+	See more information about the GAE types in the <a href="[gae-features]">documentation</a>.
+</p>
+
+<p>
+	The full release notes you can find <a href="[release-notes]#2010-02-25">here</a>
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2010-02-12"></a>
+<h2>AuDAO 1.1 - Blobs and Lists</h2>
+<p class="modified">09:30:35</p>
+
+<p>
+	Three new types: byte[], Serializable and List allows
+	to work with binary objects natively as Java allows.
+</p>
+
+<p>
+	See more information about the new types in the <a href="[feature-matrix]#daomatrix">documentation</a>.
+</p>
+
+<p>
+	The full release notes you can find <a href="[release-notes]#2010-02-12">here</a>
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2010-02-01"></a>
+<h2>AuDAO 1.0 is out !</h2>
+<p class="modified">16:32:04</p>
+
+<p>
+	Today we released the first official version of AuDAO tool.
+</p>
+
+<p>
+	The GAE implementation now supports dynamic queries - by parsing GQL conditions.
+	The dynamic GQL parser supports all features except the "!=" and "IN" operators.
+</p>
+
+<p>
+	We also release open-source libraries:
+	<ul>
+		<li><tt>audao-runtime.jar</tt> - the JDBC and GAE utilities used by the generated DAO classes </li>
+		<li><tt>audao-runtime-gql.jar</tt> - the runtime GQL parser which converts GQL statements to GAE low-level API Query on the fly.</li>
+	</ul>
+	The libraries are released under Apache 2 License and you can download it <a href="download.jsp">here</a>.
+</p>
+
+<p>
+	The full release notes you can find <a href="[release-notes]#2010-02-01">here</a>
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2010-01-14"></a>
+<h2>GAE implementation rewritten</h2>
+<p class="modified">14:11:55</p>
+
+<p>
+	DAO implementation for Google App Engine uses low-level Datastore API now !
+</p>
+
+<p>
+	The first implementation for GAE used JDO and it was a little bit tricky.
+	Now we use low-level Datastore API, so the generated code is faste, more powerfull
+	and more stable.
+</p>
+
+<p>
+	Developers can still use the old version as an option (the GAE/JDO target was renamed to <tt>gaejdo</tt>,
+	and the target <tt>gae</tt> now stands for the low-level implementation),
+	but we do not plan any enhancements of the GAE/JDO implementation in future.
+	On the other hand, improvements of the new GAE low-level API implementation are in progress !
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-12-15"></a>
+<h2>Updated Google App Engine SDK to 1.3.0</h2>
+<p class="modified">16:49:56</p>
+
+<p>
+	We updated AuDAO to use and run on Google App Engine SDK 1.3.0.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-12-04"></a>
+<h2>Updated Google App Engine SDK to 1.2.8</h2>
+<p class="modified">17:23:14</p>
+
+<p>
+	We updated AuDAO to use and run on Google App Engine SDK 1.2.8.
+</p>
+
+</div> <!-- section -->
+
+
+</div> <!-- chapter -->
+

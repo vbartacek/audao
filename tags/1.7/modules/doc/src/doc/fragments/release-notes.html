@@ -1,0 +1,416 @@
+<div class="chapter">
+<a name="release-notes"></a>
+<h1 class="chapter">AuDAO - Release Notes</h1>
+<h2>AuDAO - SQL and Java DAO Generator</h2>
+
+
+<div class="section">
+<a class="date" name="2012-04-14"></a>
+<h2>Release 1.7</h2>
+
+<p>
+	Support for HSQLDB engine.
+</p>
+
+<p>
+	<b>New Features</b>
+	<ul>
+		<li>Updated Google App Engine SDK to version 1.6.1</li>
+		<li>Support for HSQLDB engine - SQL scripts + Java DAO layer</li>
+	</ul>
+</p>
+
+</div>
+
+
+<div class="section">
+<a class="date" name="2011-02-19"></a>
+<h2>Release 1.6</h2>
+
+<p>
+	Lists instead of arrays in finders.
+	Enumerations mapped to Strings in DB.
+	Batch inserts.
+</p>
+
+<p>
+	<b>New Features</b>
+	<ul>
+		<li>Updated Google App Engine SDK to version 1.4.2</li>
+		<li><a href="[generator-output]#dao_find_method_return_type">Lists</a> can be returned instead of arrays as finder results</li>
+		<li><a href="[dao-features]#enums">String enumerations</a> - implemented.</li>
+		<li><a href="[dao-features]#insertAll">Batch inserts</a> - issue#5. Currently the optimization is implemented only for GAE. For MySQL and Oracle it is only a shortcut method.</li>
+		<li>Count() methods in GAE are not limited by max of 1000 records now.</li>
+	</ul>
+</p>
+
+</div>
+
+
+<div class="section">
+<a class="date" name="2010-06-10"></a>
+<h2>Release 1.5</h2>
+
+<p>
+	Moved to open-source.
+	Caching for GAE implemented.
+	Extended GQL parser.
+</p>
+
+<p>
+	<b>New Features</b>
+	<ul>
+		<li>Updated Google App Engine SDK to version 1.3.4</li>
+		<li>Local table's <a href="[generator-output]#config">config</a> implemented</li>
+		<li><a href="[generator-output]#daoimpl_default_cache">Default cache</a> introduced</li>
+		<li>3-level <a href="[gae-features]#caches">caches</a> for GAE implemented</li>
+		<li><a href="[gae-features]#gqlext">Extended GQL Parser</a> standalone library introduced</li>
+		<li><a href="[dao-features]#autovalues">Default values</a> for insert operation implemented</li>
+	</ul>
+</p>
+
+</div>
+
+
+<div class="section">
+<a class="date" name="2010-05-05"></a>
+<h2>Release 1.4</h2>
+
+<p>
+	Several bugs fixed.
+	Introduced "transient" columns.
+</p>
+
+<p>
+	<b>New Features</b>
+	<ul>
+		<li>Updated Google App Engine SDK to version 1.3.3.1</li>
+		<li><a href="[dao-features]#transient">Transient</a> columns introduced</li>
+		<li>"Full" <a href="[generator-output]#dto_equality">equality</a> of DTO's implmented</li>
+		<li>Multiline comments on DTO classes and their columns are allowed now</li>
+	</ul>
+</p>
+
+<p>
+	<b>Fixed Bugs</b>
+	<ul>
+		<li>bugfix#7 and #8 - inheritance - when extending DTO's, then copy constructors
+			must be generated and called properly.
+		</li>
+		<li>bugfix#10 - GAE transactions - GQL query can participate in a transaction only
+			if it is an ancestor query.
+		</li>
+		<li>bugfix#11 - GQL static queries - escaping of the property names did not work.</li>
+		<li>bugfix#12 - GWT custom field serializer - the "modified" flags are also serialized.</li>
+		<li>bugfix#13 - GAE - Date types must be cropped when inserting and seearching
+			to emulate JDBC behaviour (portability and compatibility issue)</li>
+	</ul>
+</p>
+
+</div>
+
+
+<div class="section">
+<a class="date" name="2010-03-26"></a>
+<h2>Release 1.3</h2>
+
+<p>
+	Support for GWT serialization of DTOs including GAE core classes.
+	New options which control storing properties in GAE datastore.
+	Renamed attribute @key to @gae-parent.
+</p>
+
+<p>
+	<b>New Features</b>
+	<ul>
+		<li>Updated Google App Engine SDK to version 1.3.2.</li>
+		<li>GWT server &lt;--&gt; client serialization support:
+			<ul>
+				<li>Emulation of GAE datastore core classes - liek GeoPt or Key -
+						allows to pass  DTOs containing those core classes as fields from server to client</li>
+				<li>DTO - DTO_CustomFieldSerializer - a custom field serializer class
+						can be generated along with the DTO class - reduces amount of the data
+						passed through network. 
+						The optimizations are aware of GAE datastore core types (e.g. GeoPt)</li>
+			</ul>
+		</li>
+		<li>GAE datastore optimizations:
+			<ul>
+				<li>enable/disable one-columns default indexes by
+					<a href="[gae-features]#storage-unindexed">gae/@unindexed</a> option</li>
+				<li>do not store null values - option
+					<a href="[gae-features]#storage-empty">gae/@empty</a></li>
+			</ul>
+		</li>
+		<li>DTO enhacement - methods equals() and hashCode() cane be generated
+				- you can choose the implementation
+				- <a href="[generator-output]#dto_equality">see more</a>.</li>
+		<li>Renamed the column/ref/@key attribute to column/ref/@gae-parent (GAE parent column key).</li>
+		<li>Standalone tools can generate only selective types (DAO, DTO, FACTORY, ...)</li>
+	</ul>
+</p>
+
+<p>
+	<b>Fixed Bugs</b>
+	<ul>
+		<li>bugfix#5 - update column method signature was anonymous
+			even when the column has defined the @class attribute - e.g. updateColumn(Serializable)</li>
+	</ul>
+</p>
+
+</div>
+
+
+<div class="section">
+<a class="date" name="2010-02-25"></a>
+<h2>Release 1.2</h2>
+
+<p>
+	All GAE core classes are supported now.
+	Unified conventions about DAO method signatures - index and condition finders.
+</p>
+
+<p>
+	<b>New Features</b>
+	<ul>
+		<li>Serializable + List : GAE core types added - qualifier 'gae:' in type/@class</li>
+		<li>List: qualifier 'table:' is supported in type/@class</li>
+		<li>List: explicit index and condition finders - option 'list' forces param type to be a List
+			- exploding (ANDed) conditions</li>
+		<li>Dynamic GQL parser expands Collection params into separate (ANDed) filters.</li>
+		<li>GQL dynamic and static parsers: operators IN and != are supported now.</li>
+		<li>Added @java to params/column attribute - resolving name collisions</li>
+		<li>Escaping kind and property names in GQL queries</li>
+	</ul>
+</p>
+
+<p>
+	<b>Fixed Bugs</b>
+	<ul>
+		<li>GQL Parser Static - fixed date(),datetime(),time() bugs - missing method</li>
+		<li>"prop = KEY(..)" bug - now we can filter also normal properties by key functions</li>
+	</ul>
+</p>
+
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2010-02-12"></a>
+<h2>Release 1.1</h2>
+
+<p>
+	New types introduced.
+	Fixed batch update bug - storing null values.
+</p>
+
+<p>
+	<b>New Features</b>
+	<ul>
+		<li>New type <a href="[dao-features]#typeByteArray">byte[]</a> - implemented for MySQL, Oracle and GAE</li>
+		<li>New type <a href="[dao-features]#typeSerializable">Serializable</a> - implemented for MySQL, Oracle and GAE</li>
+		<li>New type <a href="[dao-features]#typeList">List</a> - implemented for GAE</li>
+	</ul>
+</p>
+
+<p>
+	<b>Fixed Bugs</b>
+	<ul>
+		<li>In batch update methods - when setting null values, the SQL was not properly formatted
+			(fixed for MySQL and Oracle, not applicable for GAE)</li>
+	</ul>
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2010-02-01"></a>
+<h2>Release 1.0</h2>
+
+<p>
+	Dynamic GQL queries for GAE implemented.<br/>
+	Released AuDAO runtime libraries sources including
+	GQL dynamic query parser.<br/>
+	Fixed bugs in GQL to low-level API converter: integer versus float values;
+	filter by __key__, order by __key__.<br/>
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2010-01-27"></a>
+<h2>Release 0.15</h2>
+
+<p>
+	Fixed bug in GQL to low-level API converter - Date and Timestamp must be converted to
+	java.util.Date.<br/>
+	serialVersionUID static field can be generated in DTO classes. 
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2010-01-14"></a>
+<h2>Release 0.14</h2>
+
+<p>
+	Introduced DAO implementation for Google App Engine using low-level Datastore API (<i>gae</i>).<br/>
+	The old GAE / JDO implementation target renamed to <i>gaejdo</i>.<br/>
+	The documentation was updated.<br/>
+	Fixed bug in DAO update method signatures: not-null enum column type.<br/>
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-12-18"></a>
+<h2>Release 0.13</h2>
+
+<p>
+	Tweaking DAO classes: root parent of DTO, DAO and DAO Impl classes can be specified.
+	Also enum "Column" can be enabled and disabled.<br/>
+	Introduced <a href="[api:dao]">ConnectionProvider</a>
+	and <a href="[api:dao/gae]">PersistenceManagerProvider</a> classes.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-12-15"></a>
+<h2>Release 0.12</h2>
+
+<p>
+	Updated Google APP Engine SDK to 1.3.0<br/>
+	The GAE DTO implementation classes has a common parent again - the bug in JDO is resolved now.
+	The common parent is now <a href="[api:dto/gae:GaeJdoAbstractDtoImpl]">GaeJdoAbstractDtoImpl</a>.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-12-14"></a>
+<h2>Release 0.11</h2>
+
+<p>
+	AuDAO has a new logo.<br/>
+	Standalone application is now fully JDK 1.5 compatible.<br/>
+	Find by primary key DAO method can be explicitly defined now.<br/>
+	Fixed problem in GAE implementation of findOne/findMany.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-12-04"></a>
+<h2>Release 0.10</h2>
+
+<p>
+	Updated Google APP Engine SDK to 1.2.8.
+	The GAE DTO implementation classes has no more any common parent.
+	In previous SDK 1.2.6 the common parent (<a href="[api:dto:AbstractDto]">AbstractDto</a>
+	was not a problem. But in SDK 1.2.8 the JDO tried to persist even the abstract class.
+</p>
+
+</div> <!-- section -->
+
+<div class="section">
+<a class="date" name="2009-12-03"></a>
+<h2>Release 0.9</h2>
+
+<p>
+	Added possibility to configure the <tt>DaoFactory</tt> methods
+	using new tag <tt>&lt;config&gt;</tt>.
+</p>
+
+<p>
+	Documentation improved: added Javadoc, generated source files and compiled classes
+	to all examples. Added new examples.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-11-25"></a>
+<h2>Release 0.8</h2>
+
+<p>
+	Fixed dynamic delete. Added reference fk attribute.
+</p>
+
+<p>
+	Documentation improved: DAO features, all methods and types documented.
+	Crossreference to XSD added.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-11-19"></a>
+<h2>Release 0.7</h2>
+
+<p>
+	GAE: enums are mapped to raw types. Method update( dto ) implemented.
+</p>
+
+<p>
+	Getting Started documentation finished.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-11-09"></a>
+<h2>Release 0.6</h2>
+
+<p>
+	Added support for multiple queries for different DB types.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-11-06"></a>
+<h2>Release 0.5</h2>
+
+<p>
+	Online generator improved. Added XSD validation.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-11-03"></a>
+<h2>Release 0.4</h2>
+
+<p>
+	"index" condition added; "auto-find" flag added.
+</p>
+
+</div> <!-- section -->
+
+
+<div class="section">
+<a class="date" name="2009-10-29"></a>
+<h2>Release 0.3</h2>
+
+<p>
+	AuDAO Site was launched on Google App Engine.
+</p>
+
+</div> <!-- section -->
+
+
+</div> <!-- chapter -->

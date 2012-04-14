@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<project name="schema" basedir="." default="dist">
+
+	<!-- IMPORT THE COMMON PROPERTIES AND TARGETS -->
+	<import file="../../build-commons.xml"/>
+
+	<!-- SECTION PROPERTIES -->
+
+	<property name="schema.dir" location="${src.dir}/schema"/>
+	<property name="xsl.dir" location="${src.dir}/xsl"/>
+	<property name="doc.dir" location="${src.dir}/doc"/>
+
+	<property name="build.doc.dir" location="${build.dir}/doc"/>
+
+	<!-- SECTION FILESET AND CLASSPATH -->
+
+	<path id="xmlbean.path">
+		<fileset dir="${lib.global}/xmlbeans"/>
+	</path>
+
+	<path id="compile.path">
+	</path>
+
+	<!-- SECTION TARGETS -->
+
+	<target name="validate-xml">
+		<schemavalidate file="${src.xml}">
+			<schema
+				namespace="http://www.spoledge.com/audao"
+				file="${src.dir}/schema/audao.xsd"
+			/>
+		</schemavalidate>
+		<echo message="The source file '${src.xml}' is a valid XML."/>
+	</target>
+
+
+	<target name="gen-doc" description="Generates DOC.">
+		<mkdir dir="${build.doc.dir}"/>
+
+		<xslt
+			style="${xsl.dir}/xsd-html.xsl"
+			in="${schema.dir}/audao.xsd"
+			out="${build.doc.dir}/audao.html"
+		>
+			<param name="schema" expression="audao.xsd"/>
+		</xslt>
+
+		<xslt
+			style="${xsl.dir}/xsd-ref.xsl"
+			in="${schema.dir}/audao.xsd"
+			out="${build.dir}/refs.xml"
+		/>
+
+		<copy todir="${build.doc.dir}">
+			<fileset dir="${doc.dir}"/>
+		</copy>
+
+	</target>
+
+
+	<target name="xmlbeans" description="Generates XMLBeans wrappers.">
+		<antcall target="depends-on-jar">
+			<param name="name" value="xbean.jar"/>
+		</antcall>
+		<antcall target="depends-on-jar">
+			<param name="name" value="jsr173_1.0_api.jar"/>
+		</antcall>
+
+		<uptodate property="schema.not-changed" targetfile="${dist.dir}/${module-name}.jar">
+			<srcfiles dir="${schema.dir}">
+				<include name="database.xsd"/>
+			</srcfiles>
+		</uptodate>
+
+		<antcall target="xmlbeans.impl"/>
+	</target>
+
+
+	<target name="xmlbeans.impl" unless="schema.not-changed">
+		<mkdir dir="${build.src-gen.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+		<taskdef
+			name="xmlbean"
+			classname="org.apache.xmlbeans.impl.tool.XMLBean"
+			classpathref="xmlbean.path"
+		/>
+		<xmlbean
+			schema="${schema.dir}/database.xsd"
+			destfile="${dist.dir}/${module-name}.jar"
+			srcgendir="${build.src-gen.dir}"
+			classpathref="xmlbean.path"
+		>
+			<fileset dir="${schema.dir}">
+				<include name="database.xsd"/>
+			</fileset>
+		</xmlbean>
+	</target>
+
+
+	<target name="dist" description="Generates all.">
+		<antcall target="gen-doc"/>
+		<!--
+		<antcall target="xmlbeans"/>
+		-->
+	</target>
+
+</project>

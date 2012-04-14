@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns="http://www.spoledge.com/audao" version="1.0">
+
+	<tables>
+
+		<!-- Oracle: can have at most one LONG column  -->
+
+		<table name="blob_array">
+			<auto-find/>
+			<columns>
+				<column name="blob_arr_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="tiny_array">
+					<type max-length="255">byte[]</type>
+					<edit/>
+				</column>
+				<column name="short_array">
+					<type max-length="500">byte[]</type>
+					<not-null/>
+					<edit/>
+				</column>
+				<column name="normal_array">
+					<type max-length="65535">byte[]</type>
+					<edit/>
+				</column>
+			</columns>
+
+			<indexes>
+				<index name="inx_arr_name">
+					<unique/>
+					<columns>
+						<column name="name"/>
+					</columns>
+				</index>
+				<index name="inx_arr_tiny">
+					<columns>
+						<column name="tiny_array"/>
+					</columns>
+				</index>
+				<index name="inx_arr_short">
+					<columns>
+						<column name="short_array"/>
+					</columns>
+				</index>
+			</indexes>
+
+			<methods>
+				<find name="byTinyArrayCond">
+					<condition>
+						<query>tiny_array = ?</query>
+						<query dbtype="gae">tinyArray = :1</query>
+						<params>
+							<column name="tiny_array"/>
+						</params>
+					</condition>
+				</find>
+				<find name="byShortArrayCond">
+					<condition>
+						<query>short_array = ?</query>
+						<query dbtype="gae">shortArray = :1</query>
+						<params>
+							<column name="short_array"/>
+						</params>
+					</condition>
+				</find>
+				<update>
+					<set>
+						<params>
+							<column name="tiny_array"/>
+							<column name="short_array"/>
+						</params>
+					</set>
+					<all/>
+				</update>
+			</methods>
+		</table>
+
+
+		<table name="blob_array_medium">
+			<auto-find/>
+			<columns>
+				<column name="blob_arr_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="medium_array">
+					<type max-length="65536">byte[]</type>
+					<edit/>
+				</column>
+			</columns>
+
+			<indexes>
+				<index name="inx_arrmed_name">
+					<unique/>
+					<columns>
+						<column name="name"/>
+					</columns>
+				</index>
+			</indexes>
+		</table>
+
+
+		<table name="blob_array_col">
+			<edit-mode>column</edit-mode>
+			<auto-find/>
+			<columns>
+				<column name="blob_arr_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="tiny_array">
+					<type max-length="255">byte[]</type>
+					<edit/>
+				</column>
+				<column name="short_array">
+					<type max-length="500">byte[]</type>
+					<not-null/>
+					<edit/>
+				</column>
+				<column name="normal_array">
+					<type max-length="65535">byte[]</type>
+					<edit/>
+				</column>
+			</columns>
+
+			<indexes>
+				<index name="inx_arrcol_name">
+					<unique/>
+					<columns>
+						<column name="name"/>
+					</columns>
+				</index>
+			</indexes>
+		</table>
+
+
+		<table name="blob_object">
+			<auto-find/>
+			<columns>
+				<column name="blob_obj_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="anon_tiny_object">
+					<type max-length="255">Serializable</type>
+					<edit/>
+				</column>
+				<column name="tiny_object">
+					<type max-length="255" class="java.lang.String">Serializable</type>
+					<edit/>
+				</column>
+				<column name="short_object">
+					<type max-length="500" class="java.lang.String">Serializable</type>
+					<not-null/>
+					<edit/>
+				</column>
+				<column name="normal_object">
+					<type max-length="65535" class="java.lang.String">Serializable</type>
+					<edit/>
+				</column>
+			</columns>
+
+			<indexes>
+				<index name="inx_obj_name">
+					<unique/>
+					<columns>
+						<column name="name"/>
+					</columns>
+				</index>
+				<index name="inx_obj_short">
+					<columns>
+						<column name="short_object"/>
+					</columns>
+				</index>
+			</indexes>
+
+			<methods>
+				<find name="byShortObjectCond">
+					<condition>
+						<query>short_object = ?</query>
+						<query dbtype="gae">shortObject = :1</query>
+						<params>
+							<column name="short_object"/>
+						</params>
+					</condition>
+				</find>
+				<update>
+					<set>
+						<params>
+							<column name="tiny_object"/>
+							<column name="short_object"/>
+						</params>
+					</set>
+					<all/>
+				</update>
+			</methods>
+		</table>
+
+
+		<table name="blob_object_medium">
+			<auto-find/>
+			<columns>
+				<column name="blob_obj_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="medium_object">
+					<type max-length="65536" class="java.lang.String">Serializable</type>
+					<edit/>
+				</column>
+			</columns>
+
+			<indexes>
+				<index name="inx_objmed_name">
+					<unique/>
+					<columns>
+						<column name="name"/>
+					</columns>
+				</index>
+			</indexes>
+		</table>
+
+
+		<table name="blob_object_col">
+			<edit-mode>column</edit-mode>
+			<auto-find/>
+			<columns>
+				<column name="blob_obj_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="anon_tiny_object">
+					<type max-length="255">Serializable</type>
+					<edit/>
+				</column>
+				<column name="tiny_object">
+					<type max-length="255" class="java.lang.String">Serializable</type>
+					<edit/>
+				</column>
+				<column name="short_object">
+					<type max-length="500" class="java.lang.String">Serializable</type>
+					<not-null/>
+					<edit/>
+				</column>
+				<column name="normal_object">
+					<type max-length="65535" class="java.lang.String">Serializable</type>
+					<edit/>
+				</column>
+			</columns>
+
+			<indexes>
+				<index name="inx_objcol_name">
+					<unique/>
+					<columns>
+						<column name="name"/>
+					</columns>
+				</index>
+			</indexes>
+		</table>
+
+
+		<table name="blob_address" abstract="true" force-dto="true" java="BlobAddress">
+			<columns>
+				<column name="street">
+					<type max-length="32">String</type>
+				</column>
+				<column name="city">
+					<type max-length="32">String</type>
+				</column>
+				<column name="zip">
+					<type max-length="32">String</type>
+				</column>
+				<column name="country">
+					<type max-length="32">String</type>
+				</column>
+			</columns>
+		</table>
+
+		<table name="blob_embed">
+			<columns>
+				<column name="blob_embed_id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="name">
+					<type min-length="3" max-length="64">String</type>
+					<not-null/>
+				</column>
+				<column name="address">
+					<type max-length="500" class="table:blob_address">Serializable</type>
+				</column>
+			</columns>
+
+			<indexes>
+				<index name="inx_embed_name">
+					<unique/>
+					<columns>
+						<column name="name"/>
+					</columns>
+				</index>
+				<index name="inx_embed_addr">
+					<columns>
+						<column name="address"/>
+					</columns>
+				</index>
+			</indexes>
+
+			<methods>
+				<find>
+					<index name="inx_embed_name"/>
+				</find>
+				<find>
+					<index name="inx_embed_addr"/>
+				</find>
+				<find name="byAddressCond">
+					<condition>
+						<query>address = ?</query>
+						<query dbtype="gae">address = :1</query>
+						<params>
+							<column name="address"/>
+						</params>
+					</condition>
+				</find>
+			</methods>
+
+		</table>
+
+
+		<table name="blob_embed_many">
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="address1">
+					<type class="table:blob_address">Serializable</type>
+				</column>
+				<column name="address2">
+					<type class="table:blob_address">Serializable</type>
+				</column>
+			</columns>
+		</table>
+
+	</tables>
+
+</database>
