@@ -24,6 +24,7 @@
 	<path id="compile-test.path">
 		<pathelement path="${antlr-runtime.jar}"/>
 		<pathelement path="${log4j.jar}"/>
+		<fileset dir="${lib.global}/commons"/>
 		<fileset dir="${lib.global}/junit"/>
 		<fileset dir="${gae.home}/lib/impl"/>
 		<fileset dir="${gae.home}/lib/testing"/>

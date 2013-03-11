@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+	<parent>
+		<groupId>com.spoledge.audao</groupId>
+		<artifactId>audao</artifactId>
+		<version>1.7</version>
+		<relativePath>../..</relativePath>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>audao-generator</artifactId>
+
+	<properties>
+		<rootDir>${project.parent.basedir}</rootDir>
+		<extra-resources>${project.build.outputDirectory}/resources</extra-resources>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.8.4</version>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.spoledge.audao</groupId>
+			<artifactId>audao-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.spoledge.audao</groupId>
+			<artifactId>audao-parser</artifactId>
+			<classifier>static</classifier>
+			<version>${project.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${antrun-version}</version>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<mkdir dir="${extra-resources}/xsd"/>
+								<mkdir dir="${extra-resources}/xsl"/>
+								<mkdir dir="${extra-resources}/java"/>
+								<copy todir="${extra-resources}/xsd">
+									<fileset dir="../schemas/src/schema" includes="audao.xsd"/>
+								</copy>
+								<copy todir="${extra-resources}/xsl" filtering="true">
+									<fileset dir="../generator/src/xsl"/>
+									<filterset>
+										<filter token="DIR_SEP" value="/"/>
+									</filterset>
+								</copy>
+								<copy todir="${extra-resources}/xsl">
+									<fileset dir="src/xsl"/>
+								</copy>
+								<copy todir="${extra-resources}/java">
+									<fileset dir="../generator/src/java"/>
+									<fileset dir="conf" includes="sources.properties"/>
+								</copy>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
+
