@@ -1,0 +1,159 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+	<parent>
+		<groupId>com.spoledge.audao</groupId>
+		<artifactId>audao</artifactId>
+		<version>1.7</version>
+		<relativePath>../..</relativePath>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>audao-parser</artifactId>
+
+	<properties>
+		<rootDir>${project.parent.basedir}</rootDir>
+		<antlr-dir>${project.build.directory}/generated-sources/antlr3</antlr-dir>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr-runtime</artifactId>
+			<version>${antlr-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-api-1.0-sdk</artifactId>
+			<version>${gae-version}</version>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-testing</artifactId>
+			<version>${gae-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-api-stubs</artifactId>
+			<version>${gae-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.spoledge.audao</groupId>
+			<artifactId>audao-db</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr3-maven-plugin</artifactId>
+				<version>${antlr-version}</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>antlr</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>src/grammar</sourceDirectory>
+							<libDirectory>src/grammar</libDirectory>
+							<excludes>
+								<exclude>GqlLexer.g</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Fix the problem of the antlr plugin -->
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${antrun-version}</version>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<move todir="${antlr-dir}" flatten="true">
+									<fileset dir="${antlr-dir}" includes="**/src/grammar/*.java"/>
+								</move>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${jar-version}</version>
+				<executions>
+
+					<execution>
+						<id>static-only</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>static</classifier>
+							<includes>
+								<include>com/spoledge/audao/parser/gql/GqlStatic.class</include>
+								<include>com/spoledge/audao/parser/gql/impl/GqlStatic*</include>
+							</includes>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>gql-only</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>gql</classifier>
+							<includes>
+								<include>com/spoledge/audao/db/gae/GQLDynamicQuery.class</include>
+								<include>com/spoledge/audao/parser/gql/GqlDynamic.class</include>
+								<include>com/spoledge/audao/parser/gql/impl/GqlDynamic*</include>
+								<include>com/spoledge/audao/parser/gql/impl/ParserUtils.class</include>
+							</includes>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>gqlext-only</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>gqlext</classifier>
+							<includes>
+								<include>com/spoledge/audao/parser/gql/GqlExtDynamic.class</include>
+								<include>com/spoledge/audao/parser/gql/PreparedGql*.class</include>
+								<include>com/spoledge/audao/parser/gql/impl/ParserUtils.class</include>
+								<include>com/spoledge/audao/parser/gql/impl/GqlExt*</include>
+								<include>com/spoledge/audao/parser/gql/impl/soft/**</include>
+							</includes>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
