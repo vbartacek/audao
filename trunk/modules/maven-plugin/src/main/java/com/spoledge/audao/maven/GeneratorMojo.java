@@ -17,13 +17,15 @@ package com.spoledge.audao.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -39,6 +41,9 @@ import com.spoledge.audao.generator.*;
  */
 @Mojo( name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES )
 public class GeneratorMojo extends AbstractMojo {
+
+    @Component
+    private MavenProject project;
 
     @Parameter( required = true )
     private String dbType;
@@ -84,9 +89,33 @@ public class GeneratorMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         Log log = getLog();
 
+        // Check if something was changed:
+        File touch = new File( dest, "audao.txt" );
+
+        if (!touch.exists() || touch.lastModified() < src.lastModified()) generate();
+        else log.info( "Skipping AuDAO generator task - sources are up-to-date." );
+
+        try {
+            touch.delete();
+            touch.createNewFile();
+        }
+        catch (Exception e) {}
+
+        project.addCompileSourceRoot( dest.getAbsolutePath());
+        log.info( "Added source directory: " + dest );
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Private
+    ////////////////////////////////////////////////////////////////////////////
+
+    private void generate() throws MojoExecutionException {
+        Log log = getLog();
+
         String targetName = dbType.toUpperCase();
 
-        log.info( "Generating from '" + src + "', to '" + dest + "', target '" + targetName + "'" );
+        log.info( "AuDAO Generating from '" + src + "', to '" + dest + "', target '" + targetName + "'" );
 
         try {
             Target target = Target.valueOf( targetName );
