@@ -22,6 +22,27 @@
 
 	<name>AuDAO Generator Maven Plugin</name>
 
+	<description>
+		Java DAO and SQL generator for Oracle, MySQL, Google App Engine and HSQLDB databases.
+	</description>
+
+	<url>http://audao.spoledge.com</url>
+
+	<inceptionYear>2013</inceptionYear>
+
+	<organization>
+		<name>Spolecne s.r.o.</name>
+		<url>http://www.spoledge.com</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<mavenVersion>2.0.11</mavenVersion>
