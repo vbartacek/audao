@@ -162,9 +162,8 @@
 
 	<xsl:template name="pk-Name">
 		<xsl:param name="ctx" select="."/>
-		<xsl:call-template name="camel-name">
-			<xsl:with-param name="name" select="$ctx/db:columns/db:column[db:pk][1]/@name"/>
-			<xsl:with-param name="capital" select="1"/>
+		<xsl:call-template name="java-Name">
+			<xsl:with-param name="ctx" select="$ctx/db:columns/db:column[db:pk][1]"/>
 		</xsl:call-template>
 	</xsl:template>
 
