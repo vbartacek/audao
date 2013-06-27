@@ -21,6 +21,18 @@
 		</table>
 
 
+		<table name="dto_issue_14">
+			<comment>issue#14 - DaoImpl cannot be compiled - custom pk auto column</comment>
+			<columns>
+				<column name="custom_id" java="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+			</columns>
+		</table>
+
+
 		<table name="dto_dto" abstract="true" force-dto="true">
 			<columns>
 				<column name="prop_a">
