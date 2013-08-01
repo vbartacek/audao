@@ -16,7 +16,7 @@
 
 	<groupId>com.spoledge.audao</groupId>
 	<artifactId>audao-maven-plugin</artifactId>
-	<version>1.7</version>
+	<version>1.7.1</version>
 
 	<packaging>maven-plugin</packaging>
 

@@ -987,7 +987,9 @@ import java.sql.Timestamp;
 					<xsl:with-param name="islist" select="$islist"/>
 				</xsl:call-template>
 				<xsl:text> </xsl:text>
-				<xsl:call-template name="column-name"/>
+				<xsl:call-template name="column-name">
+					<xsl:with-param name="ctx" select="$col"/>
+				</xsl:call-template>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>

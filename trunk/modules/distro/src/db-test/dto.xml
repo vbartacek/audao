@@ -33,6 +33,33 @@
 		</table>
 
 
+		<table name="dao_issue_15">
+			<comment>issue#15 - DaoImpl cannot be compiled - java name + methods</comment>
+			<columns>
+				<column name="id">
+					<type>long</type>
+					<auto/>
+					<pk/>
+				</column>
+				<column name="db_col" java="col">
+					<type>int</type>
+				</column>
+			</columns>
+			<indexes>
+				<index name="inx_daoiss15_col">
+					<columns>
+						<column name="db_col"/>
+					</columns>
+				</index>
+			</indexes>
+			<methods>
+				<find>
+					<index name="inx_daoiss15_col"/>
+				</find>
+			</methods>
+		</table>
+
+
 		<table name="dto_dto" abstract="true" force-dto="true">
 			<columns>
 				<column name="prop_a">
