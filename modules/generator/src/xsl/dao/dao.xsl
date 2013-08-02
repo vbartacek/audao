@@ -954,11 +954,16 @@ import java.sql.Timestamp;
 
 	<xsl:template name="name-by-index">
 		<xsl:param name="ctx" select="."/>
+		<xsl:param name="columns" select="$ctx/../../db:columns"/>
 		<xsl:param name="columnrefs" select="$ctx/db:columns/db:column"/>
 		<xsl:param name="idx" select="0"/>
 		<xsl:for-each select="$columnrefs">
 			<xsl:if test="last() - $idx + 1 &gt; position()">
-				<xsl:call-template name="column-Name"/>
+				<xsl:variable name="name" select="@name"/>
+				<xsl:variable name="col" select="$columns/db:column[@name=$name]"/>
+				<xsl:call-template name="column-Name">
+					<xsl:with-param name="ctx" select="$col"/>
+				</xsl:call-template>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
